@@ -66,7 +66,7 @@ const Header: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-white to-red-50 rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-lg">🩸</span>
+              <span className="text-red-600 font-bold text-lg">🩸</span>
             </div>
             <div>
               <h1 className="text-lg font-inter font-semibold text-gray-900 tracking-tight">
