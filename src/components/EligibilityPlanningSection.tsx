@@ -1,9 +1,11 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
+import EligibilityCheckerModal from './EligibilityCheckerModal';
 
 const EligibilityPlanningSection: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <section className="py-16 px-4 bg-gradient-to-br from-blue-50/50 to-purple-50/50">
       <div className="container-custom max-w-4xl">
@@ -30,7 +32,12 @@ const EligibilityPlanningSection: React.FC = () => {
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Thực hiện bài kiểm tra nhanh và ẩn danh để xác định bạn có đủ điều kiện hiến máu hay không
               </p>
-              <GlassButton variant="primary" size="lg" className="w-full">
+              <GlassButton 
+                variant="primary" 
+                size="lg" 
+                className="w-full"
+                onClick={() => setIsModalOpen(true)}
+              >
                 Bắt đầu kiểm tra
               </GlassButton>
             </GlassCardContent>
@@ -72,6 +79,12 @@ const EligibilityPlanningSection: React.FC = () => {
           </GlassCard>
         </div>
       </div>
+
+      {/* Eligibility Checker Modal */}
+      <EligibilityCheckerModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };
