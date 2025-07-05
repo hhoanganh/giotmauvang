@@ -38,10 +38,10 @@ const Header: React.FC = () => {
           {/* CTA Button */}
           <div className="flex items-center gap-2">
             <GlassButton variant="primary" size="sm" className="hidden sm:flex">
-              Đăng ký hiến máu
+              Đăng nhập
             </GlassButton>
             <GlassButton variant="primary" size="sm" className="sm:hidden">
-              Đăng ký
+              Đăng nhập
             </GlassButton>
           </div>
         </div>
