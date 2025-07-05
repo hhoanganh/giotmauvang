@@ -65,7 +65,7 @@ const Header: React.FC = () => {
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-sky-500 rounded-xl flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 bg-gradient-to-br from-white to-red-50 rounded-xl flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-lg">🩸</span>
             </div>
             <div>
