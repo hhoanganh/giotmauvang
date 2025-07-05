@@ -23,47 +23,47 @@ const EventCard: React.FC<EventCardProps> = ({
   spotsAvailable
 }) => {
   return (
-    <GlassCard className="w-full">
-      <GlassCardHeader>
-        <div className="flex items-start justify-between">
+    <GlassCard className="w-full hover:shadow-xl transition-all duration-300">
+      <GlassCardHeader className="pb-4">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <GlassCardTitle className="text-lg mb-2">{title}</GlassCardTitle>
-            <div className="space-y-1 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-blood-red rounded-full"></span>
+            <GlassCardTitle className="text-xl mb-3 leading-tight">{title}</GlassCardTitle>
+            <div className="space-y-2 text-sm text-gray-600">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
                 <span>{location}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-blood-gold rounded-full"></span>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
                 <span>{date} • {time}</span>
               </div>
             </div>
           </div>
           {spotsAvailable && (
-            <div className="flex flex-col items-end">
-              <span className="text-xs text-muted-foreground">Còn lại</span>
-              <span className="text-lg font-semibold text-blood-red">{spotsAvailable}</span>
-              <span className="text-xs text-muted-foreground">chỗ</span>
+            <div className="flex flex-col items-center bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-3 min-w-[70px]">
+              <span className="text-xs text-gray-500 mb-1">Còn lại</span>
+              <span className="text-2xl font-bold text-red-600">{spotsAvailable}</span>
+              <span className="text-xs text-gray-500">chỗ</span>
             </div>
           )}
         </div>
       </GlassCardHeader>
       
-      <GlassCardContent>
-        <p className="text-sm text-foreground/80 mb-4 line-clamp-2">
+      <GlassCardContent className="space-y-6">
+        <p className="text-gray-700 leading-relaxed">
           {description}
         </p>
         
         {bloodTypesNeeded.length > 0 && (
-          <div className="mb-4">
-            <span className="text-xs font-medium text-muted-foreground mb-2 block">
+          <div>
+            <span className="text-sm font-medium text-gray-700 mb-3 block">
               Nhóm máu cần:
             </span>
             <div className="flex flex-wrap gap-2">
               {bloodTypesNeeded.map((bloodType) => (
                 <span
                   key={bloodType}
-                  className="px-2 py-1 text-xs font-medium bg-blood-red/20 text-blood-red rounded-lg backdrop-blur-sm"
+                  className="px-3 py-1 text-sm font-medium bg-red-100 text-red-700 rounded-full"
                 >
                   {bloodType}
                 </span>
@@ -72,11 +72,11 @@ const EventCard: React.FC<EventCardProps> = ({
           </div>
         )}
         
-        <div className="flex gap-2">
-          <GlassButton variant="primary" size="sm" className="flex-1">
+        <div className="flex gap-3 pt-2">
+          <GlassButton variant="primary" size="md" className="flex-1">
             Đăng ký hiến máu
           </GlassButton>
-          <GlassButton variant="default" size="sm">
+          <GlassButton variant="default" size="md">
             Chi tiết
           </GlassButton>
         </div>

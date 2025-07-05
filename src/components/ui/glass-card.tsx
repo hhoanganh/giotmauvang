@@ -12,7 +12,7 @@ const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-2xl border border-white/30 bg-white/10 backdrop-blur-md text-card-foreground shadow-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/10",
+          "rounded-2xl border border-gray-200/50 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg transition-all duration-300 hover:shadow-xl",
           className
         )}
         {...props}
@@ -43,7 +43,7 @@ const GlassCardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("text-2xl font-inter font-semibold leading-none tracking-tighter", className)}
+    className={cn("text-xl font-inter font-semibold leading-tight tracking-tight text-gray-900", className)}
     {...props}
   />
 ));
@@ -55,7 +55,7 @@ const GlassCardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-sm text-gray-600", className)}
     {...props}
   />
 ));

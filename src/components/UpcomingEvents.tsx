@@ -46,21 +46,21 @@ const UpcomingEvents: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 px-4">
-      <div className="container mx-auto max-w-6xl">
+    <section className="section-padding bg-gray-50/50">
+      <div className="container-custom">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-inter font-bold text-foreground mb-4 tracking-tight">
+        <div className="text-center mb-12 space-y-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-inter font-bold text-gray-900 tracking-tight">
             Sự Kiện Hiến Máu
-            <span className="gradient-blood bg-clip-text text-transparent"> Sắp Tới</span>
+            <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent"> Sắp Tới</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Tham gia các sự kiện hiến máu tại TP. Hồ Chí Minh và trở thành người hùng thầm lặng
           </p>
         </div>
 
         {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-12">
           {events.map((event, index) => (
             <EventCard
               key={index}
@@ -76,18 +76,18 @@ const UpcomingEvents: React.FC = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center">
-          <GlassCard className="max-w-md mx-auto p-6">
-            <GlassCardHeader>
-              <GlassCardTitle className="text-xl mb-2">
+        <div className="flex justify-center">
+          <GlassCard className="max-w-lg mx-auto p-8 text-center">
+            <GlassCardHeader className="pb-4">
+              <GlassCardTitle className="text-2xl mb-3">
                 Không tìm thấy sự kiện phù hợp?
               </GlassCardTitle>
             </GlassCardHeader>
             <GlassCardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Đăng ký nhận thông báo về các sự kiện hiến máu mới
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Đăng ký nhận thông báo về các sự kiện hiến máu mới tại khu vực của bạn
               </p>
-              <GlassButton variant="primary" size="md" className="w-full">
+              <GlassButton variant="primary" size="lg" className="w-full">
                 Đăng ký thông báo
               </GlassButton>
             </GlassCardContent>
