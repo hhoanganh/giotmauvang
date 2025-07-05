@@ -1,6 +1,5 @@
 ## What technologies are used for this project?
 
-Changes made via Lovable will be committed automatically to this repo.
 This project is built with:
 
 - Vite
