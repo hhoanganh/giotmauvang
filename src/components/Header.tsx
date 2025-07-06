@@ -102,7 +102,7 @@ const Header: React.FC = () => {
                   eventsSection.scrollIntoView({ behavior: 'smooth' });
                   // Set active tab to events after a short delay
                   setTimeout(() => {
-                    const eventsTab = document.querySelector('[data-value="events"]');
+                    const eventsTab = document.querySelector('[value="events"]');
                     if (eventsTab) {
                       (eventsTab as HTMLElement).click();
                     }
@@ -121,7 +121,7 @@ const Header: React.FC = () => {
                   eventsSection.scrollIntoView({ behavior: 'smooth' });
                   // Set active tab to centers after a short delay
                   setTimeout(() => {
-                    const centersTab = document.querySelector('[data-value="centers"]');
+                    const centersTab = document.querySelector('[value="centers"]');
                     if (centersTab) {
                       (centersTab as HTMLElement).click();
                     }
