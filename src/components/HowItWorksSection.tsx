@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import EligibilityCheckerModal from './EligibilityCheckerModal';
 
 const HowItWorksSection: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const steps = [
     {
       icon: "📝",
@@ -73,8 +75,35 @@ const HowItWorksSection: React.FC = () => {
           ))}
         </div>
 
+        {/* Eligibility Checker */}
+        <div className="max-w-2xl mx-auto mb-16">
+          <GlassCard className="text-center p-8 hover:shadow-xl transition-all duration-300">
+            <GlassCardHeader>
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                <span className="text-2xl">✓</span>
+              </div>
+              <GlassCardTitle className="text-xl mb-4">
+                Kiểm tra điều kiện
+              </GlassCardTitle>
+            </GlassCardHeader>
+            <GlassCardContent>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Thực hiện bài kiểm tra nhanh và ẩn danh để xác định bạn có đủ điều kiện hiến máu hay không
+              </p>
+              <GlassButton 
+                variant="primary" 
+                size="lg" 
+                className="w-full"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Bắt đầu kiểm tra
+              </GlassButton>
+            </GlassCardContent>
+          </GlassCard>
+        </div>
+
         {/* Information Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <GlassCard className="p-8">
             <GlassCardHeader className="pb-6">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
@@ -95,7 +124,7 @@ const HowItWorksSection: React.FC = () => {
                 <span className="text-green-600 text-xl">✓</span>
                 <p className="text-gray-600">Tuân thủ tiêu chuẩn y tế quốc tế</p>
               </div>
-              <GlassButton variant="default" size="md" className="w-full mt-6">
+              <GlassButton variant="default" size="lg" className="w-full mt-6">
                 Xem chi tiết an toàn
               </GlassButton>
             </GlassCardContent>
@@ -121,7 +150,7 @@ const HowItWorksSection: React.FC = () => {
                 <span className="text-red-600 text-xl">♥️</span>
                 <p className="text-gray-600">Cứu sống những người khác</p>
               </div>
-              <GlassButton variant="secondary" size="md" className="w-full mt-6">
+              <GlassButton variant="secondary" size="lg" className="w-full mt-6">
                 Tìm hiểu thêm
               </GlassButton>
             </GlassCardContent>
@@ -150,6 +179,12 @@ const HowItWorksSection: React.FC = () => {
           </div>
         </GlassCard>
       </div>
+
+      {/* Eligibility Checker Modal */}
+      <EligibilityCheckerModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };
