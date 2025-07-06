@@ -77,7 +77,7 @@ const EventsLocationsSection: React.FC = () => {
                   <EventCard key={index} {...event} />
                 ))}
               </div>
-              <div className="text-center pt-4 pb-4 px-4">
+              <div className="text-center pt-4 pb-8 px-4">
                 <GlassButton variant="primary" size="lg" className="min-w-[200px]">
                   Xem tất cả sự kiện
                 </GlassButton>
@@ -102,7 +102,7 @@ const EventsLocationsSection: React.FC = () => {
                   </div>
                 </GlassCard>
               ))}
-              <div className="text-center pt-4 pb-4 px-4">
+              <div className="text-center pt-4 pb-8 px-4">
                 <GlassButton variant="primary" size="lg" className="min-w-[200px]">
                   Xem tất cả trung tâm
                 </GlassButton>
