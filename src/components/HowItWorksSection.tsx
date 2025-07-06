@@ -77,76 +77,86 @@ const HowItWorksSection: React.FC = () => {
 
         {/* Information Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          <GlassCard className="p-8">
-            <GlassCardHeader className="pb-6">
+          <GlassCard className="p-8 flex flex-col">
+            <GlassCardHeader className="pb-6 flex-shrink-0">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
-                <span className="text-2xl">🔍</span>
+                <span className="text-2xl">📋</span>
                 Kiểm Tra Điều Kiện
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent>
-              <p className="text-gray-600 mb-6 leading-relaxed">
+            <GlassCardContent className="flex flex-col flex-grow">
+              <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
                 Thực hiện bài kiểm tra nhanh và ẩn danh để xác định bạn có đủ điều kiện hiến máu hay không
               </p>
-              <GlassButton 
-                variant="primary" 
-                size="lg" 
-                className="w-full"
-                onClick={() => setIsModalOpen(true)}
-              >
-                Bắt đầu kiểm tra
-              </GlassButton>
+              <div className="mt-auto">
+                <GlassButton 
+                  variant="primary" 
+                  size="lg" 
+                  className="w-full"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Bắt đầu kiểm tra
+                </GlassButton>
+              </div>
             </GlassCardContent>
           </GlassCard>
-          <GlassCard className="p-8">
-            <GlassCardHeader className="pb-6">
+          <GlassCard className="p-8 flex flex-col">
+            <GlassCardHeader className="pb-6 flex-shrink-0">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">🛡️</span>
                 An Toàn & Bảo Đảm
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="space-y-4">
-              <div className="flex items-start gap-3">
-                <span className="text-green-600 text-xl">✓</span>
-                <p className="text-gray-600">Thiết bị y tế hiện đại, vô trùng</p>
+            <GlassCardContent className="flex flex-col flex-grow">
+              <div className="space-y-4 flex-grow">
+                <div className="flex items-start gap-3">
+                  <span className="text-green-600 text-xl">✓</span>
+                  <p className="text-gray-600">Thiết bị y tế hiện đại, vô trùng</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-green-600 text-xl">✓</span>
+                  <p className="text-gray-600">Đội ngũ y bác sĩ chuyên nghiệp</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-green-600 text-xl">✓</span>
+                  <p className="text-gray-600">Tuân thủ tiêu chuẩn y tế quốc tế</p>
+                </div>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-green-600 text-xl">✓</span>
-                <p className="text-gray-600">Đội ngũ y bác sĩ chuyên nghiệp</p>
+              <div className="mt-auto">
+                <GlassButton variant="primary" size="lg" className="w-full mt-6">
+                  Xem chi tiết an toàn
+                </GlassButton>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-green-600 text-xl">✓</span>
-                <p className="text-gray-600">Tuân thủ tiêu chuẩn y tế quốc tế</p>
-              </div>
-              <GlassButton variant="default" size="lg" className="w-full mt-6">
-                Xem chi tiết an toàn
-              </GlassButton>
             </GlassCardContent>
           </GlassCard>
 
-          <GlassCard className="p-8">
-            <GlassCardHeader className="pb-6">
+          <GlassCard className="p-8 flex flex-col">
+            <GlassCardHeader className="pb-6 flex-shrink-0">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">💝</span>
                 Lợi Ích Khi Hiến Máu
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="space-y-4">
-              <div className="flex items-start gap-3">
-                <span className="text-red-600 text-xl">♥️</span>
-                <p className="text-gray-600">Khám sức khỏe miễn phí</p>
+            <GlassCardContent className="flex flex-col flex-grow">
+              <div className="space-y-4 flex-grow">
+                <div className="flex items-start gap-3">
+                  <span className="text-red-600 text-xl">♥️</span>
+                  <p className="text-gray-600">Khám sức khỏe miễn phí</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-red-600 text-xl">♥️</span>
+                  <p className="text-gray-600">Kiểm tra máu cơ bản</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-red-600 text-xl">♥️</span>
+                  <p className="text-gray-600">Cứu sống những người khác</p>
+                </div>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-red-600 text-xl">♥️</span>
-                <p className="text-gray-600">Kiểm tra máu cơ bản</p>
+              <div className="mt-auto">
+                <GlassButton variant="primary" size="lg" className="w-full mt-6">
+                  Tìm hiểu thêm
+                </GlassButton>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-red-600 text-xl">♥️</span>
-                <p className="text-gray-600">Cứu sống những người khác</p>
-              </div>
-              <GlassButton variant="secondary" size="lg" className="w-full mt-6">
-                Tìm hiểu thêm
-              </GlassButton>
             </GlassCardContent>
           </GlassCard>
         </div>
