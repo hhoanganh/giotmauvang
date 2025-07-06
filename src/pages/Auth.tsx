@@ -47,7 +47,7 @@ const Auth = () => {
       <div className="container-custom px-4 pb-8">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-white to-orange-100 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 flex items-center justify-center">
             <img 
               src="https://jduhcsgsf4.ufs.sh/f/YxhhsvmLP58IE2O12LrHIx6jwqh5iWJp4bOGCTRgVKQFmtZd" 
               alt="Giọt Máu Vàng"
