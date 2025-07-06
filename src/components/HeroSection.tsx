@@ -25,8 +25,7 @@ const HeroSection: React.FC = () => {
             </h1>
             
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Ứng dụng hiện đại giúp kết nối người hiến máu với các trung tâm y tế tại TP. Hồ Chí Minh. 
-              Cùng nhau chia sẻ yêu thương, cứu sống cuộc đời.
+            Kết nối những trái tim tình nguyện. Ứng dụng giúp người dân dễ dàng hiến máu tại TP. Hồ Chí Minh, cùng nhau trao sự sống và lan tỏa yêu thương.
             </p>
           </div>
 
