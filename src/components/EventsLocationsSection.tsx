@@ -42,15 +42,6 @@ const EventsLocationsSection: React.FC = () => {
       description: "Sự kiện hiến máu định kỳ tại trung tâm y tế",
       bloodTypesNeeded: ["O-", "A-", "B-"],
       spotsAvailable: 32
-    },
-    {
-      title: "Chương Trình Hiến Máu Tình Nguyện",
-      location: "Bệnh viện Từ Dũ, Quận 1",
-      date: "22/01/2025",
-      time: "08:30 - 15:30",
-      description: "Hiến máu tình nguyện hỗ trợ các ca sinh nở khó khăn",
-      bloodTypesNeeded: ["O+", "A+"],
-      spotsAvailable: 28
     }
   ];
 
