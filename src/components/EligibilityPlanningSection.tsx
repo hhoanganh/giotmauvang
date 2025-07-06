@@ -75,7 +75,7 @@ const EligibilityPlanningSection: React.FC = () => {
                 </div>
               </div>
               <div className="mt-auto">
-                <GlassButton variant="default" size="md" className="w-full">
+                <GlassButton variant="default" size="lg" className="w-full">
                   Xem chi tiết
                 </GlassButton>
               </div>
