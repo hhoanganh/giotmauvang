@@ -18,9 +18,9 @@ const EligibilityPlanningSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <GlassCard className="text-center p-8 hover:shadow-xl transition-all duration-300 flex flex-col">
-            <GlassCardHeader className="flex-shrink-0">
+        <div className="max-w-2xl mx-auto">
+          <GlassCard className="text-center p-8 hover:shadow-xl transition-all duration-300">
+            <GlassCardHeader>
               <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
                 <span className="text-2xl">✓</span>
               </div>
@@ -28,57 +28,18 @@ const EligibilityPlanningSection: React.FC = () => {
                 Kiểm tra điều kiện
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="flex flex-col flex-grow">
-              <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
+            <GlassCardContent>
+              <p className="text-gray-600 mb-6 leading-relaxed">
                 Thực hiện bài kiểm tra nhanh và ẩn danh để xác định bạn có đủ điều kiện hiến máu hay không
               </p>
-              <div className="mt-auto">
-                <GlassButton 
-                  variant="primary" 
-                  size="lg" 
-                  className="w-full"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  Bắt đầu kiểm tra
-                </GlassButton>
-              </div>
-            </GlassCardContent>
-          </GlassCard>
-
-          <GlassCard className="text-center p-8 hover:shadow-xl transition-all duration-300 flex flex-col">
-            <GlassCardHeader className="flex-shrink-0">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                <span className="text-2xl">⏰</span>
-              </div>
-              <GlassCardTitle className="text-xl mb-4">
-                Thời gian cần thiết
-              </GlassCardTitle>
-            </GlassCardHeader>
-            <GlassCardContent className="flex flex-col flex-grow">
-              <div className="space-y-4 mb-6 flex-grow">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Đăng ký & khám sơ bộ:</span>
-                  <span className="font-semibold">15-20 phút</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Hiến máu:</span>
-                  <span className="font-semibold">8-10 phút</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Nghỉ ngơi & ăn nhẹ:</span>
-                  <span className="font-semibold">10-15 phút</span>
-                </div>
-                <hr className="border-gray-200" />
-                <div className="flex justify-between items-center font-semibold text-lg">
-                  <span>Tổng thời gian:</span>
-                  <span className="text-red-600">45-60 phút</span>
-                </div>
-              </div>
-              <div className="mt-auto">
-                <GlassButton variant="default" size="lg" className="w-full">
-                  Xem chi tiết
-                </GlassButton>
-              </div>
+              <GlassButton 
+                variant="primary" 
+                size="lg" 
+                className="w-full"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Bắt đầu kiểm tra
+              </GlassButton>
             </GlassCardContent>
           </GlassCard>
         </div>

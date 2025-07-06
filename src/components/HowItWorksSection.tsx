@@ -9,22 +9,26 @@ const HowItWorksSection: React.FC = () => {
     {
       icon: "📝",
       title: "Đăng ký & Kiểm tra",
-      description: "Điền thông tin cá nhân và thực hiện khám sơ bộ"
+      description: "Điền thông tin cá nhân và thực hiện khám sơ bộ",
+      time: "15-20 phút"
     },
     {
       icon: "🩸",
       title: "Hiến máu",
-      description: "Quá trình hiến máu an toàn với thiết bị y tế hiện đại"
+      description: "Quá trình hiến máu an toàn với thiết bị y tế hiện đại",
+      time: "8-10 phút"
     },
     {
       icon: "🍪",
       title: "Nghỉ ngơi",
-      description: "Thư giãn và bổ sung năng lượng sau khi hiến máu"
+      description: "Thư giãn và bổ sung năng lượng sau khi hiến máu",
+      time: "10-15 phút"
     },
     {
       icon: "🏆",
       title: "Hoàn thành",
-      description: "Nhận giấy chứng nhận và lời cảm ơn từ cộng đồng"
+      description: "Nhận giấy chứng nhận và lời cảm ơn từ cộng đồng",
+      time: "Tổng: 45-60 phút"
     }
   ];
 
@@ -61,7 +65,10 @@ const HowItWorksSection: React.FC = () => {
             <GlassCard key={index} className="text-center p-6 hover:shadow-xl transition-all duration-300">
               <div className="text-4xl mb-4">{step.icon}</div>
               <h3 className="font-semibold text-lg mb-2">{step.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
+              <p className="text-gray-600 text-sm leading-relaxed mb-3">{step.description}</p>
+              <div className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                {step.time}
+              </div>
             </GlassCard>
           ))}
         </div>
