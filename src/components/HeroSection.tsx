@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { GlassButton } from '@/components/ui/glass-button';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -24,8 +23,8 @@ const HeroSection: React.FC = () => {
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Kết nối những trái tim tình nguyện. Ứng dụng giúp người dân dễ dàng hiến máu tại TP. Hồ Chí Minh, cùng nhau trao sự sống và lan tỏa yêu thương.
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed -mt-2 md:-mt-4 lg:-mt-6">
+              Kết nối những trái tim tình nguyện. Ứng dụng giúp người dân dễ dàng hiến máu tại TP. Hồ Chí Minh, cùng nhau trao sự sống và lan tỏa yêu thương.
             </p>
           </div>
 
