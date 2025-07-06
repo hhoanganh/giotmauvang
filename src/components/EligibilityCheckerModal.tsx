@@ -212,21 +212,13 @@ const EligibilityCheckerModal: React.FC<EligibilityCheckerModalProps> = ({ isOpe
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0">
         {/* Header */}
         <DialogHeader className="p-6 pb-4 border-b border-gray-200/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-white to-orange-100 rounded-lg flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-sm">🩸</span>
-              </div>
-              <DialogTitle className="text-lg font-inter font-semibold text-gray-900">
-                Kiểm tra điều kiện hiến máu
-              </DialogTitle>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-white to-orange-100 rounded-lg flex items-center justify-center shadow-md">
+              <span className="text-white font-bold text-sm">🩸</span>
             </div>
-            <button
-              onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-500" />
-            </button>
+            <DialogTitle className="text-lg font-inter font-semibold text-gray-900">
+              Kiểm tra điều kiện hiến máu
+            </DialogTitle>
           </div>
           
           {!showResult && (
