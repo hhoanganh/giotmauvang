@@ -64,20 +64,13 @@ const HowItWorksSection: React.FC = () => {
         {/* Process Steps */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {steps.map((step, index) => (
-            <GlassCard key={index} variant="with-bottom-button" className="text-center p-6 hover:shadow-xl transition-all duration-300">
-              <GlassCardContent variant="with-bottom-button" className="text-center">
-                <div className="text-4xl mb-4">{step.icon}</div>
-                <h3 className="font-semibold text-lg mb-2">{step.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-3">{step.description}</p>
-                <div className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium mb-4">
-                  {step.time}
-                </div>
-              </GlassCardContent>
-              <GlassCardFooter>
-                <GlassButton variant="secondary" size="md" className="w-full">
-                  Tìm hiểu thêm
-                </GlassButton>
-              </GlassCardFooter>
+            <GlassCard key={index} className="text-center p-6 hover:shadow-xl transition-all duration-300">
+              <div className="text-4xl mb-4">{step.icon}</div>
+              <h3 className="font-semibold text-lg mb-2">{step.title}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed mb-3">{step.description}</p>
+              <div className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                {step.time}
+              </div>
             </GlassCard>
           ))}
         </div>
