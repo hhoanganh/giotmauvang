@@ -84,13 +84,51 @@ const Header: React.FC = () => {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-2">
-            <GlassButton variant="ghost" size="sm">
+            <GlassButton 
+              variant="ghost" 
+              size="sm"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
               Trang chủ
             </GlassButton>
-            <GlassButton variant="ghost" size="sm">
+            <GlassButton 
+              variant="ghost" 
+              size="sm"
+              onClick={() => {
+                const eventsSection = document.getElementById('events-locations-section');
+                if (eventsSection) {
+                  eventsSection.scrollIntoView({ behavior: 'smooth' });
+                  // Set active tab to events after a short delay
+                  setTimeout(() => {
+                    const eventsTab = document.querySelector('[data-value="events"]');
+                    if (eventsTab) {
+                      (eventsTab as HTMLElement).click();
+                    }
+                  }, 500);
+                }
+              }}
+            >
               Sự kiện
             </GlassButton>
-            <GlassButton variant="ghost" size="sm">
+            <GlassButton 
+              variant="ghost" 
+              size="sm"
+              onClick={() => {
+                const eventsSection = document.getElementById('events-locations-section');
+                if (eventsSection) {
+                  eventsSection.scrollIntoView({ behavior: 'smooth' });
+                  // Set active tab to centers after a short delay
+                  setTimeout(() => {
+                    const centersTab = document.querySelector('[data-value="centers"]');
+                    if (centersTab) {
+                      (centersTab as HTMLElement).click();
+                    }
+                  }, 500);
+                }
+              }}
+            >
               Trung tâm
             </GlassButton>
           </nav>

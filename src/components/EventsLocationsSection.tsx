@@ -52,7 +52,7 @@ const EventsLocationsSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 px-4 lg:py-24">
+    <section id="events-locations-section" className="py-16 px-4 lg:py-24">
       <div className="container-custom">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
