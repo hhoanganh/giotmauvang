@@ -8,6 +8,22 @@ import EventCard from '@/components/EventCard';
 const EventsLocationsSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState('events');
 
+  // Function to switch tabs from external components
+  const switchToTab = (tabName: string) => {
+    setActiveTab(tabName);
+  };
+
+  // Expose the function globally for header navigation
+  React.useEffect(() => {
+    (window as any).switchToEventsTab = () => switchToTab('events');
+    (window as any).switchToCentersTab = () => switchToTab('centers');
+    
+    return () => {
+      delete (window as any).switchToEventsTab;
+      delete (window as any).switchToCentersTab;
+    };
+  }, []);
+
   const events = [
     {
       title: "Ngày Hiến Máu Nhân Đạo",
