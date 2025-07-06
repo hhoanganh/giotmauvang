@@ -48,7 +48,11 @@ const Auth = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-white to-orange-100 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-xl">🩸</span>
+            <img 
+              src="https://jduhcsgsf4.ufs.sh/f/YxhhsvmLP58IE2O12LrHIx6jwqh5iWJp4bOGCTRgVKQFmtZd" 
+              alt="Giọt Máu Vàng"
+              className="w-6 h-6 object-contain"
+            />
             </div>
             <h1 className="text-2xl font-inter font-bold text-gray-900">
               Giọt Máu Vàng
