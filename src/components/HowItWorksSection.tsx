@@ -75,8 +75,8 @@ const HowItWorksSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Eligibility Checker */}
-        <div className="max-w-2xl mx-auto mb-16">
+        {/* Information Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <GlassCard className="text-center p-8 hover:shadow-xl transition-all duration-300">
             <GlassCardHeader>
               <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
@@ -100,10 +100,6 @@ const HowItWorksSection: React.FC = () => {
               </GlassButton>
             </GlassCardContent>
           </GlassCard>
-        </div>
-
-        {/* Information Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <GlassCard className="p-8">
             <GlassCardHeader className="pb-6">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
