@@ -17,7 +17,7 @@ const HeroSection: React.FC = () => {
       <div className="relative z-10 container-custom section-padding text-center">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="space-y-8 md:space-y-12 lg:space-y-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-inter font-bold text-gray-900 tracking-tight leading-normal md:leading-relaxed lg:leading-loose py-2 md:py-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-inter font-bold text-gray-900 tracking-tight leading-tight">
               Kết nối những
               <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
                 Giọt Máu Vàng
