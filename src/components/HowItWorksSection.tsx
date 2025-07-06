@@ -77,7 +77,7 @@ const HowItWorksSection: React.FC = () => {
 
         {/* Information Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          <GlassCard className="text-center p-8 hover:shadow-xl transition-all duration-300">
+          <GlassCard className="p-8">
             <GlassCardHeader className="pb-6">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">✓</span>
