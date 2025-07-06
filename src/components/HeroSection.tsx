@@ -19,7 +19,7 @@ const HeroSection: React.FC = () => {
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-inter font-bold text-gray-900 tracking-tight leading-tight ">
               Kết nối những
-              <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent min-h-[60px] md:min-h-[80px] lg:min-h-[100px]">
+              <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent min-h-[60px] md:min-h-[60px] lg:min-h-[60px]">
                 Giọt Máu Vàng
               </span>
             </h1>
