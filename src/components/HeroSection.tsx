@@ -14,7 +14,7 @@ const HeroSection: React.FC = () => {
       <div className="absolute top-40 right-20 w-4 h-4 bg-blue-500/20 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
       <div className="absolute bottom-32 left-20 w-2 h-2 bg-blue-600/25 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-      <div className="relative z-10 container-custom section-padding text-center pt-2 md:pt-4 lg:pt-10">
+      <div className="relative z-10 container-custom section-padding text-center">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-inter font-bold text-gray-900 tracking-tight leading-tight ">
