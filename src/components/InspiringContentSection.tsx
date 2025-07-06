@@ -87,65 +87,73 @@ const InspiringContentSection: React.FC = () => {
 
         {/* News & Articles */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <GlassCard className="p-8">
-            <GlassCardHeader className="pb-6">
+          <GlassCard className="p-8 flex flex-col">
+            <GlassCardHeader className="pb-6 flex-shrink-0">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">📰</span>
                 Tin Tức & Bài Viết
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="space-y-4">
-              {news.map((article, index) => (
-                <div key={index} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 mb-1 leading-tight">
-                        {article.title}
-                      </h4>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-600 rounded-full text-xs">
-                          {article.category}
-                        </span>
-                        <span>{article.date}</span>
+            <GlassCardContent className="flex flex-col flex-grow">
+              <div className="space-y-4 flex-grow">
+                {news.map((article, index) => (
+                  <div key={index} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900 mb-1 leading-tight">
+                          {article.title}
+                        </h4>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-600 rounded-full text-xs">
+                            {article.category}
+                          </span>
+                          <span>{article.date}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-              <GlassButton variant="primary" size="md" className="w-full mt-6">
-                Xem tất cả tin tức
-              </GlassButton>
+                ))}
+              </div>
+              <div className="mt-auto">
+                <GlassButton variant="primary" size="md" className="w-full mt-6">
+                  Xem tất cả tin tức
+                </GlassButton>
+              </div>
             </GlassCardContent>
           </GlassCard>
 
-          <GlassCard className="p-8">
-            <GlassCardHeader className="pb-6">
+          <GlassCard className="p-8 flex flex-col">
+            <GlassCardHeader className="pb-6 flex-shrink-0">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">📸</span>
                 Thư Viện Ảnh
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent>
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="aspect-square bg-gradient-to-br from-red-100 to-pink-100 rounded-xl flex items-center justify-center text-4xl">
-                  🏥
+            <GlassCardContent className="flex flex-col flex-grow">
+              <div className="flex-grow">
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="aspect-square bg-gradient-to-br from-red-100 to-pink-100 rounded-xl flex items-center justify-center text-4xl">
+                    🏥
+                  </div>
+                  <div className="aspect-square bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center text-4xl">
+                    👥
+                  </div>
+                  <div className="aspect-square bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center text-4xl">
+                    🩸
+                  </div>
+                  <div className="aspect-square bg-gradient-to-br from-orange-100 to-yellow-100 rounded-xl flex items-center justify-center text-4xl">
+                    ❤️
+                  </div>
                 </div>
-                <div className="aspect-square bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center text-4xl">
-                  👥
-                </div>
-                <div className="aspect-square bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center text-4xl">
-                  🩸
-                </div>
-                <div className="aspect-square bg-gradient-to-br from-orange-100 to-yellow-100 rounded-xl flex items-center justify-center text-4xl">
-                  ❤️
-                </div>
+                <p className="text-gray-600 text-sm text-center mb-6">
+                  Hình ảnh từ các trung tâm hiến máu và sự kiện cộng đồng
+                </p>
               </div>
-              <p className="text-gray-600 text-sm text-center mb-6">
-                Hình ảnh từ các trung tâm hiến máu và sự kiện cộng đồng
-              </p>
-              <GlassButton variant="primary" size="md" className="w-full">
-                Xem thư viện
-              </GlassButton>
+              <div className="mt-auto">
+                <GlassButton variant="primary" size="md" className="w-full">
+                  Xem thư viện
+                </GlassButton>
+              </div>
             </GlassCardContent>
           </GlassCard>
         </div>
