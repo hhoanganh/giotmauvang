@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { GlassButton } from '@/components/ui/glass-button';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -15,16 +16,16 @@ const HeroSection: React.FC = () => {
 
       <div className="relative z-10 container-custom section-padding text-center">
         <div className="max-w-4xl mx-auto space-y-8">
-          <div className="space-y-8 md:space-y-12 lg:space-y-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-inter font-bold text-gray-900 tracking-tight leading-tight py-4 md:py-8 lg:py-12">
+          <div className="space-y-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-inter font-bold text-gray-900 tracking-tight leading-tight ">
               Kết nối những
               <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
                 Giọt Máu Vàng
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed -mt-2 md:-mt-4 lg:-mt-6">
-              Kết nối những trái tim tình nguyện. Ứng dụng giúp người dân dễ dàng hiến máu tại TP. Hồ Chí Minh, cùng nhau trao sự sống và lan tỏa yêu thương.
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Kết nối những trái tim tình nguyện. Ứng dụng giúp người dân dễ dàng hiến máu tại TP. Hồ Chí Minh, cùng nhau trao sự sống và lan tỏa yêu thương.
             </p>
           </div>
 
