@@ -15,7 +15,7 @@ const GlassButton = React.forwardRef<HTMLButtonElement, GlassButtonProps>(
     const variants = {
       default: "bg-white/90 backdrop-blur-sm border border-gray-200/50 text-gray-900 shadow-md hover:bg-white hover:shadow-lg hover:border-gray-300/50",
       primary: "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-blue-800 border-0",
-      secondary: "bg-gradient-to-r from-orange-500 to-white-500 text-white shadow-lg hover:shadow-xl hover:from-red-600 hover:to-orange-600 border-0",
+      secondary: "bg-gradient-to-r from-red-300 to-orange-400 text-white shadow-lg hover:shadow-xl hover:from-red-400 hover:to-orange-500 border-0",
       ghost: "text-gray-700 hover:bg-gray-100/80 hover:text-gray-900 border-0 shadow-none"
     };
 
