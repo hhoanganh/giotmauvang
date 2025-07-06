@@ -26,6 +26,15 @@ const EventsLocationsSection: React.FC = () => {
       description: "Sự kiện hiến máu định kỳ tại trung tâm y tế",
       bloodTypesNeeded: ["O-", "A-", "B-"],
       spotsAvailable: 32
+    },
+    {
+      title: "Chương Trình Hiến Máu Tình Nguyện",
+      location: "Bệnh viện Từ Dũ, Quận 1",
+      date: "22/01/2025",
+      time: "08:30 - 15:30",
+      description: "Hiến máu tình nguyện hỗ trợ các ca sinh nở khó khăn",
+      bloodTypesNeeded: ["O+", "A+"],
+      spotsAvailable: 28
     }
   ];
 
@@ -56,10 +65,9 @@ const EventsLocationsSection: React.FC = () => {
 
         <GlassCard className="max-w-6xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="events">Sự kiện</TabsTrigger>
               <TabsTrigger value="centers">Trung tâm</TabsTrigger>
-              <TabsTrigger value="map">Bản đồ</TabsTrigger>
               <TabsTrigger value="demand">Nhu cầu</TabsTrigger>
             </TabsList>
             
@@ -69,23 +77,39 @@ const EventsLocationsSection: React.FC = () => {
                   <EventCard key={index} {...event} />
                 ))}
               </div>
+              <div className="text-center pt-4">
+                <GlassButton variant="primary" size="lg" className="min-w-[200px]">
+                  Xem tất cả sự kiện
+                </GlassButton>
+              </div>
             </TabsContent>
             
             <TabsContent value="centers" className="space-y-4">
               {donationCenters.map((center, index) => (
                 <GlassCard key={index} className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{center.name}</h3>
-                  <p className="text-gray-600 mb-2">📍 {center.address}</p>
-                  <p className="text-gray-600">📞 {center.phone}</p>
+                  <div className="flex gap-4">
+                    {/* Left: Center Info */}
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">{center.name}</h3>
+                      <p className="text-gray-600 mb-2">📍 {center.address}</p>
+                      <p className="text-gray-600">📞 {center.phone}</p>
+                    </div>
+                    
+                    {/* Right: Small Map */}
+                    <div className="w-32 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">🗺️</span>
+                    </div>
+                  </div>
                 </GlassCard>
               ))}
-            </TabsContent>
-            
-            <TabsContent value="map" className="text-center py-12">
-              <div className="bg-gradient-to-br from-blue-50 to-red-50 rounded-2xl p-12 border-2 border-dashed border-gray-300">
-                <p className="text-gray-600 text-lg">🗺️ Bản đồ tương tác sẽ được hiển thị tại đây</p>
+              <div className="text-center pt-4">
+                <GlassButton variant="primary" size="lg" className="min-w-[200px]">
+                  Xem tất cả trung tâm
+                </GlassButton>
               </div>
             </TabsContent>
+            
+
             
             <TabsContent value="demand" className="space-y-4">
               <h3 className="text-xl font-semibold mb-6">Mức độ cần máu theo nhóm</h3>
