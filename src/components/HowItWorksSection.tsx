@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
+import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle, GlassCardFooter } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import EligibilityCheckerModal from './EligibilityCheckerModal';
@@ -77,38 +77,38 @@ const HowItWorksSection: React.FC = () => {
 
         {/* Information Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          <GlassCard className="p-8 flex flex-col">
-            <GlassCardHeader className="pb-6 flex-shrink-0">
+          <GlassCard variant="with-bottom-button" className="p-8">
+            <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">📋</span>
                 Kiểm Tra Điều Kiện
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="flex flex-col flex-grow">
-              <p className="text-gray-600 mb-6 leading-relaxed flex-grow">
+            <GlassCardContent variant="with-bottom-button">
+              <p className="text-gray-600 leading-relaxed">
                 Thực hiện bài kiểm tra nhanh và ẩn danh để xác định bạn có đủ điều kiện hiến máu hay không
               </p>
-              <div className="mt-auto">
-                <GlassButton 
-                  variant="primary" 
-                  size="lg" 
-                  className="w-full"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  Bắt đầu kiểm tra
-                </GlassButton>
-              </div>
             </GlassCardContent>
+            <GlassCardFooter>
+              <GlassButton 
+                variant="primary" 
+                size="lg" 
+                className="w-full"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Bắt đầu kiểm tra
+              </GlassButton>
+            </GlassCardFooter>
           </GlassCard>
-          <GlassCard className="p-8 flex flex-col">
-            <GlassCardHeader className="pb-6 flex-shrink-0">
+          <GlassCard variant="with-bottom-button" className="p-8">
+            <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">🛡️</span>
                 An Toàn & Bảo Đảm
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="flex flex-col flex-grow">
-              <div className="space-y-4 flex-grow">
+            <GlassCardContent variant="with-bottom-button">
+              <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <span className="text-green-600 text-xl">✓</span>
                   <p className="text-gray-600">Thiết bị y tế hiện đại, vô trùng</p>
@@ -122,23 +122,23 @@ const HowItWorksSection: React.FC = () => {
                   <p className="text-gray-600">Tuân thủ tiêu chuẩn y tế quốc tế</p>
                 </div>
               </div>
-              <div className="mt-auto">
-                <GlassButton variant="primary" size="lg" className="w-full mt-6">
-                  Xem chi tiết an toàn
-                </GlassButton>
-              </div>
             </GlassCardContent>
+            <GlassCardFooter>
+              <GlassButton variant="primary" size="lg" className="w-full">
+                Xem chi tiết an toàn
+              </GlassButton>
+            </GlassCardFooter>
           </GlassCard>
 
-          <GlassCard className="p-8 flex flex-col">
-            <GlassCardHeader className="pb-6 flex-shrink-0">
+          <GlassCard variant="with-bottom-button" className="p-8">
+            <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">💝</span>
                 Lợi Ích Khi Hiến Máu
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="flex flex-col flex-grow">
-              <div className="space-y-4 flex-grow">
+            <GlassCardContent variant="with-bottom-button">
+              <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <span className="text-red-600 text-xl">♥️</span>
                   <p className="text-gray-600">Khám sức khỏe miễn phí</p>
@@ -152,12 +152,12 @@ const HowItWorksSection: React.FC = () => {
                   <p className="text-gray-600">Cứu sống những người khác</p>
                 </div>
               </div>
-              <div className="mt-auto">
-                <GlassButton variant="primary" size="lg" className="w-full mt-6">
-                  Tìm hiểu thêm
-                </GlassButton>
-              </div>
             </GlassCardContent>
+            <GlassCardFooter>
+              <GlassButton variant="primary" size="lg" className="w-full">
+                Tìm hiểu thêm
+              </GlassButton>
+            </GlassCardFooter>
           </GlassCard>
         </div>
 

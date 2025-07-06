@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
+import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle, GlassCardFooter } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 
 const InspiringContentSection: React.FC = () => {
@@ -87,15 +87,15 @@ const InspiringContentSection: React.FC = () => {
 
         {/* News & Articles */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <GlassCard className="p-8 flex flex-col">
-            <GlassCardHeader className="pb-6 flex-shrink-0">
+          <GlassCard variant="with-bottom-button" className="p-8">
+            <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">📰</span>
                 Tin Tức & Bài Viết
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="flex flex-col flex-grow">
-              <div className="space-y-4 flex-grow">
+            <GlassCardContent variant="with-bottom-button">
+              <div className="space-y-4">
                 {news.map((article, index) => (
                   <div key={index} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
                     <div className="flex items-start justify-between gap-4">
@@ -114,47 +114,45 @@ const InspiringContentSection: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <div className="mt-auto">
-                <GlassButton variant="primary" size="md" className="w-full mt-6">
-                  Xem tất cả tin tức
-                </GlassButton>
-              </div>
             </GlassCardContent>
+            <GlassCardFooter>
+              <GlassButton variant="primary" size="md" className="w-full">
+                Xem tất cả tin tức
+              </GlassButton>
+            </GlassCardFooter>
           </GlassCard>
 
-          <GlassCard className="p-8 flex flex-col">
-            <GlassCardHeader className="pb-6 flex-shrink-0">
+          <GlassCard variant="with-bottom-button" className="p-8">
+            <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">📸</span>
                 Thư Viện Ảnh
               </GlassCardTitle>
             </GlassCardHeader>
-            <GlassCardContent className="flex flex-col flex-grow">
-              <div className="flex-grow">
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="aspect-square bg-gradient-to-br from-red-100 to-pink-100 rounded-xl flex items-center justify-center text-4xl">
-                    🏥
-                  </div>
-                  <div className="aspect-square bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center text-4xl">
-                    👥
-                  </div>
-                  <div className="aspect-square bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center text-4xl">
-                    🩸
-                  </div>
-                  <div className="aspect-square bg-gradient-to-br from-orange-100 to-yellow-100 rounded-xl flex items-center justify-center text-4xl">
-                    ❤️
-                  </div>
+            <GlassCardContent variant="with-bottom-button">
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="aspect-square bg-gradient-to-br from-red-100 to-pink-100 rounded-xl flex items-center justify-center text-4xl">
+                  🏥
                 </div>
-                <p className="text-gray-600 text-sm text-center mb-6">
-                  Hình ảnh từ các trung tâm hiến máu và sự kiện cộng đồng
-                </p>
+                <div className="aspect-square bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center text-4xl">
+                  👥
+                </div>
+                <div className="aspect-square bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center text-4xl">
+                  🩸
+                </div>
+                <div className="aspect-square bg-gradient-to-br from-orange-100 to-yellow-100 rounded-xl flex items-center justify-center text-4xl">
+                  ❤️
+                </div>
               </div>
-              <div className="mt-auto">
-                <GlassButton variant="primary" size="md" className="w-full">
-                  Xem thư viện
-                </GlassButton>
-              </div>
+              <p className="text-gray-600 text-sm text-center">
+                Hình ảnh từ các trung tâm hiến máu và sự kiện cộng đồng
+              </p>
             </GlassCardContent>
+            <GlassCardFooter>
+              <GlassButton variant="primary" size="md" className="w-full">
+                Xem thư viện
+              </GlassButton>
+            </GlassCardFooter>
           </GlassCard>
         </div>
       </div>

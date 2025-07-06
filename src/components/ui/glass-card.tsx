@@ -1,20 +1,23 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  variant?: 'default' | 'with-bottom-button';
 }
 
 const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
-  ({ className, children, ...props }, ref) => {
+  ({ className, variant = 'default', children, ...props }, ref) => {
+    const baseClasses = "bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300";
+    
+    const variants = {
+      default: "",
+      "with-bottom-button": "flex flex-col"
+    };
+
     return (
       <div
+        className={cn(baseClasses, variants[variant], className)}
         ref={ref}
-        className={cn(
-          "rounded-2xl border border-gray-200/50 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg transition-all duration-300 hover:shadow-xl",
-          className
-        )}
         {...props}
       >
         {children}
@@ -25,54 +28,94 @@ const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
 
 GlassCard.displayName = "GlassCard";
 
-const GlassCardHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
-    {...props}
-  />
-));
+interface GlassCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'with-bottom-button';
+}
+
+const GlassCardHeader = React.forwardRef<HTMLDivElement, GlassCardHeaderProps>(
+  ({ className, variant = 'default', children, ...props }, ref) => {
+    const baseClasses = "p-6";
+    
+    const variants = {
+      default: "",
+      "with-bottom-button": "flex-shrink-0"
+    };
+
+    return (
+      <div
+        className={cn(baseClasses, variants[variant], className)}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
 GlassCardHeader.displayName = "GlassCardHeader";
 
-const GlassCardTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn("text-xl font-inter font-semibold leading-tight tracking-tight text-gray-900", className)}
-    {...props}
-  />
-));
-GlassCardTitle.displayName = "GlassCardTitle";
+interface GlassCardContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'with-bottom-button';
+}
 
-const GlassCardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-sm text-gray-600", className)}
-    {...props}
-  />
-));
-GlassCardDescription.displayName = "GlassCardDescription";
+const GlassCardContent = React.forwardRef<HTMLDivElement, GlassCardContentProps>(
+  ({ className, variant = 'default', children, ...props }, ref) => {
+    const baseClasses = "px-6 pb-6";
+    
+    const variants = {
+      default: "",
+      "with-bottom-button": "flex flex-col flex-grow"
+    };
 
-const GlassCardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-));
+    return (
+      <div
+        className={cn(baseClasses, variants[variant], className)}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
 GlassCardContent.displayName = "GlassCardContent";
 
-export {
-  GlassCard,
-  GlassCardHeader,
-  GlassCardTitle,
-  GlassCardDescription,
-  GlassCardContent,
-};
+interface GlassCardFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+const GlassCardFooter = React.forwardRef<HTMLDivElement, GlassCardFooterProps>(
+  ({ className, children, ...props }, ref) => {
+    return (
+      <div
+        className={cn("px-6 pb-6 mt-auto", className)}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+GlassCardFooter.displayName = "GlassCardFooter";
+
+interface GlassCardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
+
+const GlassCardTitle = React.forwardRef<HTMLHeadingElement, GlassCardTitleProps>(
+  ({ className, children, ...props }, ref) => {
+    return (
+      <h3
+        className={cn("text-xl font-inter font-semibold text-gray-900", className)}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </h3>
+    );
+  }
+);
+
+GlassCardTitle.displayName = "GlassCardTitle";
+
+export { GlassCard, GlassCardHeader, GlassCardContent, GlassCardFooter, GlassCardTitle };
