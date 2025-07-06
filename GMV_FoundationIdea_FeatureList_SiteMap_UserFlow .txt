@@ -1,0 +1,856 @@
+Part I: Project Foundations
+1.1. Core Mission & Vision
+Mission Statement: To seamlessly connect blood donors with donation centers across Ho Chi Minh City, simplifying the blood donation process and fostering a vibrant, accessible community of life-savers.
+
+Vision Statement: To become the national standard for blood donation management, empowering every citizen to contribute to a healthier Vietnam through an intelligently integrated and highly efficient digital ecosystem that seamlessly shares vital information with the national healthcare system.
+
+1.2. Target Audience & User Roles
+Primary Target Audience:
+
+Vietnamese Citizens in Ho Chi Minh City (initially): A diverse group including students, office workers (private & government), and other working professionals who prioritize convenience, efficiency, and social responsibility.
+Foreign Residents in Ho Chi Minh City: A smaller segment seeking a user-friendly and potentially multilingual platform for humanitarian contributions.
+Key Motivations:
+
+Convenience & Time-Saving: Online pre-registration speeds up the donation process and guarantees service at specific times (e.g., weekends).
+Social Responsibility/Altruism: The desire to help others and contribute to the community.
+Basic Health Information: Access to personal blood type information.
+Improved User Experience: A desire for a modern, intuitive interface over an outdated one.
+Main Pain Points:
+
+Outdated UI/UX: The current website's user interface and experience are not modern.
+Limited Backend Integration: Implies inefficiencies for both users and administrators.
+Inconvenience of Traditional Registration: The need to wait for a number if not pre-registered.
+Secondary Target Audiences:
+
+Donation Center Employees: Including check-in staff, data entry personnel, and medical staff/doctors who need efficient tools to manage donor flow, input data, and screen donors.
+Administrators/System Managers (at Intelin Technology Joint Stock Company): Responsible for overall system management, event scheduling, user accounts, content, and reporting.
+Key User Roles:
+
+Guest User: Browses information without logging in.
+Registered Blood Donor: Registers for events, manages bookings, views history, takes surveys, accesses health info, and uses QR for check-in.
+
+
+Center Staff: Manages check-ins, verifies identity, and updates donor status.
+Medical Professional: Accesses health declarations, inputs screening results, and approves/defers donors.
+System Administrator: Manages events, users, content, and analytics.
+1.3. Brand Personality
+Trustworthy & Reliable: Essential for handling sensitive health information and integrating with the national healthcare system.
+Empathetic & Caring: Reflects the compassionate nature of blood donation and supports donors.
+Efficient & Streamlined: Directly addresses the need for convenience and a modern experience.
+Modern & Innovative: Aims to overcome the outdated UI/UX and showcases forward-thinking use of technology.
+Community-Oriented & Inspiring: Fosters a sense of belonging and encourages broader participation.
+1.4. Design Principles
+1.4.1 Clarity & Simplicity (Aligned with Efficient & Streamlined Personality):
+
+Principle: Every screen, interaction, and piece of information should be easy to understand and free of unnecessary clutter. Users should intuitively know what to do next without extensive thought.
+Application: Use clear language, intuitive icons, and a logical flow for tasks like registration. Minimize steps where possible. This directly addresses the "outdated UI/UX" pain point and the "convenience" motivation.
+1.4.2 Trust & Security (Aligned with Trustworthy & Reliable Personality):
+
+Principle: The design must visually communicate trustworthiness and assure users their personal and health data are secure. Transparency in processes and clear communication regarding data handling are crucial.
+Application: Utilize clean, professional aesthetics. Ensure secure login and data submission processes are clearly indicated. Provide clear explanations for data collection (e.g., medical declarations). This supports the "an toàn bảo mật thông tin cho người dùng" (information security and safety for users) goal of the existing system.
+
+1.4.3 Empathy & Support (Aligned with Empathetic & Caring Personality):
+
+Principle: The design should feel supportive and considerate of the user's journey, especially given the sensitive nature of blood donation. Provide helpful guidance, positive reinforcement, and easy access to support.
+Application: Use encouraging microcopy. Provide clear error messages that guide users to solutions, not just state a problem. Include prominent contact/support options.
+1.4.4 Efficiency & Responsiveness (Aligned with Efficient & Streamlined, Modern & Innovative Personality):
+
+Principle: The application must deliver a fast, fluid, and consistent experience across all devices (desktops, tablets, mobile phones). Users should be able to complete tasks quickly and easily, minimizing waiting times and effort.
+Application: Optimize loading times, ensure touch-friendly interfaces, and adapt layouts seamlessly to different screen sizes. Streamline multi-step forms (like the registration process). This directly improves upon the "outdated UI/UX" and supports the goal of online registration for convenience.
+
+1.4.5 Inspiration & Community (Aligned with Community-Oriented & Inspiring Personality):
+
+Principle: The design should foster a sense of purpose and community, motivating users to donate and feel part of a larger, life-saving effort.
+Application: Incorporate imagery and messaging that highlight the positive impact of donations (e.g., "save 3 lives per donation"). Consider features that allow users to share their donation journey or see the collective impact.
+
+1.4.6 Intentional & Context-Aware Flow
+
+Principle: The interface should adapt to the user's context and intent. We will avoid endless scrolling and passive information feeds, instead creating focused, "moment-based" experiences that show the user what matters most, when it matters most. Our design guides the user through a flow with a clear beginning, middle, and end.
+
+Application: The homepage will adapt for new vs. returning donors. User dashboards will change based on the user's current status in their donation cycle (e.g., eligible to donate, appointment upcoming, post-donation). Feature flows will be presented as deliberate, step-by-step processes to reduce cognitive load and increase user confidence.
+===========================================================================================================================================
+Part II: Site map and Feature list and User flow:
+
+Application Root
+├── I. Public/Guest User Section
+│   ├── Home/Landing Page
+│   │   └── F1.1: Public Information & Event Discovery
+│   │       ├── F1.1.1: Events & Locations
+│   │       │   ├── Upcoming Events List
+│   │       │   ├── Event Schedule View
+│   │       │   ├── Map of Donation Centers
+│   │       │   ├── List of Donation Centers
+│   │       │   ├── Blood Demand Levels View (by type)
+│   │       │   └── Available Time Slots Check (pre-registration)
+│   │       ├── F1.1.2: General Information
+│   │       │   ├── FAQs
+│   │       │   ├── Donation Guidelines
+│   │       │   ├── Safety Assurance Information
+│   │       │   ├── Benefits of Donation (e.g., Free Health Checks)
+│   │       │   └── Full Donation Process Overview
+│   │       ├── F1.1.3: Inspiring Content
+│   │       │   ├── News & Articles
+│   │       │   ├── Success Stories / Testimonials (Videos/Text)
+│   │       │   └── Photo Gallery (Donation Centers)
+│   │       ├── F1.1.4: Contact & Support
+│   │       │   └── Contact Information
+│   │       ├── F1.1.5: Eligibility Self-Check
+│   │       │   └── Anonymous Pre-screening Quiz
+│   │       └── F1.1.6: Appointment Planning
+│   │           └── Estimated Time Commitment for Appointments
+│   └── Account Access / Registration
+│       └── F1.2.1: Secure Authentication
+│           ├── Login (Phone + OTP)
+│           └── Registration (New Account Creation)
+│
+├── II. Registered Blood Donor Section
+│   ├── Donor Dashboard / My Account Home
+│   │   ├── F1.2: Donor Account & Registration
+│   │   │   ├── F1.2.2: My Profile
+│   │   │   │   ├── Edit Personal Information
+│   │   │   │   ├── Manage Contact Details
+│   │   │   │   └── Manage Preferences
+│   │   │   ├── F1.2.3: My Appointments
+│   │   │   │   ├── Book New Donation Slot
+│   │   │   │   ├── View Upcoming Appointments
+│   │   │   │   ├── Reschedule Appointment
+│   │   │   │   └── Cancel Appointment
+│   │   │   ├── F1.2.4: Digital Health Declaration
+│   │   │   │   └── Submit Health Declaration Form
+│   │   │   └── F1.2.5: My QR Code
+│   │   │       └── Display Personal Check-in QR Code
+│   │   ├── F1.3: Basic Donor History
+│   │   │   └── F1.3.1: My Donation History
+│   │   │       ├── View Past Donations List
+│   │   │       └── View Basic Health Outcomes (e.g., Blood Type)
+│   │   ├── F3.1: Automated Communication Hub
+│   │   │   └── F3.1.1: Notifications / Alerts (Inbox/Settings)
+│   │   │       ├── Next Donation Eligibility Reminders
+│   │   │       ├── Urgent Blood Need Alerts (if subscribed)
+│   │   │       └── System Announcements (Emergency Alerts)
+│   │   └── F3.2: Donor Recognition & Motivation
+│   │       ├── F3.2.1: My Impact
+│   │       │   └── Personalized Donation Statistics (e.g., "Lives Helped")
+│   │       ├── F3.2.3: Donation Updates
+│   │       │   └── Generic "Donation Used" Notifications
+│   │       └── Post-Donation (via F3.2.x or integrated with F1.2.3)
+│   │           └── Submit Feedback Form
+│
+├── III. Center Staff Section
+│   ├── Staff Dashboard / Center Operations Home
+│   │   ├── F2.1: Staff Check-in & Donor Flow
+│   │   │   ├── F2.1.1: Donor Check-in
+│   │   │   │   └── QR Code Scanner
+│   │   │   ├── F2.1.2: Donor Bookings & Details
+│   │   │   │   ├── Live Expected Donor List (by time slot/date)
+│   │   │   │   └── Donor Details View
+│   │   │   ├── F2.1.3: Donor Status Updates
+│   │   │   │   └── Update Donor Progress (Arrived, Checked-in, Screening Complete, No-Show, etc.)
+│   │   │   └── F2.1.4: Manual Donor Entry
+│   │   │       ├── Add Walk-in Donor Details
+│   │   │       └── Process Donors with Issues (manual lookup)
+│   │   └── F3.1: Automated Communication Hub
+│   │       └── F3.1.2: Staff Alerts & Broadcasts
+│   │           ├── Send In-Center Notifications (e.g., "Room 3 ready")
+│   │           └── Broadcast Urgent Blood Type Needs (Local Donors)
+│
+├── IV. Medical Professional Section
+│   ├── Medical Dashboard / Screening Home
+│   │   └── F2.2: Medical Screening & Record Keeping
+│   │       ├── F2.2.1: Health Declaration Review
+│   │       │   └── View Pre-submitted Health Declarations
+│   │       ├── F2.2.2: Screening Outcome Input
+│   │       │   ├── Record Screening Results (Approve/Decline)
+│   │       │   └── Record Donor Deferrals (with custom notes)
+│   │       └── F2.2.3: Donor Medical History
+│   │           └── Access Past Screening Records (by donor)
+│
+└── V. System Administrator Section
+    ├── Admin Dashboard / System Management Home
+    │   ├── F3.3: Content Management System (CMS)
+    │   │   └── F3.3.1: Public Content Management
+    │   │       ├── Manage News & Articles
+    │   │       ├── Manage FAQs & Guidelines
+    │   │       ├── Manage Event Details & Descriptions
+    │   │       └── Manage Inspiring Content (e.g., Testimonials)
+    │   └── F3.4: Core Admin Management
+    │       ├── F3.4.1: Event & Schedule Management
+    │       │   ├── Create New Events
+    │       │   ├── Edit Existing Events
+    │       │   ├── Publish/Unpublish Events
+    │       │   └── Manage Event Schedules
+    │       ├── F3.4.2: User & Role Management
+    │       │   ├── Manage Donor Accounts
+    │       │   ├── Manage Staff Accounts
+    │       │   └── Assign/Edit User Roles
+    │       └── F3.4.3: Basic Operational Reporting
+    │           ├── Generate Donor Activity Reports
+    │           └── Generate Event Performance Reports
+	
+
+
+High-Level, Prioritized Combined Feature List (Named & Numbered)
+P1: Priority 1: Core Public & Donor Journey (MVP Foundation)
+
+F1.1: Public Information & Event Discovery:
+F1.1.1: Event & Location View: Event listings (upcoming, schedule, locations on map), Blood demand levels view.
+F1.1.2: General Info Access: FAQs & donation guidelines, Safety assurance info, Benefits info access, Process overview visualization.
+F1.1.3: Engaging Content: News & inspiring content, Donor testimonials & center photos.
+F1.1.4: Contact & Support: Contact information.
+F1.1.5: Eligibility Self-Check: Basic eligibility self-check quiz (anonymous).
+F1.1.6: Appointment Time Estimates: Estimated time commitment for appointments.
+F1.2: Donor Account & Registration:
+F1.2.1: Secure Authentication: Secure registration/login (e.g., Phone + OTP).
+F1.2.2: Profile Management: Personal profile management (contact info, preferences).
+F1.2.3: Appointment Scheduling: Online booking for specific slots, View/reschedule/cancel appointments.
+F1.2.4: Digital Health Declaration: Digital health declaration submission.
+F1.2.5: QR Check-in System: Personal QR code for check-in.
+F1.3: Basic Donor History:
+F1.3.1: Donation Record View: View past donation history and basic health outcomes (blood type).
+
+---------------------
+
+P2: Priority 2: Essential Center & Medical Operations
+
+F2.1: Staff Check-in & Donor Flow:
+F2.1.1: Donor Check-in: QR code scanning for instant check-in.
+F2.1.2: Booking & Details Overview: View donor bookings & details (live expected list).
+F2.1.3: Real-time Status Updates: Update donor status (arrived, checked-in, no-show, etc.).
+F2.1.4: Manual Donor Entry: Manual entry for walk-ins.
+F2.2: Medical Screening & Record Keeping:
+F2.2.1: Health Declaration Access: Access pre-submitted health declarations.
+F2.2.2: Screening Outcome Input: Input & record physical screening results (approve/decline/defer), Donor deferral with custom notes.
+F2.2.3: Comprehensive Donor Medical History: Access past screening records for individual donors.
+
+------------------
+
+P3: Priority 3: Enhanced Donor Engagement & Operational Efficiency
+
+F3.1: Automated Communication Hub:
+F3.1.1: Personalized Donor Notifications: Personalized notifications for donors (reminders, eligibility, urgent needs), Push notification eligibility reminders.
+F3.1.2: Staff-Initiated Alerts: Ability for Center Staff to send in-center notifications, Ability for Center Staff to broadcast urgent blood type needs to local eligible donors.
+F3.2: Donor Recognition & Motivation:
+F3.2.1: Impact Metrics: Personalized donation impact statistics.
+F3.2.2: Digital Donor Credential: Digital donor card.
+F3.2.3: Anonymous Donation Impact Updates: Generic "donation used" notifications.
+F3.3: Content Management System (CMS):
+F3.3.1: Public Content Admin: Admin management of public content (news, FAQs, event details).
+F3.4: Core Admin Management:
+F3.4.1: Event & Schedule Admin: Event & schedule management (create, edit, publish).
+F3.4.2: User & Role Admin: User account & role management (add/edit staff).
+F3.4.3: Basic Operational Reporting: Basic reporting on donor activity & event performance.
+
+==================================================
+
+In the context of the user journey descriptions, 'Feature Interaction' refers to the specific named feature or sub-feature from our detailed list that the user is directly engaging with or utilizing at that particular step in their journey.
+It essentially answers the question: "What part of the application's defined functionality is the user currently interacting with to achieve their goal?"	
+
+Most Critical User Journeys
+These journeys represent the essential, high-frequency paths that are fundamental to the application's core purpose of facilitating blood donation.
+
+Journey 1: Guest User Discovers Event & Books First Donation
+User Role: Guest User
+Goal: Find an upcoming blood donation event, understand eligibility, and book a slot.
+Home/Landing Page -> F1.1.1: Events & Locations -> F1.1.5: Eligibility Self-Check -> F1.1.1: Events & Locations -> F1.1.6: Appointment Planning -> Account Access / Registration (F1.2.1: Secure Authentication) -> F1.2.3: My Appointments -> F1.2.4: Digital Health Declaration -> F1.2.3: My Appointments
+Steps:
+
+User Action: Opens the application/visits the website.
+Screen/Page: Home/Landing Page
+Feature Interaction: Application Root
+User Action: Navigates to view upcoming events.
+Screen/Page: F1.1.1: Events & Locations
+Feature Interaction: "Upcoming Events List" (under F1.1.1 Event & Location View)
+User Action: Browses event details, locations, and schedules.
+Screen/Page: F1.1.1: Events & Locations
+Feature Interaction: "Event Schedule View", "Map of Donation Centers", "List of Donation Centers"
+User Action: Checks basic eligibility.
+Screen/Page: F1.1.5: Eligibility Self-Check
+Feature Interaction: "Anonymous Pre-screening Quiz"
+User Action: Decides on an event and checks available time slots.
+Screen/Page: F1.1.1: Events & Locations / F1.1.6: Appointment Planning
+Feature Interaction: "Available Time Slots Check (pre-registration)", "Estimated Time Commitment for Appointments"
+User Action: Proceeds to register an account and book the slot.
+Screen/Page: Account Access / Registration (F1.2.1: Secure Authentication)
+Feature Interaction: "Registration (New Account Creation)"
+User Action: Completes the digital health declaration as part of the booking process.
+Screen/Page: F1.2.3: My Appointments / F1.2.4: Digital Health Declaration
+Feature Interaction: "Book New Donation Slot", "Submit Health Declaration Form"
+User Action: Confirms the booking.
+Screen/Page: F1.2.3: My Appointments
+Feature Interaction: "Book New Donation Slot"
+----------------------
+
+Journey 2: Registered Donor Manages & Attends Scheduled Donation
+User Role: Registered Blood Donor
+Goal: Manage an existing appointment, complete pre-arrival tasks, and check-in at the center.
+Account Access / Registration (F1.2.1: Secure Authentication) -> Donor Dashboard / My Account Home (F1.2.3: My Appointments) -> F1.2.4: Digital Health Declaration -> F1.2.5: My QR Code
+Steps:
+
+User Action: Logs into their account.
+Screen/Page: Account Access / Registration (F1.2.1: Secure Authentication)
+Feature Interaction: "Login (Phone + OTP)"
+User Action: Views upcoming appointments.
+Screen/Page: Donor Dashboard / My Account Home (F1.2.3: My Appointments)
+Feature Interaction: "View Upcoming Appointments"
+User Action: (Optional) Reschedules or cancels an appointment.
+Screen/Page: F1.2.3: My Appointments
+Feature Interaction: "Reschedule Appointment", "Cancel Appointment"
+User Action: Completes or reviews digital health declaration before arrival.
+Screen/Page: F1.2.4: Digital Health Declaration
+Feature Interaction: "Submit Health Declaration Form"
+User Action: Displays personal QR code for check-in at the center.
+Screen/Page: F1.2.5: My QR Code
+Feature Interaction: "Display Personal Check-in QR Code"
+----------------------
+
+Journey 3: Center Staff Manages Donor Check-in & Initial Flow
+User Role: Center Staff
+Goal: Efficiently check in donors and manage their initial progress at the donation center.
+Staff Dashboard / Center Operations Home -> F2.1.1: Donor Check-in -> F2.1.4: Manual Donor Entry (optional path) -> F2.1.2: Donor Bookings & Details -> F2.1.3: Donor Status Updates
+Steps:
+
+User Action: Staff logs into the Staff Application/Portal.
+Screen/Page: Staff Dashboard / Center Operations Home
+Feature Interaction: (Implicit Staff Login)
+User Action: Accesses the check-in interface.
+Screen/Page: F2.1.1: Donor Check-in
+Feature Interaction: "QR Code Scanner"
+User Action: Scans donor's QR code.
+Screen/Page: F2.1.1: Donor Check-in
+Feature Interaction: "QR Code Scanner"
+User Action: (If no QR code) Manually enters donor information.
+Screen/Page: F2.1.4: Manual Donor Entry
+Feature Interaction: "Add Walk-in Donor Details", "Process Donors with Issues (manual lookup)"
+User Action: Views donor details and current booking status.
+Screen/Page: F2.1.2: Donor Bookings & Details
+Feature Interaction: "Live Expected Donor List (by time slot/date)", "Donor Details View"
+User Action: Updates the donor's status (e.g., "Arrived," "Checked-in").
+Screen/Page: F2.1.3: Donor Status Updates
+Feature Interaction: "Update Donor Progress"
+===============================
+
+Other Important, Secondary User Journeys (Checklist)
+These flows are important for a complete and robust application but may occur less frequently or support more specialized administrative/management tasks.
+
+I. Guest User Flows: Information Seeking & Sharing
+1. Guest User Seeks General Information
+User Role: Guest User
+Goal: Find specific information like FAQs, donation guidelines, or inspiring content.
+Home/Landing Page -> F1.1.2: General Information -> F1.1.2: General Information (FAQ/Guidelines List) -> F1.1.2: General Information (FAQ/Guidelines Detail View)
+Steps:
+
+User Action: Opens the application/visits the website.
+Screen/Page: Home/Landing Page
+Feature Interaction: Application Root
+User Action: Navigates to the "General Information" section.
+Screen/Page: F1.1.2: General Information
+Feature Interaction: "FAQs", "Donation Guidelines", "Safety Assurance Information", "Benefits of Donation", "Full Donation Process Overview"
+User Action: Browses specific information or content (e.g., clicks on an FAQ category or a guideline section).
+Screen/Page: F1.1.2: General Information (Detail View for Topic)
+Feature Interaction: Consumption of content within sections like "FAQs", "Donation Guidelines".
+User Action: Navigates to "Inspiring Content" to view news, testimonials, or photos.
+Screen/Page: F1.1.3: Inspiring Content
+Feature Interaction: "News & Articles", "Success Stories / Testimonials", "Photo Gallery"
+User Action: Clicks on a specific news article, testimonial video, or photo album.
+Screen/Page: F1.1.3: Inspiring Content (Detail View for content item)
+Feature Interaction: Consumption of specific content items.
+
+
+2. Guest User Seeks Direct Support/Information
+User Role: Guest User
+Goal: Find contact information for specific inquiries.
+Home/Landing Page -> F1.1.3: Inspiring Content -> F1.1.3: Inspiring Content (Detail View for content item)
+Home/Landing Page -> F1.1.4: Contact & Support -> F1.1.4: Contact & Support
+Steps:
+
+User Action: Opens the application/visits the website.
+Screen/Page: Home/Landing Page
+Feature Interaction: Application Root
+User Action: Navigates to the "Contact & Support" section.
+Screen/Page: F1.1.4: Contact & Support
+Feature Interaction: "Contact Information"
+User Action: Retrieves contact details (e.g., phone number, email, physical address) to use for direct contact.
+Screen/Page: F1.1.4: Contact & Support
+Feature Interaction: Viewing "Contact Information" details.
+
+
+3. Guest User Shares Event Information
+User Role: Guest User
+Goal: Share details of an upcoming event with others via external platforms.
+Home/Landing Page -> F1.1.1: Events & Locations (Event Detail View) -> (External Share Dialog/Sheet)
+Steps:
+
+User Action: Opens the application/visits the website.
+Screen/Page: Home/Landing Page
+Feature Interaction: Application Root
+User Action: Navigates to view upcoming events and selects an event to view its details.
+Screen/Page: F1.1.1: Events & Locations (Event Detail View)
+Feature Interaction: "Upcoming Events List"
+User Action: Clicks on a "Share" icon/button for the event (e.g., typically found on the event detail page).
+Screen/Page: F1.1.1: Events & Locations (Event Detail View)
+Feature Interaction: (Implicit external share functionality linked to F1.1.1)
+User Action: Selects an external platform (e.g., Facebook, Zalo, Email, SMS) from the operating system's share sheet to share the event details.
+Screen/Page: (External Share Dialog/Sheet)
+Feature Interaction: (Implicit external share functionality linked to F1.1.1)
+
+--------------------
+II. Registered Donor Flows: Account & Activity Management
+1. Registered Donor Manages Personal Profile Information
+User Role: Registered Blood Donor
+Goal: Update their personal and contact details in their donor profile.
+Account Access / Registration (F1.2.1: Secure Authentication) -> F1.2.2: My Profile -> F1.2.2: My Profile (Edit Mode) -> F1.2.2: My Profile
+Steps:
+
+User Action: Logs into their account.
+Screen/Page: Account Access / Registration (F1.2.1: Secure Authentication)
+Feature Interaction: "Login (Phone + OTP)"
+User Action: Navigates to "My Profile" from the Donor Dashboard.
+Screen/Page: F1.2.2: My Profile
+Feature Interaction: "Edit Personal Information", "Manage Contact Details", "Manage Preferences"
+User Action: Edits a specific field (e.g., updating their phone number, address, or notification preferences).
+Screen/Page: F1.2.2: My Profile (Edit Mode)
+Feature Interaction: Interacting with input fields for "Edit Personal Information", "Manage Contact Details", "Manage Preferences"
+User Action: Saves the changes to their profile.
+Screen/Page: F1.2.2: My Profile
+Feature Interaction: Saving changes for "Edit Personal Information", "Manage Contact Details", "Manage Preferences"
+
+
+2. Registered Donor Views Donation History and Basic Health Outcomes
+User Role: Registered Blood Donor
+Goal: Review records of their past donations and associated health outcomes.
+Account Access / Registration (F1.2.1: Secure Authentication) -> F1.3.1: My Donation History
+Steps:
+
+User Action: Logs into their account.
+Screen/Page: Account Access / Registration (F1.2.1: Secure Authentication)
+Feature Interaction: "Login (Phone + OTP)"
+User Action: Navigates to "My Donation History" from the Donor Dashboard.
+Screen/Page: F1.3.1: My Donation History
+Feature Interaction: "View Past Donations List"
+User Action: Views the list of their past donations, including dates and locations.
+Screen/Page: F1.3.1: My Donation History
+Feature Interaction: Viewing "View Past Donations List"
+User Action: Reviews basic health outcomes associated with their donations (e.g., confirmed blood type, iron levels if provided).
+Screen/Page: F1.3.1: My Donation History
+Feature Interaction: Viewing "View Basic Health Outcomes (e.g., Blood Type)"
+
+
+3. Registered Donor Submits Post-Donation Feedback
+User Role: Registered Blood Donor
+Goal: Provide feedback about their recent blood donation experience.
+Post-Donation (specific screen/pop-up or My Appointments/History) -> Post-Donation (Feedback Form Interface) -> Post-Donation
+Steps:
+
+User Action: (After completing a donation) Accesses the feedback option, either through a direct prompt, notification, or by navigating to a specific section.
+Screen/Page: Post-Donation (specific screen/pop-up after donation completion or within My Appointments/History)
+Feature Interaction: Engaging with the prompt to "Submit Feedback Form"
+User Action: Fills out the feedback form with their comments or ratings.
+Screen/Page: Post-Donation (Feedback Form Interface)
+Feature Interaction: Inputting information for "Submit Feedback Form"
+User Action: Submits the completed feedback form.
+Screen/Page: Post-Donation
+Feature Interaction: Submitting "Submit Feedback Form"
+
+
+4. Registered Donor Views Personalized Impact Statistics
+User Role: Registered Blood Donor
+Goal: See personalized metrics on the impact of their blood donations.
+Account Access / Registration (F1.2.1: Secure Authentication) -> F3.2.1: My Impact
+Steps:
+
+User Action: Logs into their account.
+Screen/Page: Account Access / Registration (F1.2.1: Secure Authentication)
+Feature Interaction: "Login (Phone + OTP)"
+User Action: Navigates to the "My Impact" or a similar recognition section from the Donor Dashboard.
+Screen/Page: F3.2.1: My Impact
+Feature Interaction: Accessing "Personalized Impact Statistics"
+User Action: Views personalized statistics, such as the estimated number of lives saved or donations given over time.
+Screen/Page: F3.2.1: My Impact
+Feature Interaction: Viewing "Personalized Impact Statistics"
+
+
+5. Registered Donor Accesses Digital Donor Card
+User Role: Registered Blood Donor
+Goal: Display their digital donor card with essential identification and blood type information.
+Account Access / Registration (F1.2.1: Secure Authentication) -> F3.2.2: Digital Donor Credential
+Steps:
+
+User Action: Logs into their account.
+Screen/Page: Account Access / Registration (F1.2.1: Secure Authentication)
+Feature Interaction: "Login (Phone + OTP)"
+User Action: Navigates to the section to view their digital donor card (e.g., from profile or a dedicated card section).
+Screen/Page: F3.2.2: Digital Donor Credential
+Feature Interaction: Accessing "Digital Donor Card"
+User Action: Displays the digital donor card, showing their blood type and donor ID.
+Screen/Page: F3.2.2: Digital Donor Credential
+Feature Interaction: Displaying "Digital Donor Card"
+
+
+6. Registered Donor Receives Generic "Donation Used" Notifications
+User Role: Registered Blood Donor
+Goal: Be informed when their donated blood has been utilized, fostering a sense of contribution.
+Device Notification or In-App Notification Inbox: F3.1.1) -> (Device Notification or In-App Notification Inbox: F3.1.1)
+Steps:
+
+User Action: A notification is sent to the donor (e.g., push notification to their device or an in-app message).
+Screen/Page: (Device Notification or In-App Notification Inbox: F3.1.1)
+Feature Interaction: Sending/Receiving "Anonymous Donation Impact Updates" (F3.2.3)
+User Action: The donor views the notification stating that their donation has been used (without specific recipient details).
+Screen/Page: (Device Notification or In-App Notification Inbox: F3.1.1)
+Feature Interaction: Viewing "Anonymous Donation Impact Updates"
+---------------------------
+
+III. Medical Professional Flows: Screening & Record Management
+1. Medical Professional Reviews Health Declarations
+User Role: Medical Professional
+Goal: Examine pre-submitted health declarations from donors to assess their eligibility for donation.
+Medical Dashboard / Screening Home -> Medical Dashboard / Screening Home (Donor Queue/List) -> F2.2.1: Health Declaration Review -> F2.2.1: Health Declaration Review (detail view)
+Steps:
+
+User Action: Medical Professional logs into the Medical Application/Portal.
+Screen/Page: Medical Dashboard / Screening Home
+Feature Interaction: (Implicit Medical Login)
+User Action: Accesses a list of donors awaiting screening or selects a specific donor's record.
+Screen/Page: Medical Dashboard / Screening Home (Donor Queue/List)
+Feature Interaction: (Selection of donor from a list)
+User Action: Views the pre-submitted digital health declaration for the selected donor.
+Screen/Page: F2.2.1: Health Declaration Review
+Feature Interaction: "View Pre-submitted Health Declarations"
+User Action: Reviews all responses within the detailed health declaration form.
+Screen/Page: F2.2.1: Health Declaration Review (detail view)
+Feature Interaction: Consumption of content within "View Pre-submitted Health Declarations"
+
+
+2. Medical Professional Inputs Screening Results
+User Role: Medical Professional
+Goal: Record the outcome of a donor's medical screening, including approval, decline, or deferral.
+F2.2.2: Screening Outcome Input -> F2.2.2: Screening Outcome Input (Deferral Notes Field - optional) -> F2.2.2: Screening Outcome Input
+Steps:
+
+User Action: After reviewing the health declaration and conducting physical screening, the Medical Professional navigates to the screening results input interface for the donor.
+Screen/Page: F2.2.2: Screening Outcome Input
+Feature Interaction: Initiating "Record Screening Results (Approve/Decline)"
+User Action: Selects the screening outcome (e.g., "Approved," "Declined," or "Deferred").
+Screen/Page: F2.2.2: Screening Outcome Input
+Feature Interaction: Selecting outcome for "Record Screening Results (Approve/Decline)"
+User Action: (If "Deferred") Enters custom medical notes explaining the reason for deferral and the deferral period.
+Screen/Page: F2.2.2: Screening Outcome Input (Deferral Notes Field)
+Feature Interaction: Inputting notes for "Donor Deferral with Custom Notes"
+User Action: Saves the screening results.
+Screen/Page: F2.2.2: Screening Outcome Input
+Feature Interaction: Saving "Record Screening Results (Approve/Decline)", "Donor Deferral with Custom Notes"
+
+
+3. Medical Professional Accesses Comprehensive Past Medical History for a Donor
+User Role: Medical Professional
+Goal: Retrieve and review a donor's complete historical medical and screening records for informed decision-making.
+Medical Dashboard / Screening Home -> Medical Dashboard / Screening Home (Donor Search/List) -> F2.2.3: Donor Medical History (Donor Profile View)
+Steps:
+
+User Action: Medical Professional logs into the Medical Application/Portal.
+Screen/Page: Medical Dashboard / Screening Home
+Feature Interaction: (Implicit Medical Login)
+User Action: Searches for or selects a specific donor from their active list or via a search function.
+Screen/Page: Medical Dashboard / Screening Home (Donor Search/List)
+Feature Interaction: (Implicit search/lookup within F2.2.3)
+User Action: Navigates to the donor's comprehensive medical history section.
+Screen/Page: F2.2.3: Donor Medical History (Donor Profile View)
+Feature Interaction: "Access Past Screening Records (by donor)"
+User Action: Reviews all available past screening records, donation outcomes, and any associated notes.
+Screen/Page: F2.2.3: Donor Medical History (Donor Profile View)
+Feature Interaction: Consumption of "Access Past Screening Records (by donor)"
+-------------------------
+
+IV. Center Staff Flows: Communication & Management
+1. Center Staff Sends In-Center Notifications to Donors
+User Role: Center Staff
+Goal: Broadcast timely, non-urgent messages to donors currently at the donation center.
+Staff Dashboard / Center Operations Home -> F3.1.2: Staff Alerts & Broadcasts -> F3.1.2: Staff Alerts & Broadcasts (Message Composition Interface) -> F3.1.2: Staff Alerts & Broadcasts
+Steps:
+
+User Action: Staff logs into the Staff Application/Portal.
+Screen/Page: Staff Dashboard / Center Operations Home
+Feature Interaction: (Implicit Staff Login)
+User Action: Navigates to the "Staff Alerts & Broadcasts" section.
+Screen/Page: F3.1.2: Staff Alerts & Broadcasts
+Feature Interaction: Initiating "Send In-Center Notifications"
+User Action: Composes a message for in-center broadcast (e.g., "Room 3 is now available," "Refreshments are ready").
+Screen/Page: F3.1.2: Staff Alerts & Broadcasts (Message Composition Interface)
+Feature Interaction: Inputting content for "Send In-Center Notifications"
+User Action: Sends the notification, which appears on donors' devices if they are checked in/within the facility.
+Screen/Page: F3.1.2: Staff Alerts & Broadcasts
+Feature Interaction: Sending "Send In-Center Notifications"
+
+
+2. Center Staff Broadcasts Urgent Blood Type Needs to Local Eligible Donors
+User Role: Center Staff
+Goal: Alert eligible donors in the vicinity about an immediate or urgent need for a specific blood type.
+Staff Dashboard / Center Operations Home -> F3.1.2: Staff Alerts & Broadcasts -> F3.1.2: Staff Alerts & Broadcasts (Broadcast Composition Interface) -> F3.1.2: Staff Alerts & Broadcasts
+Steps:
+
+User Action: Staff logs into the Staff Application/Portal.
+Screen/Page: Staff Dashboard / Center Operations Home
+Feature Interaction: (Implicit Staff Login)
+User Action: Navigates to the "Staff Alerts & Broadcasts" section.
+Screen/Page: F3.1.2: Staff Alerts & Broadcasts
+Feature Interaction: Initiating "Broadcast Urgent Blood Type Needs"
+User Action: Selects the urgently needed blood type and composes the alert message.
+Screen/Page: F3.1.2: Staff Alerts & Broadcasts (Broadcast Composition Interface)
+Feature Interaction: Selecting blood type and inputting message for "Broadcast Urgent Blood Type Needs"
+User Action: Sends the broadcast to relevant, eligible donors (e.g., based on location, last donation date).
+Screen/Page: F3.1.2: Staff Alerts & Broadcasts
+Feature Interaction: Sending "Broadcast Urgent Blood Type Needs"
+-----------------
+
+V. System Administrator Flows: Management & Operations
+1. System Administrator Manages Public Content (CMS)
+User Role: System Administrator
+Goal: Create, edit, and publish public-facing content such as news articles, FAQs, and event details.
+Admin Dashboard / System Management Home -> F3.3.1: Public Content Management -> F3.3.1: Public Content Management (Content List/Editor) -> F3.3.1: Public Content Management (Content Editor Interface) -> F3.3.1: Public Content Management
+Steps:
+
+User Action: Administrator logs into the Admin Panel.
+Screen/Page: Admin Dashboard / System Management Home
+Feature Interaction: (Implicit Admin Login)
+User Action: Navigates to the "Public Content Management" section within the CMS.
+Screen/Page: F3.3.1: Public Content Management
+Feature Interaction: "Manage News & Articles", "Manage FAQs & Guidelines", "Manage Event Details & Descriptions", "Manage Inspiring Content" (depending on content type)
+User Action: Selects an action:
+To create new content: Clicks "Add New" (e.g., "Add New News Article").
+To edit existing content: Selects an item from a list (e.g., a specific FAQ entry) to open its editor.
+Screen/Page: F3.3.1: Public Content Management (Content List/Editor)
+Feature Interaction: Initiating content creation or selecting existing content for "Content Editing & Publishing"
+User Action: Inputs or modifies content details (e.g., text, images, dates).
+Screen/Page: F3.3.1: Public Content Management (Content Editor Interface)
+Feature Interaction: Inputting/editing content for "Content Editing & Publishing"
+User Action: Saves and/or publishes the content to make it visible on the public site.
+Screen/Page: F3.3.1: Public Content Management
+Feature Interaction: "Content Editing & Publishing" (Save/Publish functionality)
+
+2. System Administrator Manages Event Schedules
+User Role: System Administrator
+Goal: Create, edit, and control the publication status of blood donation event schedules.
+Admin Dashboard / System Management Home -> F3.4.1: Event & Schedule Management -> F3.4.1: Event & Schedule Management (Event List/Editor) -> F3.4.1: Event & Schedule Management (Event Editor Interface) -> F3.4.1: Event & Schedule Management
+Steps:
+
+User Action: Administrator logs into the Admin Panel.
+Screen/Page: Admin Dashboard / System Management Home
+Feature Interaction: (Implicit Admin Login)
+User Action: Navigates to the "Event & Schedule Management" section.
+Screen/Page: F3.4.1: Event & Schedule Management
+Feature Interaction: Accessing "Event & Schedule Management"
+User Action: Selects an action:
+To create a new event: Clicks "Create New Event".
+To edit an existing event: Selects an event from the list.
+To change publication status: Toggles a switch or selects an option for an event.
+Screen/Page: F3.4.1: Event & Schedule Management (Event List/Editor)
+Feature Interaction: "Create New Events", "Edit Existing Events", "Publish/Unpublish Events"
+User Action: Inputs or modifies event details (e.g., dates, times, location, capacity).
+Screen/Page: F3.4.1: Event & Schedule Management (Event Editor Interface)
+Feature Interaction: Inputting/editing details for "Create New Events" or "Edit Existing Events"
+User Action: Saves the changes and/or publishes/unpublishes the event schedule.
+Screen/Page: F3.4.1: Event & Schedule Management
+Feature Interaction: Saving/Publishing/Unpublishing changes for "Manage Event Schedules"
+
+3. System Administrator Manages User Accounts and Assigns Roles
+User Role: System Administrator
+Goal: Oversee and modify user accounts (donors, staff) and manage their system roles for security and access control.
+Admin Dashboard / System Management Home -> F3.4.2: User & Role Management -> F3.4.2: User & Role Management (User List/Add User Form) -> F3.4.2: User & Role Management (Add/Edit User Form) -> F3.4.2: User & Role Management
+Steps:
+
+User Action: Administrator logs into the Admin Panel.
+Screen/Page: Admin Dashboard / System Management Home
+Feature Interaction: (Implicit Admin Login)
+User Action: Navigates to the "User & Role Management" section.
+Screen/Page: F3.4.2: User & Role Management
+Feature Interaction: Accessing "Manage Donor Accounts", "Manage Staff Accounts", "Assign/Edit User Roles"
+User Action: Selects an action:
+To add a new staff user: Clicks "Add New Staff User".
+To manage an existing user: Selects a user (donor or staff) from the list.
+Screen/Page: F3.4.2: User & Role Management (User List/Add User Form)
+Feature Interaction: Initiating add user, or selecting user for "Manage Donor Accounts" / "Manage Staff Accounts"
+User Action: Inputs new user details or edits existing user information (e.g., contact info, status).
+Screen/Page: F3.4.2: User & Role Management (Add/Edit User Form)
+Feature Interaction: Inputting/editing details for "Manage Donor Accounts" / "Manage Staff Accounts"
+User Action: Assigns or modifies the user's role (e.g., changing a staff member's role from "Center Staff" to "Medical Professional").
+Screen/Page: F3.4.2: User & Role Management (Add/Edit User Form)
+Feature Interaction: Utilizing "Assign/Edit User Roles" functionality
+User Action: Saves the changes to the user account.
+Screen/Page: F3.4.2: User & Role Management
+Feature Interaction: Saving changes for "Manage Donor Accounts" / "Manage Staff Accounts" / "Assign/Edit User Roles"
+
+4. System Administrator Generates Basic Operational Reports
+User Role: System Administrator
+Goal: Obtain analytical insights into donor activity and event performance to support operational planning.
+Admin Dashboard / System Management Home -> F3.4.3: Basic Operational Reporting -> F3.4.3: Basic Operational Reporting (Report Selection) -> F3.4.3: Basic Operational Reporting (Parameter Input) -> F3.4.3: Basic Operational Reporting (Report View)
+Steps:
+
+User Action: Administrator logs into the Admin Panel.
+Screen/Page: Admin Dashboard / System Management Home
+Feature Interaction: (Implicit Admin Login)
+User Action: Navigates to the "Basic Operational Reporting" section.
+Screen/Page: F3.4.3: Basic Operational Reporting
+Feature Interaction: Accessing "Generate Donor Activity Reports", "Generate Event Performance Reports"
+User Action: Selects the desired report type (e.g., Donor Activity, Event Performance).
+Screen/Page: F3.4.3: Basic Operational Reporting (Report Selection)
+Feature Interaction: Selecting report type for "Generate Donor Activity Reports" / "Generate Event Performance Reports"
+User Action: Specifies report parameters (e.g., date range, specific event, blood type).
+Screen/Page: F3.4.3: Basic Operational Reporting (Parameter Input)
+Feature Interaction: Inputting parameters for "Generate Donor Activity Reports" / "Generate Event Performance Reports"
+User Action: Generates and views the report.
+Screen/Page: F3.4.3: Basic Operational Reporting (Report View)
+Feature Interaction: Viewing generated results for "Generate Donor Activity Reports" / "Generate Event Performance Reports"
+User Action: (Optional) Exports the generated report in a chosen format (e.g., CSV, PDF).
+Screen/Page: F3.4.3: Basic Operational Reporting (Report View)
+Feature Interaction: Export functionality for "Generate Donor Activity Reports" / "Generate Event Performance Reports"
+
+
+=================================
+Additional User Flows (Beyond Critical & Secondary)
+These flows leverage existing screens and features for specific, often more detailed or less frequent interactions.
+
+I. Guest User Flows
+1. Guest User Deeply Explores Donation Benefits & Safety
+User Role: Guest User
+Goal: Gain in-depth understanding of personal benefits and safety measures related to blood donation.
+Home/Landing Page -> F1.1.2: General Information -> F1.1.2: General Information
+Steps:
+
+User Action: Opens the application/visits the website.
+Screen/Page: Home/Landing Page
+Feature Interaction: Application Root
+User Action: Navigates to the "General Information" section.
+Screen/Page: F1.1.2: General Information
+Feature Interaction: "Benefits of Donation (e.g., Free Health Checks)", "Safety Assurance Information"
+User Action: Reads detailed articles or sections on specific benefits (e.g., free health checks provided) or safety protocols.
+Screen/Page: F1.1.2: General Information
+Feature Interaction: Consumption of detailed content under "Benefits of Donation", "Safety Assurance Information"
+
+
+2. Guest User Seeks Direct Support/Information
+User Role: Guest User
+Goal: Find contact information for specific inquiries.
+Home/Landing Page -> F1.1.4: Contact & Support -> F1.1.4: Contact & Support
+Steps:
+
+User Action: Opens the application/visits the website.
+Screen/Page: Home/Landing Page
+Feature Interaction: Application Root
+User Action: Navigates to the "Contact & Support" section.
+Screen/Page: F1.1.4: Contact & Support
+Feature Interaction: "Contact Information"
+User Action: Retrieves contact details (phone number, email, address).
+Screen/Page: F1.1.4: Contact & Support
+Feature Interaction: Viewing "Contact Information"
+-------------------------------
+
+II. Registered Blood Donor Flows
+1. Registered Donor Reviews Personal Notifications
+User Role: Registered Blood Donor
+Goal: Check for new alerts or reminders in their in-app notification center.
+Account Access / Registration (F1.2.1: Secure Authentication) -> F3.1.1: Notifications / Alerts (Inbox/Settings)
+Steps:
+
+User Action: Logs into their account.
+Screen/Page: Account Access / Registration (F1.2.1: Secure Authentication)
+Feature Interaction: "Login (Phone + OTP)"
+User Action: Navigates to their Notifications/Alerts section.
+Screen/Page: F3.1.1: Notifications / Alerts (Inbox/Settings)
+Feature Interaction: Viewing "Next Donation Eligibility Reminders", "Urgent Blood Need Alerts", "System Announcements"
+
+
+2. Registered Donor Updates Profile Information
+User Role: Registered Blood Donor
+Goal: Keep personal and contact details up-to-date.
+Account Access / Registration (F1.2.1: Secure Authentication) -> F1.2.2: My Profile -> F1.2.2: My Profile (Edit Mode) -> F1.2.2: My Profile
+Steps:
+
+User Action: Logs into their account.
+Screen/Page: Account Access / Registration (F1.2.1: Secure Authentication)
+Feature Interaction: "Login (Phone + OTP)"
+User Action: Navigates to "My Profile".
+Screen/Page: F1.2.2: My Profile
+Feature Interaction: "Edit Personal Information", "Manage Contact Details", "Manage Preferences"
+User Action: Makes changes and saves.
+Screen/Page: F1.2.2: My Profile
+Feature Interaction: "Edit Personal Information", "Manage Contact Details", "Manage Preferences"
+--------------------------
+
+III. Center Staff Flows
+1. Center Staff Provides In-Center Announcements
+User Role: Center Staff
+Goal: Send specific, timely notifications to donors currently at the center.
+Staff Dashboard / Center Operations Home -> F3.1.2: Staff Alerts & Broadcasts -> F3.1.2: Staff Alerts & Broadcasts (Message Composition Interface) -> F3.1.2: Staff Alerts & Broadcasts
+Steps:
+
+User Action: Staff logs into the Staff Application/Portal.
+Screen/Page: Staff Dashboard / Center Operations Home
+Feature Interaction: (Implicit Staff Login)
+User Action: Navigates to the "Staff Alerts & Broadcasts" section.
+Screen/Page: F3.1.2: Staff Alerts & Broadcasts
+Feature Interaction: "Send In-Center Notifications"
+User Action: Composes and sends a specific in-center message (e.g., "Room 3 is now open for screening").
+Screen/Page: F3.1.2: Staff Alerts & Broadcasts
+Feature Interaction: "Send In-Center Notifications"
+-----------------------------
+
+IV. Medical Professional Flows
+
+1. Medical Professional Conducts Detailed Health Declaration Review
+User Role: Medical Professional
+Goal: Thoroughly review a donor's submitted health declaration for potential issues.
+Medical Dashboard / Screening Home -> F2.2.1: Health Declaration Review -> F2.2.1: Health Declaration Review (detail view)
+Steps:
+
+User Action: Medical Professional logs into the Medical Application/Portal.
+Screen/Page: Medical Dashboard / Screening Home
+Feature Interaction: (Implicit Medical Login)
+User Action: Selects a specific donor's pre-submitted health declaration to review.
+Screen/Page: F2.2.1: Health Declaration Review
+Feature Interaction: "View Pre-submitted Health Declarations"
+User Action: Examines all answers within the detailed health declaration form.
+Screen/Page: F2.2.1: Health Declaration Review (detail view)
+Feature Interaction: Deep dive into "View Pre-submitted Health Declarations" content
+--------------------------------
+
+V. System Administrator Flows
+1. System Administrator Publishes a New News Article
+User Role: System Administrator
+Goal: Add and publish new engaging content to the public section of the application.
+Admin Dashboard / System Management Home -> F3.3.1: Public Content Management -> F3.3.1: Public Content Management (New Article Editor) -> F3.3.1: Public Content Management
+Steps:
+
+User Action: Administrator logs into the Admin Panel.
+Screen/Page: Admin Dashboard / System Management Home
+Feature Interaction: (Implicit Admin Login)
+User Action: Navigates to the "Public Content Management" section within the CMS.
+Screen/Page: F3.3.1: Public Content Management
+Feature Interaction: "Manage News & Articles"
+User Action: Creates a new news article, inputs content, and sets publishing details.
+Screen/Page: F3.3.1: Public Content Management (New Article Editor)
+Feature Interaction: "Manage News & Articles" (Create/Edit functionality)
+User Action: Publishes the article.
+Screen/Page: F3.3.1: Public Content Management
+Feature Interaction: "Manage News & Articles" (Publish functionality)
+
+2. System Administrator Adds a New Staff User
+User Role: System Administrator
+Goal: Onboard a new member of staff or medical professional into the system.
+Admin Dashboard / System Management Home -> F3.4.2: User & Role Management -> F3.4.2: User & Role Management (Add New Staff Form) -> F3.4.2: User & Role Management (Add New Staff Form) -> F3.4.2: User & Role Management
+Steps:
+
+User Action: Administrator logs into the Admin Panel.
+Screen/Page: Admin Dashboard / System Management Home
+Feature Interaction: (Implicit Admin Login)
+User Action: Navigates to the "User & Role Management" section.
+Screen/Page: F3.4.2: User & Role Management
+Feature Interaction: "Manage Staff Accounts"
+User Action: Initiates the process to add a new staff account.
+Screen/Page: F3.4.2: User & Role Management (Add New Staff Form)
+Feature Interaction: "Manage Staff Accounts" (Add functionality)
+User Action: Inputs new staff details and assigns a specific role (e.g., Center Staff, Medical Professional).
+Screen/Page: F3.4.2: User & Role Management (Add New Staff Form)
+Feature Interaction: "Assign/Edit User Roles"
+User Action: Confirms and creates the new staff account.
+Screen/Page: F3.4.2: User & Role Management
+Feature Interaction: "Manage Staff Accounts"
