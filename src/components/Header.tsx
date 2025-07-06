@@ -67,7 +67,7 @@ const Header: React.FC = () => {
           <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-white to-orange-100 rounded-xl flex items-center justify-center shadow-md">
             <img 
-                src="https://img.icons8.com/emoji/96/drop-of-blood-emoji.png" 
+                src="https://jduhcsgsf4.ufs.sh/f/YxhhsvmLP58IE2O12LrHIx6jwqh5iWJp4bOGCTRgVKQFmtZd" 
                 alt="Giọt Máu Vàng"
                 className="w-6 h-6 object-contain"
               />
