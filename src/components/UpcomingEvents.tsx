@@ -50,9 +50,9 @@ const UpcomingEvents: React.FC = () => {
       <div className="container-custom">
         {/* Section Header */}
         <div className="text-center mb-12 space-y-4">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-inter font-bold text-gray-900 tracking-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-inter font-bold text-gray-900 tracking-tight leading-tight">
             Sự Kiện Hiến Máu
-            <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent"> Sắp Tới</span>
+            <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent mt-2"> Sắp Tới</span>
           </h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Tham gia các sự kiện hiến máu tại TP. Hồ Chí Minh và trở thành người hùng thầm lặng
