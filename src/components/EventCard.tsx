@@ -76,7 +76,7 @@ const EventCard: React.FC<EventCardProps> = ({
           <GlassButton variant="primary" size="md" className="flex-1">
             Đăng ký hiến máu
           </GlassButton>
-          <GlassButton variant="default" size="md">
+          <GlassButton variant="secondary" size="md">
             Chi tiết
           </GlassButton>
         </div>

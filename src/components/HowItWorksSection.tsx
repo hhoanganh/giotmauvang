@@ -177,7 +177,7 @@ const HowItWorksSection: React.FC = () => {
             ))}
           </Accordion>
           <div className="text-center mt-8">
-            <GlassButton variant="default" size="lg">
+            <GlassButton variant="ghost" size="lg">
               Xem tất cả câu hỏi
             </GlassButton>
           </div>

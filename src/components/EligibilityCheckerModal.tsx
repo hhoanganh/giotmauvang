@@ -209,9 +209,9 @@ const EligibilityCheckerModal: React.FC<EligibilityCheckerModalProps> = ({ isOpe
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0">
+      <DialogContent className="sm:max-w-2xl h-[600px] p-0 gap-0 flex flex-col">
         {/* Header */}
-        <DialogHeader className="p-6 pb-4 border-b border-gray-200/50">
+        <DialogHeader className="p-6 pb-4 border-b border-gray-200/50 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-br from-white to-orange-100 rounded-lg flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-sm">🩸</span>
@@ -238,53 +238,55 @@ const EligibilityCheckerModal: React.FC<EligibilityCheckerModalProps> = ({ isOpe
         </DialogHeader>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 flex-1 overflow-y-auto flex flex-col">
           {!showResult ? (
-            <GlassCard className="border-0 shadow-none bg-transparent">
-              <GlassCardHeader className="text-center">
+            <GlassCard className="border-0 shadow-none bg-transparent flex flex-col flex-1">
+              <GlassCardHeader className="text-center flex-shrink-0">
                 <GlassCardTitle className="text-xl leading-relaxed mb-6">
                   {questions[currentQuestion].text}
                 </GlassCardTitle>
               </GlassCardHeader>
               
-              <GlassCardContent className="space-y-4">
-                {questions[currentQuestion].options.map((option) => (
-                  <GlassButton
-                    key={option.value}
-                    variant="default"
-                    size="lg"
-                    className="w-full py-4 text-left justify-start"
-                    onClick={() => handleAnswer(questions[currentQuestion].id, option.value)}
-                  >
-                    {option.label}
-                  </GlassButton>
-                ))}
-              </GlassCardContent>
+              <GlassCardContent className="space-y-4 flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col justify-center">
+                  {questions[currentQuestion].options.map((option) => (
+                    <GlassButton
+                      key={option.value}
+                      variant="default"
+                      size="lg"
+                      className="w-full py-4 text-left justify-start mb-4"
+                      onClick={() => handleAnswer(questions[currentQuestion].id, option.value)}
+                    >
+                      {option.label}
+                    </GlassButton>
+                  ))}
+                </div>
 
-              {/* Navigation */}
-              <div className="flex justify-between mt-8">
-                <GlassButton
-                  variant="ghost"
-                  onClick={goBack}
-                  disabled={currentQuestion === 0}
-                  className="flex items-center gap-2"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Quay lại
-                </GlassButton>
-                
-                <GlassButton
-                  variant="ghost"
-                  onClick={resetChecker}
-                  className="text-gray-500"
-                >
-                  Làm lại
-                </GlassButton>
-              </div>
+                {/* Navigation */}
+                <div className="flex justify-between mt-8 flex-shrink-0">
+                  <GlassButton
+                    variant="ghost"
+                    onClick={goBack}
+                    disabled={currentQuestion === 0}
+                    className="flex items-center gap-2"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Quay lại
+                  </GlassButton>
+                  
+                  <GlassButton
+                    variant="ghost"
+                    onClick={resetChecker}
+                    className="text-gray-500"
+                  >
+                    Làm lại
+                  </GlassButton>
+                </div>
+              </GlassCardContent>
             </GlassCard>
           ) : (
             // Result Screen
-            <div className="text-center">
+            <div className="text-center flex flex-col flex-1 justify-center">
               {getResultContent() && (
                 <>
                   {getResultContent()!.icon}

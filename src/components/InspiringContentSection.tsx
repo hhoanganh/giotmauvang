@@ -112,7 +112,7 @@ const InspiringContentSection: React.FC = () => {
                   </div>
                 </div>
               ))}
-              <GlassButton variant="default" size="md" className="w-full mt-6">
+              <GlassButton variant="primary" size="md" className="w-full mt-6">
                 Xem tất cả tin tức
               </GlassButton>
             </GlassCardContent>
@@ -143,7 +143,7 @@ const InspiringContentSection: React.FC = () => {
               <p className="text-gray-600 text-sm text-center mb-6">
                 Hình ảnh từ các trung tâm hiến máu và sự kiện cộng đồng
               </p>
-              <GlassButton variant="secondary" size="md" className="w-full">
+              <GlassButton variant="primary" size="md" className="w-full">
                 Xem thư viện
               </GlassButton>
             </GlassCardContent>
