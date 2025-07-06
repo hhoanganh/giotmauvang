@@ -81,7 +81,7 @@ const HowItWorksSection: React.FC = () => {
             <GlassCardHeader className="pb-6">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">✓</span>
-                Kiểm tra điều kiện
+                Kiểm Tra Điều Kiện
               </GlassCardTitle>
             </GlassCardHeader>
             <GlassCardContent>
