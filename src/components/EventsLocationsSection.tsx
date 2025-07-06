@@ -128,7 +128,7 @@ const EventsLocationsSection: React.FC = () => {
 
             
             <TabsContent value="demand" className="space-y-4">
-              <h3 className="text-xl font-semibold mb-6"> Mức độ cần máu theo nhóm</h3>
+              <h3 className="text-xl font-semibold mb-6 text-center">Mức độ cần máu theo nhóm</h3>
               {bloodDemand.map((blood, index) => (
                 <GlassCard key={index} className="p-6">
                   <div className="flex items-center justify-between">
