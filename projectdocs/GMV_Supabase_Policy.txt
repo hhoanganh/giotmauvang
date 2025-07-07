@@ -1,0 +1,137 @@
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own notifications
+CREATE POLICY "Users can view own notifications" ON notifications
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Users can update their own notifications
+CREATE POLICY "Users can update own notifications" ON notifications
+  FOR UPDATE USING (auth.uid() = user_id);
+
+-- Admin can manage all notifications
+CREATE POLICY "Admin can manage all notifications" ON notifications
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role = 'system_admin'
+  ));
+  
+  
+ALTER TABLE faqs ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can view active FAQs
+CREATE POLICY "Anyone can view active FAQs" ON faqs
+  FOR SELECT USING (is_active = true);
+
+-- Staff and admin can manage all FAQs
+CREATE POLICY "Staff/Admin can manage all FAQs" ON faqs
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role IN ('center_staff', 'system_admin')
+  ));
+  
+ALTER TABLE news_articles ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can view published articles
+CREATE POLICY "Anyone can view published articles" ON news_articles
+  FOR SELECT USING (status = 'published');
+
+-- Staff and admin can manage all articles
+CREATE POLICY "Staff/Admin can manage all articles" ON news_articles
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role IN ('center_staff', 'system_admin')
+  ));
+  
+ALTER TABLE donation_records ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own donation records
+CREATE POLICY "Users can view own donation records" ON donation_records
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Staff, medical, admin can manage all donation records
+CREATE POLICY "Staff/Medical/Admin can manage all donation records" ON donation_records
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role IN ('center_staff', 'medical_professional', 'system_admin')
+  ));
+  
+ALTER TABLE health_declarations ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own health declarations
+CREATE POLICY "Users can view own health declarations" ON health_declarations
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Users can create their own health declarations
+CREATE POLICY "Users can create own health declarations" ON health_declarations
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Users can update their own health declarations
+CREATE POLICY "Users can update own health declarations" ON health_declarations
+  FOR UPDATE USING (auth.uid() = user_id);
+
+-- Staff, medical, admin can manage all health declarations
+CREATE POLICY "Staff/Medical/Admin can manage all health declarations" ON health_declarations
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role IN ('center_staff', 'medical_professional', 'system_admin')
+  ));
+  
+ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own appointments
+CREATE POLICY "Users can view own appointments" ON appointments
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Users can create their own appointments
+CREATE POLICY "Users can create own appointments" ON appointments
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Users can update their own appointments
+CREATE POLICY "Users can update own appointments" ON appointments
+  FOR UPDATE USING (auth.uid() = user_id);
+
+-- Users can delete their own future appointments
+CREATE POLICY "Users can delete own future appointments" ON appointments
+  FOR DELETE USING (auth.uid() = user_id AND appointment_date > now());
+
+-- Staff, medical, admin can manage all appointments
+CREATE POLICY "Staff/Medical/Admin can manage all appointments" ON appointments
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role IN ('center_staff', 'medical_professional', 'system_admin')
+  ));
+  
+ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can view published events
+CREATE POLICY "Anyone can view published events" ON events
+  FOR SELECT USING (status IN ('upcoming', 'active'));
+
+-- Admins can manage all events
+CREATE POLICY "Admins can manage all events" ON events
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role = 'system_admin'
+  ));
+  
+ALTER TABLE donation_centers ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can view centers
+CREATE POLICY "Anyone can view centers" ON donation_centers
+  FOR SELECT USING (true);
+
+-- Admins can manage all centers
+CREATE POLICY "Admins can manage all centers" ON donation_centers
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role = 'system_admin'
+  ));
+  
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own profile
+CREATE POLICY "Users can view own profile" ON profiles
+  FOR SELECT USING (auth.uid() = id);
+
+-- Users can update their own profile
+CREATE POLICY "Users can update own profile" ON profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+-- Admins can manage all profiles
+CREATE POLICY "Admins can manage all profiles" ON profiles
+  FOR ALL USING (EXISTS (
+    SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.primary_role = 'system_admin'
+  ));
+  

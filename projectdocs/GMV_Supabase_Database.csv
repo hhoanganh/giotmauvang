@@ -1,0 +1,97 @@
+table_name,column_name,data_type,is_nullable,column_default,constraint_name,constraint_definition
+appointments,appointment_date,timestamp with time zone,NO,null,null,null
+appointments,center_id,uuid,YES,null,null,null
+appointments,created_at,timestamp with time zone,YES,now(),null,null
+appointments,event_id,uuid,YES,null,null,null
+appointments,id,uuid,NO,gen_random_uuid(),null,null
+appointments,qr_code,text,YES,null,null,null
+appointments,status,text,YES,'scheduled'::text,appointments_status_check,"CHECK ((status = ANY (ARRAY['scheduled'::text, 'confirmed'::text, 'checked_in'::text, 'completed'::text, 'cancelled'::text, 'no_show'::text])))"
+appointments,time_slot,text,NO,null,null,null
+appointments,updated_at,timestamp with time zone,YES,now(),null,null
+appointments,user_id,uuid,YES,null,null,null
+donation_centers,address,text,NO,null,null,null
+donation_centers,created_at,timestamp with time zone,YES,now(),null,null
+donation_centers,email,text,YES,null,null,null
+donation_centers,id,uuid,NO,gen_random_uuid(),null,null
+donation_centers,is_active,boolean,YES,TRUE,null,null
+donation_centers,latitude,numeric,YES,null,null,null
+donation_centers,longitude,numeric,YES,null,null,null
+donation_centers,name,text,NO,null,null,null
+donation_centers,operating_hours,jsonb,YES,null,null,null
+donation_centers,phone,text,YES,null,null,null
+donation_centers,updated_at,timestamp with time zone,YES,now(),null,null
+donation_records,appointment_id,uuid,YES,null,null,null
+donation_records,blood_type,text,YES,null,null,null
+donation_records,blood_volume,integer,YES,null,null,null
+donation_records,center_id,uuid,YES,null,null,null
+donation_records,created_at,timestamp with time zone,YES,now(),null,null
+donation_records,deferral_reason,text,YES,null,null,null
+donation_records,deferral_until,date,YES,null,null,null
+donation_records,donation_date,timestamp with time zone,NO,null,null,null
+donation_records,hemoglobin_level,numeric,YES,null,null,null
+donation_records,id,uuid,NO,gen_random_uuid(),null,null
+donation_records,medical_notes,text,YES,null,null,null
+donation_records,screening_result,text,YES,null,donation_records_screening_result_check,"CHECK ((screening_result = ANY (ARRAY['approved'::text, 'deferred'::text, 'rejected'::text])))"
+donation_records,user_id,uuid,YES,null,null,null
+events,blood_types_needed,ARRAY,YES,null,null,null
+events,center_id,uuid,YES,null,null,null
+events,created_at,timestamp with time zone,YES,now(),null,null
+events,current_registrations,integer,YES,0,null,null
+events,description,text,YES,null,null,null
+events,end_date,timestamp with time zone,NO,null,null,null
+events,id,uuid,NO,gen_random_uuid(),null,null
+events,max_capacity,integer,YES,null,null,null
+events,start_date,timestamp with time zone,NO,null,null,null
+events,status,text,YES,'upcoming'::text,events_status_check,"CHECK ((status = ANY (ARRAY['upcoming'::text, 'active'::text, 'completed'::text, 'cancelled'::text])))"
+events,title,text,NO,null,null,null
+events,updated_at,timestamp with time zone,YES,now(),null,null
+faqs,answer,text,NO,null,null,null
+faqs,category,text,YES,null,null,null
+faqs,created_at,timestamp with time zone,YES,now(),null,null
+faqs,id,uuid,NO,gen_random_uuid(),null,null
+faqs,is_active,boolean,YES,TRUE,null,null
+faqs,order_index,integer,YES,0,null,null
+faqs,question,text,NO,null,null,null
+health_declarations,answers,jsonb,NO,null,null,null
+health_declarations,appointment_id,uuid,YES,null,null,null
+health_declarations,created_at,timestamp with time zone,YES,now(),null,null
+health_declarations,id,uuid,NO,gen_random_uuid(),null,null
+health_declarations,is_eligible,boolean,YES,null,null,null
+health_declarations,medical_notes,text,YES,null,null,null
+health_declarations,reviewed_at,timestamp with time zone,YES,null,null,null
+health_declarations,reviewed_by,uuid,YES,null,null,null
+health_declarations,user_id,uuid,YES,null,null,null
+news_articles,author_id,uuid,YES,null,null,null
+news_articles,content,text,NO,null,null,null
+news_articles,created_at,timestamp with time zone,YES,now(),null,null
+news_articles,excerpt,text,YES,null,null,null
+news_articles,id,uuid,NO,gen_random_uuid(),null,null
+news_articles,image_url,text,YES,null,null,null
+news_articles,published_at,timestamp with time zone,YES,null,null,null
+news_articles,status,text,YES,'draft'::text,news_articles_status_check,"CHECK ((status = ANY (ARRAY['draft'::text, 'published'::text, 'archived'::text])))"
+news_articles,title,text,NO,null,null,null
+news_articles,type,text,YES,'news'::text,news_articles_type_check,"CHECK ((type = ANY (ARRAY['news'::text, 'testimonial'::text, 'story'::text])))"
+news_articles,updated_at,timestamp with time zone,YES,now(),null,null
+notifications,id,uuid,NO,gen_random_uuid(),null,null
+notifications,is_read,boolean,YES,FALSE,null,null
+notifications,message,text,NO,null,null,null
+notifications,sent_at,timestamp with time zone,YES,now(),null,null
+notifications,title,text,NO,null,null,null
+notifications,type,text,YES,null,notifications_type_check,"CHECK ((type = ANY (ARRAY['reminder'::text, 'urgent'::text, 'system'::text, 'donation_update'::text])))"
+notifications,user_id,uuid,YES,null,null,null
+profiles,address,text,YES,null,null,null
+profiles,blood_type,text,YES,null,profiles_blood_type_check,"CHECK ((blood_type = ANY (ARRAY['A+'::text, 'A-'::text, 'B+'::text, 'B-'::text, 'AB+'::text, 'AB-'::text, 'O+'::text, 'O-'::text])))"
+profiles,created_at,timestamp with time zone,NO,now(),null,null
+profiles,date_of_birth,date,YES,null,null,null
+profiles,email,text,YES,null,null,null
+profiles,emergency_contact,text,YES,null,null,null
+profiles,full_name,text,YES,null,null,null
+profiles,gender,text,YES,null,profiles_gender_check,"CHECK ((gender = ANY (ARRAY['male'::text, 'female'::text, 'other'::text])))"
+profiles,id,uuid,NO,null,null,null
+profiles,is_active,boolean,YES,TRUE,null,null
+profiles,last_donation_date,date,YES,null,null,null
+profiles,phone_number,text,YES,null,null,null
+profiles,preferences,jsonb,YES,null,null,null
+profiles,primary_role,text,YES,null,profiles_primary_role_check,"CHECK ((primary_role = ANY (ARRAY['donor'::text, 'center_staff'::text, 'medical_professional'::text, 'system_admin'::text])))"
+profiles,total_donations,integer,YES,0,null,null
+profiles,updated_at,timestamp with time zone,NO,now(),null,null
