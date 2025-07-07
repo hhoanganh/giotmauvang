@@ -18,15 +18,6 @@ You are developing a blood donation web app using:
 ## ALWAYS follow this architecture pattern:
 1. RLS POLICIES handle database-level security (row access control)
 
-## DATABASE FUNCTIONS & BUSINESS LOGIC
-- Use PostgreSQL functions for:
-  - Atomic multi-step operations (e.g., booking with slot check)
-  - Complex queries/aggregations (e.g., reporting, statistics)
-  - Enforcing business rules (e.g., donation eligibility)
-  - Securing sensitive logic on the server
-- Call functions from the client using `supabase.rpc('function_name', params)`.
-- Always secure functions with RLS and validate all inputs.
-
 ## SECURITY REQUIREMENTS:
 - All database tables have RLS enabled
 - Users can only access their own data (except staff/admin)
