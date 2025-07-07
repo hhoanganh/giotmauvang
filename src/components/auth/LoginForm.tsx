@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,31 +38,30 @@ const LoginForm = () => {
         email: data.email,
         password: data.password,
       });
-
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          toast({
-            title: 'Đăng nhập thất bại',
-            description: 'Email hoặc mật khẩu không chính xác',
-            variant: 'destructive',
-          });
-        } else {
-          toast({
-            title: 'Đăng nhập thất bại',
-            description: error.message,
-            variant: 'destructive',
-          });
+        let message = error.message;
+        if (message.toLowerCase().includes('invalid login credentials')) {
+          message = 'Email hoặc mật khẩu không chính xác.';
+        } else if (message.toLowerCase().includes('email not confirmed')) {
+          message = 'Tài khoản của bạn chưa được xác nhận. Vui lòng kiểm tra email để xác nhận tài khoản trước khi đăng nhập.';
         }
+        toast({
+          title: 'Đăng nhập thất bại',
+          description: message,
+          variant: 'destructive',
+        });
         return;
       }
-
       toast({
-        title: 'Đăng nhập thành công',
+        title: 'Đăng nhập thành công!',
         description: 'Chào mừng bạn quay lại!',
       });
-      
+      form.reset();
       navigate('/');
-    } catch (error) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    } catch (err) {
       toast({
         title: 'Có lỗi xảy ra',
         description: 'Vui lòng thử lại sau',
@@ -128,6 +126,7 @@ const LoginForm = () => {
           <button
             type="button"
             className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+            // Implement forgot password logic here if needed
           >
             Quên mật khẩu?
           </button>
