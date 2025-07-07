@@ -49,7 +49,7 @@ const RegisterForm = () => {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -74,10 +74,14 @@ const RegisterForm = () => {
       }
       toast({
         title: 'Đăng ký thành công!',
-        description: 'Chào mừng bạn đến với cộng đồng hiến máu.',
+        description: 'Vui lòng kiểm tra email để xác nhận tài khoản trước khi đăng nhập.',
+        duration: 2000,
       });
       form.reset();
       navigate('/');
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     } catch (err) {
       toast({
         title: 'Có lỗi xảy ra',
