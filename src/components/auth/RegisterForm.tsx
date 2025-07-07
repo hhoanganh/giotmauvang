@@ -75,7 +75,7 @@ const RegisterForm = () => {
       toast({
         title: 'Đăng ký thành công!',
         description: 'Vui lòng kiểm tra email để xác nhận tài khoản trước khi đăng nhập.',
-        duration: 2000,
+        duration: 4000,
       });
       form.reset();
       navigate('/');
