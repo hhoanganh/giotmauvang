@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
-import { registerUser } from '@/lib/actions/auth';
+import { supabase } from '@/integrations/supabase/client';
 
 const registerSchema = z.object({
   fullName: z.string().min(2, 'Họ và tên phải có ít nhất 2 ký tự'),
@@ -49,23 +49,36 @@ const RegisterForm = () => {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      const response = await registerUser(data);
-      if (!response.success) {
+      const { error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            full_name: data.fullName,
+            phone_number: data.phoneNumber,
+          },
+          emailRedirectTo: window.location.origin + '/',
+        },
+      });
+      if (error) {
+        let message = error.message;
+        if (message.includes('User already registered')) {
+          message = 'Email này đã được đăng ký. Vui lòng đăng nhập.';
+        }
         toast({
           title: 'Đăng ký thất bại',
-          description: response.message,
+          description: message,
           variant: 'destructive',
         });
         return;
       }
       toast({
         title: 'Đăng ký thành công!',
-        description: response.message,
+        description: 'Chào mừng bạn đến với cộng đồng hiến máu.',
       });
       form.reset();
-      // Optionally, redirect to dashboard or login
-      // navigate('/');
-    } catch (error) {
+      navigate('/');
+    } catch (err) {
       toast({
         title: 'Có lỗi xảy ra',
         description: 'Vui lòng thử lại sau',
