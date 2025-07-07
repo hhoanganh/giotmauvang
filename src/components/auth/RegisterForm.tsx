@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { GlassButton } from '@/components/ui/glass-button';
@@ -11,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
+import { registerUser } from '@/lib/actions/auth';
 
 const registerSchema = z.object({
   fullName: z.string().min(2, 'Họ và tên phải có ít nhất 2 ký tự'),
@@ -50,42 +49,22 @@ const RegisterForm = () => {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            full_name: data.fullName,
-            phone_number: data.phoneNumber,
-          },
-          emailRedirectTo: `${window.location.origin}/`,
-        },
-      });
-
-      if (error) {
-        if (error.message.includes('User already registered')) {
-          toast({
-            title: 'Tài khoản đã tồn tại',
-            description: 'Email này đã được đăng ký. Vui lòng đăng nhập.',
-            variant: 'destructive',
-          });
-        } else {
-          toast({
-            title: 'Đăng ký thất bại',
-            description: error.message,
-            variant: 'destructive',
-          });
-        }
+      const response = await registerUser(data);
+      if (!response.success) {
+        toast({
+          title: 'Đăng ký thất bại',
+          description: response.message,
+          variant: 'destructive',
+        });
         return;
       }
-
       toast({
         title: 'Đăng ký thành công!',
-        description: 'Vui lòng kiểm tra email để xác thực tài khoản.',
+        description: response.message,
       });
-
-      // Reset form
       form.reset();
+      // Optionally, redirect to dashboard or login
+      // navigate('/');
     } catch (error) {
       toast({
         title: 'Có lỗi xảy ra',
