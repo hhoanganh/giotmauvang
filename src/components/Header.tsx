@@ -3,7 +3,22 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GlassButton } from '@/components/ui/glass-button';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
-import { LogOut, User as UserIcon, Heart, Bell, Calendar, History, ChevronDown } from 'lucide-react';
+import {
+  LogOut,
+  User as UserIcon,
+  Heart,
+  Bell,
+  Calendar,
+  History,
+  ChevronDown,
+  Users,
+  UserCheck,
+  Shield,
+  Megaphone,
+  ClipboardList,
+  FileText,
+  BarChart2
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Header: React.FC = () => {
@@ -21,9 +36,7 @@ const Header: React.FC = () => {
       setUser(session?.user ?? null);
       setIsLoading(false);
     };
-
     getInitialSession();
-
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -31,7 +44,6 @@ const Header: React.FC = () => {
         setIsLoading(false);
       }
     );
-
     return () => subscription.unsubscribe();
   }, []);
 
@@ -77,12 +89,53 @@ const Header: React.FC = () => {
     }
   };
 
-  // Get user icon by role (only donor for now)
+  // Get user icon by role
   const getUserIcon = (role: string | undefined) => {
     switch (role) {
+      case 'center_staff':
+        return <Users className="w-6 h-6 text-blue-500" />;
+      case 'medical_professional':
+        return <UserCheck className="w-6 h-6 text-green-500" />;
+      case 'system_admin':
+        return <Shield className="w-6 h-6 text-yellow-500" />;
       case 'donor':
       default:
         return <Heart className="w-6 h-6 text-red-500" />;
+    }
+  };
+
+  // Get menu items by role
+  const getMenuItems = (role: string | undefined) => {
+    switch (role) {
+      case 'center_staff':
+        return [
+          { label: 'Donor Check-in', icon: <ClipboardList className="w-4 h-4" />, to: '/staff/checkin' },
+          { label: 'Broadcast Alerts', icon: <Megaphone className="w-4 h-4" />, to: '/staff/alerts' },
+          { label: 'Logout', icon: <LogOut className="w-4 h-4" />, action: handleSignOut, danger: true },
+        ];
+      case 'medical_professional':
+        return [
+          { label: 'Medical Screening', icon: <UserCheck className="w-4 h-4" />, to: '/medical/screening' },
+          { label: 'Logout', icon: <LogOut className="w-4 h-4" />, action: handleSignOut, danger: true },
+        ];
+      case 'system_admin':
+        return [
+          { label: 'Dashboard', icon: <Shield className="w-4 h-4" />, to: '/admin' },
+          { label: 'Events', icon: <Calendar className="w-4 h-4" />, to: '/admin/events' },
+          { label: 'Users', icon: <Users className="w-4 h-4" />, to: '/admin/users' },
+          { label: 'Content', icon: <FileText className="w-4 h-4" />, to: '/admin/content' },
+          { label: 'Reports', icon: <BarChart2 className="w-4 h-4" />, to: '/admin/reports' },
+          { label: 'Logout', icon: <LogOut className="w-4 h-4" />, action: handleSignOut, danger: true },
+        ];
+      case 'donor':
+      default:
+        return [
+          { label: 'My Profile', icon: <UserIcon className="w-4 h-4" />, to: '/profile' },
+          { label: 'My Appointments', icon: <Calendar className="w-4 h-4" />, to: '/appointments' },
+          { label: 'My Donation History', icon: <History className="w-4 h-4" />, to: '/history' },
+          { label: 'Notification', icon: <Bell className="w-4 h-4" />, to: '/notifications' },
+          { label: 'Logout', icon: <LogOut className="w-4 h-4" />, action: handleSignOut, danger: true },
+        ];
     }
   };
 
@@ -176,24 +229,28 @@ const Header: React.FC = () => {
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md z-50 py-2 border border-gray-100 animate-fade-in">
-                    <Link to="/profile" className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
-                      <UserIcon className="w-4 h-4" /> My Profile
-                    </Link>
-                    <Link to="/appointments" className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
-                      <Calendar className="w-4 h-4" /> My Appointments
-                    </Link>
-                    <Link to="/history" className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
-                      <History className="w-4 h-4" /> My Donation History
-                    </Link>
-                    <Link to="/notifications" className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
-                      <Bell className="w-4 h-4" /> Notification
-                    </Link>
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center gap-2 px-4 py-2 w-full text-left text-red-600 hover:bg-gray-100 transition-colors"
-                    >
-                      <LogOut className="w-4 h-4" /> Logout
-                    </button>
+                    {getMenuItems(user.user_metadata?.primary_role).map((item, idx) =>
+                      item.action ? (
+                        <button
+                          key={item.label}
+                          onClick={item.action}
+                          className={`flex items-center gap-2 px-4 py-2 w-full text-left transition-colors ${
+                            item.danger ? 'text-red-600 hover:bg-gray-100' : 'text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          {item.icon} {item.label}
+                        </button>
+                      ) : (
+                        <Link
+                          key={item.label}
+                          to={item.to}
+                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          {item.icon} {item.label}
+                        </Link>
+                      )
+                    )}
                   </div>
                 )}
               </div>
