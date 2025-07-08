@@ -23,45 +23,17 @@ import { useToast } from '@/hooks/use-toast';
 
 const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Fetch user role from profiles table
-  const fetchUserRole = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('primary_role')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching user role:', error);
-        return 'donor'; // Default fallback
-      }
-
-      return data?.primary_role || 'donor';
-    } catch (error) {
-      console.error('Error fetching user role:', error);
-      return 'donor'; // Default fallback
-    }
-  };
-
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        const role = await fetchUserRole(session.user.id);
-        setUserRole(role);
-      }
-      
       setIsLoading(false);
     };
     getInitialSession();
@@ -69,14 +41,6 @@ const Header: React.FC = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          const role = await fetchUserRole(session.user.id);
-          setUserRole(role);
-        } else {
-          setUserRole(null);
-        }
-        
         setIsLoading(false);
       }
     );
@@ -257,7 +221,7 @@ const Header: React.FC = () => {
                   aria-haspopup="menu"
                   aria-expanded={dropdownOpen}
                 >
-                  {getUserIcon(userRole)}
+                  {getUserIcon(user.user_metadata?.primary_role)}
                   <span className="max-w-32 truncate text-sm text-gray-700">
                     {user.user_metadata?.full_name || user.email}
                   </span>
@@ -265,7 +229,7 @@ const Header: React.FC = () => {
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md z-50 py-2 border border-gray-100 animate-fade-in">
-                    {getMenuItems(userRole).map((item, idx) =>
+                    {getMenuItems(user.user_metadata?.primary_role).map((item, idx) =>
                       item.action ? (
                         <button
                           key={item.label}
