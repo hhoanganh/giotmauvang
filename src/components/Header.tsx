@@ -21,75 +21,26 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-// Define profile type
-interface Profile {
-  id: string;
-  full_name: string | null;
-  email: string | null;
-  primary_role: string | null;
-  phone_number: string | null;
-  blood_type: string | null;
-  is_active: boolean;
-  total_donations: number;
-}
-
 const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Fetch user profile data
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return null;
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      return null;
-    }
-  };
-
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        const profileData = await fetchProfile(session.user.id);
-        setProfile(profileData);
-      }
-      
       setIsLoading(false);
     };
     getInitialSession();
-
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          const profileData = await fetchProfile(session.user.id);
-          setProfile(profileData);
-        } else {
-          setProfile(null);
-        }
-        
         setIsLoading(false);
       }
     );
@@ -188,20 +139,6 @@ const Header: React.FC = () => {
     }
   };
 
-  // Get display name from profile or fallback to email
-  const getDisplayName = () => {
-    if (profile?.full_name) {
-      return profile.full_name;
-    }
-    if (profile?.email) {
-      return profile.email;
-    }
-    if (user?.email) {
-      return user.email;
-    }
-    return 'Người dùng';
-  };
-
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200/50">
       <div className="container-custom">
@@ -284,16 +221,15 @@ const Header: React.FC = () => {
                   aria-haspopup="menu"
                   aria-expanded={dropdownOpen}
                 >
-                  {getUserIcon(profile?.primary_role)}
+                  {getUserIcon(user.user_metadata?.primary_role)}
                   <span className="max-w-32 truncate text-sm text-gray-700">
-                    {getDisplayName()}
+                    {user.user_metadata?.full_name || user.email}
                   </span>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </button>
-                
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md z-50 py-2 border border-gray-100 animate-fade-in">
-                    {getMenuItems(profile?.primary_role).map((item, idx) =>
+                    {getMenuItems(user.user_metadata?.primary_role).map((item, idx) =>
                       item.action ? (
                         <button
                           key={item.label}
