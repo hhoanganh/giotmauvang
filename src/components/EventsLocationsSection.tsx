@@ -1,204 +1,155 @@
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { GlassCard, GlassCardHeader, GlassCardContent } from '@/components/ui/glass-card';
+import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import EventCard from '@/components/EventCard';
+import { Link } from 'react-router-dom';
 
-const events = [
-  {
-    id: '1',
-    title: 'Ngày hội hiến máu nhân đạo',
-    location: 'Trung tâm Hội nghị Quốc gia',
-    date: '20/04/2024',
-    image: 'https://images.unsplash.com/photo-1516253015493-199ef5490798?w=400&h=200&fit=crop',
-  },
-  {
-    id: '2',
-    title: 'Hiến máu cứu người - Một nghĩa cử cao đẹp',
-    location: 'Nhà văn hóa Thanh Niên',
-    date: '25/04/2024',
-    image: 'https://images.unsplash.com/photo-1628201693545-1d9919420c64?w=400&h=200&fit=crop',
-  },
-  {
-    id: '3',
-    title: 'Giọt máu hồng - Trao đời sự sống',
-    location: 'Trường Đại học Bách Khoa',
-    date: '30/04/2024',
-    image: 'https://images.unsplash.com/photo-1588075592484-345e9543a8ca?w=400&h=200&fit=crop',
-  },
-];
+const EventsLocationsSection: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('events');
 
-const centers = [
-  {
-    id: '1',
-    name: 'Bệnh viện Chợ Rẫy',
-    address: '201B Nguyễn Chí Thanh, Quận 5',
-    phone: '028 3855 4269',
-    image: 'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=400&h=200&fit=crop',
-  },
-  {
-    id: '2',
-    name: 'Viện Huyết học - Truyền máu TW',
-    address: '125 Lê Lợi, Quận 1',
-    phone: '028 3829 7935',
-    image: 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&h=200&fit=crop',
-  },
-  {
-    id: '3',
-    name: 'Bệnh viện Từ Dũ',
-    address: '284 Cống Quỳnh, Quận 1',
-    phone: '028 3829 5024',
-    image: 'https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=400&h=200&fit=crop',
-  },
-  {
-    id: '4',
-    name: 'Trung tâm Huyết học TP.HCM',
-    address: '118 Hồng Bàng, Quận 5',
-    phone: '028 3855 7890',
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=200&fit=crop',
-  },
-  {
-    id: '5',
-    name: 'Bệnh viện Đại học Y Dược',
-    address: '215 Hồng Bàng, Quận 5',
-    phone: '028 3855 2983',
-    image: 'https://images.unsplash.com/photo-1574192324001-ee41e18ed679?w=400&h=200&fit=crop',
-  },
-  {
-    id: '6',
-    name: 'Bệnh viện Thống Nhất',
-    address: '1 Lý Thường Kiệt, Quận Tân Bình',
-    phone: '028 3846 1344',
-    image: 'https://images.unsplash.com/photo-1585435557343-3b092031d4cc?w=400&h=200&fit=crop',
-  },
-];
-
-const EventsLocationsSection = () => {
-  const [activeTab, setActiveTab] = useState<'events' | 'centers'>('events');
-
-  (window as any).switchToEventsTab = () => {
-    setActiveTab('events');
+  // Function to switch tabs from external components
+  const switchToTab = (tabName: string) => {
+    setActiveTab(tabName);
   };
 
-  (window as any).switchToCentersTab = () => {
-    setActiveTab('centers');
-  };
+  // Expose the function globally for header navigation
+  React.useEffect(() => {
+    (window as any).switchToEventsTab = () => switchToTab('events');
+    (window as any).switchToCentersTab = () => switchToTab('centers');
+    
+    return () => {
+      delete (window as any).switchToEventsTab;
+      delete (window as any).switchToCentersTab;
+    };
+  }, []);
+
+  const events = [
+    {
+      title: "Ngày Hiến Máu Nhân Đạo",
+      location: "Bệnh viện Chợ Rẫy, Quận 5",
+      date: "15/01/2025",
+      time: "08:00 - 17:00",
+      description: "Chương trình hiến máu lớn nhất trong tháng",
+      bloodTypesNeeded: ["A+", "O+", "AB-", "B+"],
+      spotsAvailable: 45
+    },
+    {
+      title: "Hiến Máu Cứu Người - Quận 1",
+      location: "Trung tâm Y tế Quận 1",
+      date: "18/01/2025", 
+      time: "07:30 - 16:00",
+      description: "Sự kiện hiến máu định kỳ tại trung tâm y tế",
+      bloodTypesNeeded: ["O-", "A-", "B-"],
+      spotsAvailable: 32
+    }
+  ];
+
+  const donationCenters = [
+    { name: "Bệnh viện Chợ Rẫy", address: "201B Nguyễn Chí Thanh, Quận 5", phone: "028 3855 4269" },
+    { name: "Viện Huyết học - Truyền máu TW", address: "125 Lê Lợi, Quận 1", phone: "028 3829 7935" },
+    { name: "Bệnh viện Từ Dũ", address: "284 Cống Quỳnh, Quận 1", phone: "028 3829 5024" }
+  ];
+
+  const bloodDemand = [
+    { type: "O+", demand: "Cao", color: "text-red-600", level: 85 },
+    { type: "A+", demand: "Trung bình", color: "text-orange-500", level: 60 },
+    { type: "B+", demand: "Thấp", color: "text-green-600", level: 30 },
+    { type: "AB+", demand: "Cao", color: "text-red-600", level: 75 }
+  ];
 
   return (
-    <section id="events-locations-section" className="section-padding">
+    <section id="events-locations-section" className="py-16 px-4 lg:py-24">
       <div className="container-custom">
-        <h2 className="text-3xl font-inter font-bold text-gray-900 text-center mb-8">
-          Sự kiện & Địa điểm
-        </h2>
-        
-        {/* Tabs */}
-        <div className="flex justify-center gap-4 mb-8">
-          <GlassButton 
-            variant={activeTab === 'events' ? 'primary' : 'ghost'}
-            size="md"
-            className="px-6"
-            onClick={() => setActiveTab('events')}
-          >
-            Sự kiện
-          </GlassButton>
-          <GlassButton
-            variant={activeTab === 'centers' ? 'primary' : 'ghost'}
-            size="md"
-            className="px-6"
-            onClick={() => setActiveTab('centers')}
-          >
-            Địa điểm
-          </GlassButton>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Sự Kiện & Địa Điểm
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Tìm hiểu các sự kiện hiến máu và trung tâm y tế gần bạn
+          </p>
         </div>
 
-        {/* Events Tab Content */}
-        {activeTab === 'events' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {events.slice(0, 6).map((event) => (
-                <GlassCard key={event.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  {event.image && (
-                    <div className="h-48 overflow-hidden">
-                      <img
-                        src={event.image}
-                        alt={event.title}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                      />
+        <GlassCard className="max-w-6xl mx-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsTrigger value="events">Sự kiện</TabsTrigger>
+              <TabsTrigger value="centers">Trung tâm</TabsTrigger>
+              <TabsTrigger value="demand">Nhu cầu</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="events" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {events.map((event, index) => (
+                  <EventCard key={index} {...event} />
+                ))}
+              </div>
+              <div className="text-center pt-4 pb-8 px-4">
+                <Link to="/events">
+                  <GlassButton variant="primary" size="lg" className="min-w-[200px]">
+                    Xem tất cả sự kiện
+                  </GlassButton>
+                </Link>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="centers" className="space-y-4">
+              {donationCenters.map((center, index) => (
+                <GlassCard key={index} className="p-6">
+                  <div className="flex gap-4">
+                    {/* Left: Center Info */}
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">{center.name}</h3>
+                      <p className="text-gray-600 mb-2">📍 {center.address}</p>
+                      <p className="text-gray-600">📞 {center.phone}</p>
                     </div>
-                  )}
-                  <GlassCardHeader>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {event.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      {event.location} - {event.date}
-                    </p>
-                  </GlassCardHeader>
-                  <GlassCardContent>
-                    <GlassButton variant="primary" size="sm">
-                      Tìm hiểu thêm
-                    </GlassButton>
-                  </GlassCardContent>
+                    
+                    {/* Right: Small Map */}
+                    <div className="w-32 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">🗺️</span>
+                    </div>
+                  </div>
                 </GlassCard>
               ))}
-            </div>
-            
-            <div className="text-center">
-              <Link to="/events">
-                <GlassButton variant="secondary" size="lg" className="px-8">
-                  Xem tất cả sự kiện
-                  <ArrowRight className="w-5 h-5" />
-                </GlassButton>
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* Centers Tab Content */}
-        {activeTab === 'centers' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {centers.slice(0, 6).map((center) => (
-                <GlassCard key={center.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  {center.image && (
-                    <div className="h-48 overflow-hidden">
-                      <img
-                        src={center.image}
-                        alt={center.name}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                      />
-                    </div>
-                  )}
-                  <GlassCardHeader>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {center.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      {center.address}
-                    </p>
-                    <p className="text-gray-600 text-sm">
-                      {center.phone}
-                    </p>
-                  </GlassCardHeader>
-                  <GlassCardContent>
-                    <GlassButton variant="primary" size="sm">
-                      Xem chi tiết
-                    </GlassButton>
-                  </GlassCardContent>
-                </GlassCard>
-              ))}
-            </div>
-            
-            <div className="text-center">
-              <Link to="/centers">
-                <GlassButton variant="secondary" size="lg" className="px-8">
+              <div className="text-center pt-4 pb-8 px-4">
+                <GlassButton variant="primary" size="lg" className="min-w-[200px]">
                   Xem tất cả trung tâm
-                  <ArrowRight className="w-5 h-5" />
                 </GlassButton>
-              </Link>
-            </div>
-          </div>
-        )}
+              </div>
+            </TabsContent>
+            
+
+            
+            <TabsContent value="demand" className="space-y-4">
+              <h3 className="text-xl font-semibold mb-6 text-center">Mức độ cần máu theo nhóm</h3>
+              {bloodDemand.map((blood, index) => (
+                <GlassCard key={index} className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <span className="font-bold text-red-600">{blood.type}</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">Nhóm máu {blood.type}</h4>
+                        <p className={`${blood.color} font-medium`}>Nhu cầu: {blood.demand}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-red-500 to-orange-500"
+                          style={{ width: `${blood.level}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm text-gray-500">{blood.level}%</span>
+                    </div>
+                  </div>
+                </GlassCard>
+              ))}
+            </TabsContent>
+          </Tabs>
+        </GlassCard>
       </div>
     </section>
   );
