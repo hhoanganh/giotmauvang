@@ -48,9 +48,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log("Auth state change:", event, session?.user?.id);
         
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          // Defer the profile fetch to avoid deadlock and handle loading properly
+          setTimeout(async () => {
+            await fetchProfile(session.user.id);
+            if (!isInitialized) {
+              isInitialized = true;
+              setLoading(false);
+            }
+          }, 0);
+        } else {
+          setProfile(null);
+          if (!isInitialized) {
+            isInitialized = true;
+            setLoading(false);
+          }
+        }
+      }
+    );
+
+    // Get the current session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log("Initial session:", session?.user?.id);
+      
+      // If we already processed this through onAuthStateChange, don't duplicate
+      if (!isInitialized) {
         setUser(session?.user ?? null);
         
         if (session?.user) {
@@ -59,32 +86,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProfile(null);
         }
         
-        // Only set loading to false after we've processed the initial session
-        if (!isInitialized) {
-          isInitialized = true;
-          setLoading(false);
-        }
-      }
-    );
-
-    // Get the current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Initial session:", session?.user?.id);
-      
-      // If we already processed this through onAuthStateChange, don't duplicate
-      if (!isInitialized) {
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          fetchProfile(session.user.id).finally(() => {
-            isInitialized = true;
-            setLoading(false);
-          });
-        } else {
-          setProfile(null);
-          isInitialized = true;
-          setLoading(false);
-        }
+        isInitialized = true;
+        setLoading(false);
       }
     });
 
