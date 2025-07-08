@@ -20,7 +20,7 @@ const UpcomingEvents: React.FC = () => {
       title: "Hiến Máu Cứu Người - Quận 1",
       location: "Trung tâm Y tế Quận 1",
       date: "18/01/2025", 
-      time: "07:30 - 16:00",
+      time: "07:30 - 16:30",
       description: "Sự kiện hiến máu định kỳ tại trung tâm y tế, phục vụ nhu cầu cấp thiết của bệnh viện trong khu vực.",
       bloodTypesNeeded: ["O-", "A-", "B-"],
       spotsAvailable: 32
