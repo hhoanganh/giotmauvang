@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GlassButton } from '@/components/ui/glass-button';
-import { supabase } from '@/integrations/supabase/client';
-import { User } from '@supabase/supabase-js';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   LogOut,
   User as UserIcon,
@@ -21,67 +20,12 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-// Typed interface for user profile
-interface UserProfile {
-  id: string;
-  full_name: string | null;
-  primary_role: string | null;
-}
-
 const Header: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, profile, loading, signOut } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('id, full_name, primary_role')
-          .eq('id', session.user.id)
-          .single();
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-          setProfile(null);
-        } else {
-          setProfile(profileData);
-        }
-      } else {
-        setProfile(null);
-      }
-      setIsLoading(false);
-    };
-    getInitialSession();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('id, full_name, primary_role')
-            .eq('id', session.user.id)
-            .single();
-          if (profileError) {
-            console.error('Error fetching profile:', profileError);
-            setProfile(null);
-          } else {
-            setProfile(profileData);
-          }
-        } else {
-          setProfile(null);
-        }
-        setIsLoading(false);
-      }
-    );
-    return () => subscription.unsubscribe();
-  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -99,31 +43,6 @@ const Header: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [dropdownOpen]);
-
-  const handleSignOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        toast({
-          title: 'Có lỗi xảy ra',
-          description: 'Không thể đăng xuất. Vui lòng thử lại.',
-          variant: 'destructive',
-        });
-        return;
-      }
-      toast({
-        title: 'Đăng xuất thành công',
-        description: 'Hẹn gặp lại bạn!',
-      });
-      setDropdownOpen(false);
-    } catch (error) {
-      toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
-    }
-  };
 
   // Get user icon by role
   const getUserIcon = (role: string | undefined) => {
@@ -172,6 +91,23 @@ const Header: React.FC = () => {
           { label: 'Notification', icon: <Bell className="w-4 h-4" />, to: '/notifications' },
           { label: 'Logout', icon: <LogOut className="w-4 h-4" />, action: handleSignOut, danger: true },
         ];
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: 'Đăng xuất thành công',
+        description: 'Hẹn gặp lại bạn!',
+      });
+      setDropdownOpen(false);
+    } catch (error) {
+      toast({
+        title: 'Có lỗi xảy ra',
+        description: 'Vui lòng thử lại sau',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -247,7 +183,7 @@ const Header: React.FC = () => {
 
           {/* Auth Section */}
           <div className="flex items-center gap-2">
-            {isLoading ? (
+            {loading ? (
               <div className="w-20 h-9 bg-gray-200 rounded-2xl animate-pulse"></div>
             ) : user ? (
               <div className="relative" ref={dropdownRef}>
