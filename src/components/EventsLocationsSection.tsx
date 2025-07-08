@@ -113,13 +113,13 @@ const EventsLocationsSection: React.FC = () => {
                 </GlassCard>
               ))}
               <div className="text-center pt-4 pb-8 px-4">
-                <GlassButton variant="primary" size="lg" className="min-w-[200px]">
-                  Xem tất cả trung tâm
-                </GlassButton>
+                <Link to="/centers">
+                  <GlassButton variant="primary" size="lg" className="min-w-[200px]">
+                    Xem tất cả trung tâm
+                  </GlassButton>
+                </Link>
               </div>
             </TabsContent>
-            
-
             
             <TabsContent value="demand" className="space-y-4">
               <h3 className="text-xl font-semibold mb-6 text-center">Mức độ cần máu theo nhóm</h3>
