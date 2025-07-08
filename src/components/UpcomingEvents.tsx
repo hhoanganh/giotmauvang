@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import EventCard from '@/components/EventCard';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
@@ -75,6 +76,15 @@ const UpcomingEvents: React.FC = () => {
           ))}
         </div>
 
+        {/* View All Events Button */}
+        <div className="flex justify-center mb-12">
+          <Link to="/events">
+            <GlassButton variant="primary" size="lg" className="px-8">
+              Xem tất cả sự kiện
+            </GlassButton>
+          </Link>
+        </div>
+
         {/* Call to Action */}
         <div className="flex justify-center">
           <GlassCard className="max-w-lg mx-auto p-8 text-center">
@@ -87,7 +97,7 @@ const UpcomingEvents: React.FC = () => {
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Đăng ký nhận thông báo về các sự kiện hiến máu mới tại khu vực của bạn
               </p>
-              <GlassButton variant="primary" size="lg" className="w-full">
+              <GlassButton variant="secondary" size="lg" className="w-full">
                 Đăng ký thông báo
               </GlassButton>
             </GlassCardContent>
