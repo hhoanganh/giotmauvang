@@ -166,7 +166,7 @@ const Centers: React.FC = () => {
             <span className="text-2xl font-bold text-gray-900">{centers.length}</span>
           </div>
           <p className="text-gray-600">
-            trung tâm đang hoạt động tại TP.HCM
+            Trung tâm đang hoạt động tại TP.HCM
           </p>
           <p className="text-sm text-gray-500 mt-2">
             Sẵn sàng phục vụ cộng đồng 24/7
