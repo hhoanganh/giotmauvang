@@ -32,26 +32,7 @@ export async function registerUser(formData: RegisterFormData): Promise<AuthResp
     // Server-side validation
     const validatedData = registerSchema.parse(formData);
     
-    // Check if email already exists
-    const { data: existingUser, error: checkError } = await supabase.auth.admin.getUserByEmail(validatedData.email);
-    
-    if (checkError && checkError.message !== 'User not found') {
-      return {
-        success: false,
-        message: 'Có lỗi xảy ra khi kiểm tra email',
-        error: checkError.message
-      };
-    }
-    
-    if (existingUser) {
-      return {
-        success: false,
-        message: 'Email này đã được đăng ký. Vui lòng đăng nhập.',
-        error: 'EMAIL_EXISTS'
-      };
-    }
-
-    // Create user in Supabase Auth
+    // Create user in Supabase Auth (Supabase will handle duplicate email checking)
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: validatedData.email,
       password: validatedData.password,
@@ -65,6 +46,15 @@ export async function registerUser(formData: RegisterFormData): Promise<AuthResp
     });
 
     if (authError) {
+      // Handle specific error cases
+      if (authError.message.includes('already registered')) {
+        return {
+          success: false,
+          message: 'Email này đã được đăng ký. Vui lòng đăng nhập.',
+          error: 'EMAIL_EXISTS'
+        };
+      }
+      
       return {
         success: false,
         message: 'Đăng ký thất bại',
@@ -263,4 +253,4 @@ export async function logoutUser(): Promise<AuthResponse> {
       error: error instanceof Error ? error.message : 'Unknown error'
     };
   }
-} 
+}
