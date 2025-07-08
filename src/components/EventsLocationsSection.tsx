@@ -4,6 +4,7 @@ import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/
 import { GlassButton } from '@/components/ui/glass-button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EventCard from '@/components/EventCard';
+import { Link } from 'react-router-dom';
 
 const EventsLocationsSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState('events');
@@ -85,9 +86,11 @@ const EventsLocationsSection: React.FC = () => {
                 ))}
               </div>
               <div className="text-center pt-4 pb-8 px-4">
-                <GlassButton variant="primary" size="lg" className="min-w-[200px]">
-                  Xem tất cả sự kiện
-                </GlassButton>
+                <Link to="/events">
+                  <GlassButton variant="primary" size="lg" className="min-w-[200px]">
+                    Xem tất cả sự kiện
+                  </GlassButton>
+                </Link>
               </div>
             </TabsContent>
             
