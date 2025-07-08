@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { GlassButton } from '@/components/ui/glass-button';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -25,6 +25,7 @@ const Header: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   // Close dropdown on outside click
@@ -140,7 +141,11 @@ const Header: React.FC = () => {
               variant="ghost" 
               size="sm"
               onClick={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (location.pathname !== '/') {
+                  navigate('/');
+                } else {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
               }}
             >
               Trang chủ
@@ -149,14 +154,18 @@ const Header: React.FC = () => {
               variant="ghost" 
               size="sm"
               onClick={() => {
-                const eventsSection = document.getElementById('events-locations-section');
-                if (eventsSection) {
-                  eventsSection.scrollIntoView({ behavior: 'smooth' });
-                  setTimeout(() => {
-                    if ((window as any).switchToEventsTab) {
-                      (window as any).switchToEventsTab();
-                    }
-                  }, 500);
+                if (location.pathname !== '/') {
+                  navigate('/', { state: { scrollTo: 'events' } });
+                } else {
+                  const eventsSection = document.getElementById('events-locations-section');
+                  if (eventsSection) {
+                    eventsSection.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => {
+                      if ((window as any).switchToEventsTab) {
+                        (window as any).switchToEventsTab();
+                      }
+                    }, 500);
+                  }
                 }
               }}
             >
@@ -166,14 +175,18 @@ const Header: React.FC = () => {
               variant="ghost" 
               size="sm"
               onClick={() => {
-                const eventsSection = document.getElementById('events-locations-section');
-                if (eventsSection) {
-                  eventsSection.scrollIntoView({ behavior: 'smooth' });
-                  setTimeout(() => {
-                    if ((window as any).switchToCentersTab) {
-                      (window as any).switchToCentersTab();
-                    }
-                  }, 500);
+                if (location.pathname !== '/') {
+                  navigate('/', { state: { scrollTo: 'centers' } });
+                } else {
+                  const eventsSection = document.getElementById('events-locations-section');
+                  if (eventsSection) {
+                    eventsSection.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => {
+                      if ((window as any).switchToCentersTab) {
+                        (window as any).switchToCentersTab();
+                      }
+                    }, 500);
+                  }
                 }
               }}
             >

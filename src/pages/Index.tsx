@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import EventsLocationsSection from '@/components/EventsLocationsSection';
@@ -9,6 +10,25 @@ import UpcomingEvents from '@/components/UpcomingEvents';
 import ContactSupportSection from '@/components/ContactSupportSection';
 
 const Index = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.scrollTo) {
+      const eventsSection = document.getElementById('events-locations-section');
+      if (eventsSection) {
+        eventsSection.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+          if (location.state.scrollTo === 'events' && (window as any).switchToEventsTab) {
+            (window as any).switchToEventsTab();
+          }
+          if (location.state.scrollTo === 'centers' && (window as any).switchToCentersTab) {
+            (window as any).switchToCentersTab();
+          }
+        }, 500);
+      }
+    }
+  }, [location.state]);
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
