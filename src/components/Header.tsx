@@ -26,7 +26,6 @@ interface UserProfile {
   id: string;
   full_name: string | null;
   primary_role: string | null;
-  avatar_url?: string | null;
 }
 
 const Header: React.FC = () => {
@@ -45,7 +44,7 @@ const Header: React.FC = () => {
       if (session?.user) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('id, full_name, primary_role, avatar_url')
+          .select('id, full_name, primary_role')
           .eq('id', session.user.id)
           .single();
         if (profileError) {
@@ -66,7 +65,7 @@ const Header: React.FC = () => {
         if (session?.user) {
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
-            .select('id, full_name, primary_role, avatar_url')
+            .select('id, full_name, primary_role')
             .eq('id', session.user.id)
             .single();
           if (profileError) {
