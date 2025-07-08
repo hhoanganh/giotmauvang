@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,38 +24,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Helper to fetch profile
   const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, full_name, primary_role")
-      .eq("id", userId)
-      .single();
-    setProfile(data || null);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, primary_role")
+        .eq("id", userId)
+        .single();
+      
+      if (error) {
+        console.error("Error fetching profile:", error);
+        setProfile(null);
+      } else {
+        setProfile(data || null);
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setProfile(null);
+    }
   };
 
   useEffect(() => {
-    setLoading(true);
-    // Listen for session restoration and auth changes
+    let isInitialized = false;
+
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
+        console.log("Auth state change:", event, session?.user?.id);
+        
         setUser(session?.user ?? null);
+        
         if (session?.user) {
           await fetchProfile(session.user.id);
         } else {
           setProfile(null);
         }
-        setLoading(false);
+        
+        // Only set loading to false after we've processed the initial session
+        if (!isInitialized) {
+          isInitialized = true;
+          setLoading(false);
+        }
       }
     );
 
-    // On mount, get the current session (may be null at first, but will be set by INITIAL_SESSION event)
+    // Get the current session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
+      console.log("Initial session:", session?.user?.id);
+      
+      // If we already processed this through onAuthStateChange, don't duplicate
+      if (!isInitialized) {
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          fetchProfile(session.user.id).finally(() => {
+            isInitialized = true;
+            setLoading(false);
+          });
+        } else {
+          setProfile(null);
+          isInitialized = true;
+          setLoading(false);
+        }
       }
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
