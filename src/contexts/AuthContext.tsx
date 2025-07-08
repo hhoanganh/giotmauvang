@@ -8,7 +8,7 @@ interface UserProfile {
 }
 
 interface AuthContextType {
-  user: any; // Optionally use Supabase's User type
+  user: any;
   profile: UserProfile | null;
   loading: boolean;
   signOut: () => Promise<void>;
@@ -21,41 +21,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const getSessionAndProfile = async () => {
-      setLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("id, full_name, primary_role")
-          .eq("id", session.user.id)
-          .single();
-        setProfile(data || null);
-      } else {
-        setProfile(null);
-      }
-      setLoading(false);
-    };
-    getSessionAndProfile();
+  // Helper to fetch profile
+  const fetchProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, primary_role")
+      .eq("id", userId)
+      .single();
+    setProfile(data || null);
+  };
 
+  useEffect(() => {
+    setLoading(true);
+    // Listen for session restoration and auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setUser(session?.user ?? null);
         if (session?.user) {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("id, full_name, primary_role")
-            .eq("id", session.user.id)
-            .single();
-          setProfile(data || null);
+          await fetchProfile(session.user.id);
         } else {
           setProfile(null);
         }
         setLoading(false);
       }
     );
+
+    // On mount, get the current session (may be null at first, but will be set by INITIAL_SESSION event)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
+      setLoading(false);
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
