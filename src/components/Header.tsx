@@ -21,8 +21,17 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+// Typed interface for user profile
+interface UserProfile {
+  id: string;
+  full_name: string | null;
+  primary_role: string | null;
+  avatar_url?: string | null;
+}
+
 const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -30,17 +39,45 @@ const Header: React.FC = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
+      if (session?.user) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, full_name, primary_role, avatar_url')
+          .eq('id', session.user.id)
+          .single();
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          setProfile(null);
+        } else {
+          setProfile(profileData);
+        }
+      } else {
+        setProfile(null);
+      }
       setIsLoading(false);
     };
     getInitialSession();
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
+        if (session?.user) {
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('id, full_name, primary_role, avatar_url')
+            .eq('id', session.user.id)
+            .single();
+          if (profileError) {
+            console.error('Error fetching profile:', profileError);
+            setProfile(null);
+          } else {
+            setProfile(profileData);
+          }
+        } else {
+          setProfile(null);
+        }
         setIsLoading(false);
       }
     );
@@ -221,15 +258,15 @@ const Header: React.FC = () => {
                   aria-haspopup="menu"
                   aria-expanded={dropdownOpen}
                 >
-                  {getUserIcon(user.user_metadata?.primary_role)}
+                  {getUserIcon(profile?.primary_role)}
                   <span className="max-w-32 truncate text-sm text-gray-700">
-                    {user.user_metadata?.full_name || user.email}
+                    {profile?.full_name || user?.email}
                   </span>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md z-50 py-2 border border-gray-100 animate-fade-in">
-                    {getMenuItems(user.user_metadata?.primary_role).map((item, idx) =>
+                    {getMenuItems(profile?.primary_role).map((item, idx) =>
                       item.action ? (
                         <button
                           key={item.label}
