@@ -175,19 +175,7 @@ const Header: React.FC = () => {
               variant="ghost" 
               size="sm"
               onClick={() => {
-                if (location.pathname !== '/') {
-                  navigate('/', { state: { scrollTo: 'centers' } });
-                } else {
-                  const eventsSection = document.getElementById('events-locations-section');
-                  if (eventsSection) {
-                    eventsSection.scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => {
-                      if ((window as any).switchToCentersTab) {
-                        (window as any).switchToCentersTab();
-                      }
-                    }, 500);
-                  }
-                }
+                navigate('/centers');
               }}
             >
               Trung tâm
