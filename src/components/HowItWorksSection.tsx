@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle, GlassCardFooter } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -177,8 +178,8 @@ const HowItWorksSection: React.FC = () => {
             ))}
           </Accordion>
           <div className="text-center mt-8">
-            <GlassButton variant="ghost" size="lg">
-              Xem tất cả câu hỏi
+            <GlassButton asChild variant="ghost" size="lg">
+              <Link to="/faq">Xem tất cả câu hỏi</Link>
             </GlassButton>
           </div>
         </GlassCard>
