@@ -181,6 +181,11 @@ const Gallery: React.FC = () => {
               </div>
             ))}
           </div>
+          {galleries.length === 0 && !error && (
+            <div className="text-center text-gray-500 mt-8">
+              Chưa có album nào. {isAdmin && "Hãy tạo album mới!"}
+            </div>
+          )}
         </div>
       </main>
     </div>
