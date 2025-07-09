@@ -117,8 +117,8 @@ const Centers: React.FC = () => {
       {/* Consistent Header */}
       <Header />
 
-      {/* Title & Subtitle Section (matching Events.tsx) */}
-      <div className="section-padding">
+      <main className="section-padding">
+        {/* Title & Subtitle Section (matching Events.tsx) */}
         <div className="container-custom">
           <div className="text-center mb-8 space-y-4">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-inter font-bold text-gray-900 tracking-tight leading-tight">
@@ -132,122 +132,122 @@ const Centers: React.FC = () => {
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Filters */}
-      <div className="container-custom">
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="Chọn quận" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả quận</SelectItem>
-              {districts.map(district => (
-                <SelectItem key={district} value={district}>
-                  {district}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Community Impact Banner */}
-      <div className="container-custom py-6">
-        <GlassCard className="text-center p-6 mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-2xl font-bold text-gray-900">{centers.length}</span>
-          </div>
-          <p className="text-gray-600">
-            Trung tâm đang hoạt động tại TP.HCM
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Sẵn sàng phục vụ cộng đồng 24/7
-          </p>
-        </GlassCard>
-      </div>
-
-      {/* Centers Grid */}
-      <div className="container-custom pb-16">
-        {filteredCenters.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCenters.map((center) => (
-              <GlassCard key={center.id} className="p-6 hover:shadow-xl transition-all duration-300">
-                <div className="space-y-4">
-                  {/* Center Name */}
-                  <h3 className="text-lg font-semibold text-gray-900 leading-tight">
-                    {center.name}
-                  </h3>
-
-                  {/* Address */}
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {center.address}
-                    </p>
-                  </div>
-
-                  {/* Phone */}
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                    <button
-                      onClick={() => handleCall(center.phone)}
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
-                    >
-                      {center.phone}
-                    </button>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-2 pt-2">
-                    <GlassButton
-                      variant="primary"
-                      size="sm"
-                      onClick={() => handleDirections(center.address)}
-                      className="flex-1"
-                    >
-                      <Navigation className="h-4 w-4" />
-                      Chỉ đường
-                    </GlassButton>
-                    <GlassButton
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleCall(center.phone)}
-                      className="flex-1"
-                    >
-                      <Phone className="h-4 w-4" />
-                      Gọi ngay
-                    </GlassButton>
-                  </div>
-                </div>
-              </GlassCard>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MapPin className="h-8 w-8 text-gray-400" />
+        {/* Filters */}
+        <div className="container-custom">
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Không tìm thấy trung tâm
-            </h3>
-            <p className="text-gray-500">
-              Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc quận
-            </p>
+            <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue placeholder="Chọn quận" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả quận</SelectItem>
+                {districts.map(district => (
+                  <SelectItem key={district} value={district}>
+                    {district}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        )}
-      </div>
+        </div>
+
+        {/* Community Impact Banner */}
+        <div className="container-custom py-6">
+          <GlassCard className="text-center p-6 mb-8">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-2xl font-bold text-gray-900">{centers.length}</span>
+            </div>
+            <p className="text-gray-600">
+              Trung tâm đang hoạt động tại TP.HCM
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              Sẵn sàng phục vụ cộng đồng 24/7
+            </p>
+          </GlassCard>
+        </div>
+
+        {/* Centers Grid */}
+        <div className="container-custom pb-16">
+          {filteredCenters.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredCenters.map((center) => (
+                <GlassCard key={center.id} className="p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="space-y-4">
+                    {/* Center Name */}
+                    <h3 className="text-lg font-semibold text-gray-900 leading-tight">
+                      {center.name}
+                    </h3>
+
+                    {/* Address */}
+                    <div className="flex items-start gap-3">
+                      <MapPin className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
+                      <p className="text-gray-600 text-sm leading-relaxed">
+                        {center.address}
+                      </p>
+                    </div>
+
+                    {/* Phone */}
+                    <div className="flex items-center gap-3">
+                      <Phone className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                      <button
+                        onClick={() => handleCall(center.phone)}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+                      >
+                        {center.phone}
+                      </button>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2 pt-2">
+                      <GlassButton
+                        variant="primary"
+                        size="sm"
+                        onClick={() => handleDirections(center.address)}
+                        className="flex-1"
+                      >
+                        <Navigation className="h-4 w-4" />
+                        Chỉ đường
+                      </GlassButton>
+                      <GlassButton
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleCall(center.phone)}
+                        className="flex-1"
+                      >
+                        <Phone className="h-4 w-4" />
+                        Gọi ngay
+                      </GlassButton>
+                    </div>
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Không tìm thấy trung tâm
+              </h3>
+              <p className="text-gray-500">
+                Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc quận
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 };
