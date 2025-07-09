@@ -295,19 +295,7 @@ const Gallery: React.FC = () => {
                     />
                   </div>
                 )}
-                {/* Show images for this album */}
-                {images[gallery.id] && images[gallery.id].length > 0 && (
-                  <div className="p-5 pt-0 grid grid-cols-2 gap-2">
-                    {images[gallery.id].map((img) => (
-                      <img
-                        key={img.id}
-                        src={img.url}
-                        alt={img.caption || ''}
-                        className="rounded-lg object-cover w-full h-32"
-                      />
-                    ))}
-                  </div>
-                )}
+                {/* Removed image grid from album card on /gallery */}
               </div>
             ))}
           </div>
