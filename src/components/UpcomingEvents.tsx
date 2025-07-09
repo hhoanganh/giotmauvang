@@ -55,7 +55,7 @@ const UpcomingEvents: React.FC = () => {
             Sự Kiện Hiến Máu
             <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent mt-2"> Sắp Tới</span>
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Tham gia các sự kiện hiến máu tại TP. Hồ Chí Minh và trở thành người hùng thầm lặng
           </p>
         </div>
