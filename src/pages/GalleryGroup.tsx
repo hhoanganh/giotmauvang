@@ -30,6 +30,7 @@ const GalleryGroup: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch gallery info
   useEffect(() => {
@@ -44,6 +45,7 @@ const GalleryGroup: React.FC = () => {
   // Fetch images for this gallery
   useEffect(() => {
     const fetchImages = async () => {
+      setLoading(true);
       const { data, error } = await supabase
         .from('gallery_images')
         .select('*')
@@ -51,6 +53,7 @@ const GalleryGroup: React.FC = () => {
         .order('uploaded_at', { ascending: true });
       if (!error && data) setImages(data);
       else setImages([]);
+      setLoading(false);
     };
     if (groupId) fetchImages();
   }, [groupId]);
@@ -146,6 +149,14 @@ const GalleryGroup: React.FC = () => {
             )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {!loading && images.length === 0 && (
+              <div className="text-center text-gray-500 mt-8">
+                Chưa có ảnh nào trong album này.
+              </div>
+            )}
+            {loading && (
+              <div className="text-center text-gray-400 mt-8">Đang tải ảnh...</div>
+            )}
             {images.map((img) => (
               <div key={img.id} className="rounded-xl overflow-hidden bg-white/80 shadow hover:shadow-lg transition-all duration-300 flex flex-col">
                 <div className="aspect-[4/3] w-full bg-gray-100 flex items-center justify-center overflow-hidden">

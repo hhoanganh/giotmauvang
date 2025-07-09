@@ -29,6 +29,7 @@ const Gallery: React.FC = () => {
   const [uploading, setUploading] = useState<{ [key: string]: boolean }>({});
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Modal state
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -44,9 +45,11 @@ const Gallery: React.FC = () => {
 
   // Fetch all galleries on mount
   const fetchGalleries = async () => {
+    setLoading(true);
     const { data, error } = await supabase.from('galleries').select('*').order('created_at', { ascending: false });
     if (error) setError('Lỗi khi tải danh sách album: ' + error.message);
     else setGalleries(data || []);
+    setLoading(false);
   };
   useEffect(() => { fetchGalleries(); }, []);
 
@@ -299,10 +302,13 @@ const Gallery: React.FC = () => {
               </div>
             ))}
           </div>
-          {galleries.length === 0 && !error && (
+          {!loading && galleries.length === 0 && !error && (
             <div className="text-center text-gray-500 mt-8">
               Chưa có album nào. {isAdmin && "Hãy tạo album mới!"}
             </div>
+          )}
+          {loading && (
+            <div className="text-center text-gray-400 mt-8">Đang tải dữ liệu...</div>
           )}
         </div>
         {/* Create Modal */}
