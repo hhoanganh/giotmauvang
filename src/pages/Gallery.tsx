@@ -103,6 +103,7 @@ const Gallery: React.FC = () => {
           title: formTitle,
           description: formDescription,
           cover_image: coverUrl,
+          created_by: profile?.id, // Set created_by
         },
       ]);
       if (insertError) throw insertError;
@@ -180,6 +181,7 @@ const Gallery: React.FC = () => {
         {
           gallery_id: galleryId,
           url: publicUrl,
+          uploaded_by: profile?.id, // Set uploaded_by
         },
       ]);
       if (insertError) throw insertError;

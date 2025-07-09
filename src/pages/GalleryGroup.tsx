@@ -88,6 +88,7 @@ const GalleryGroup: React.FC = () => {
         {
           gallery_id: gallery.id,
           url: publicUrl,
+          uploaded_by: profile?.id, // Set uploaded_by
         },
       ]);
       if (insertError) throw insertError;
