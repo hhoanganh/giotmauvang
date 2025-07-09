@@ -27,7 +27,7 @@ const initialPhotoGroups = [
   }
 ];
 
-const BUCKET = 'gallery'; // You may need to create this bucket in Supabase Storage
+const BUCKET = 'gallery';
 
 const Gallery: React.FC = () => {
   const { profile } = useAuth();
@@ -50,16 +50,30 @@ const Gallery: React.FC = () => {
     setUploading((prev) => ({ ...prev, [groupId]: true }));
     try {
       const filePath = `${groupId}/${Date.now()}_${file.name}`;
+      console.log('Uploading to bucket:', BUCKET, 'filePath:', filePath, 'file:', file);
       const { data, error: uploadError } = await supabase.storage.from(BUCKET).upload(filePath, file, {
         cacheControl: '3600',
         upsert: false,
       });
-      if (uploadError) throw uploadError;
-      // Get public URL
+      console.log('Upload response:', data, uploadError);
+      if (uploadError) {
+        setError('Upload failed: ' + uploadError.message);
+        setUploading((prev) => ({ ...prev, [groupId]: false }));
+        return;
+      }
+      if (!data) {
+        setError('Upload failed: No data returned.');
+        setUploading((prev) => ({ ...prev, [groupId]: false }));
+        return;
+      }
       const { data: publicUrlData } = supabase.storage.from(BUCKET).getPublicUrl(filePath);
       const publicUrl = publicUrlData?.publicUrl;
-      if (!publicUrl) throw new Error('Không lấy được đường dẫn ảnh sau khi upload.');
-      // Update UI immediately
+      console.log('Public URL:', publicUrl);
+      if (!publicUrl) {
+        setError('Không lấy được đường dẫn ảnh sau khi upload.');
+        setUploading((prev) => ({ ...prev, [groupId]: false }));
+        return;
+      }
       setPhotoGroups((prev) => prev.map(group =>
         group.id === groupId
           ? { ...group, images: [...group.images, { url: publicUrl }] }
@@ -67,10 +81,9 @@ const Gallery: React.FC = () => {
       ));
       setSuccess('Tải ảnh lên thành công!');
     } catch (err: any) {
-      setError(err.message || 'Lỗi khi tải ảnh lên.');
+      setError('Lỗi khi tải ảnh lên: ' + (err.message || err));
     } finally {
       setUploading((prev) => ({ ...prev, [groupId]: false }));
-      // Reset file input value so the same file can be uploaded again if needed
       if (fileInputs.current[groupId]) fileInputs.current[groupId]!.value = '';
     }
   };
