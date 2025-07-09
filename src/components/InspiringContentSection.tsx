@@ -2,6 +2,7 @@
 import React from 'react';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle, GlassCardFooter } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
+import { Link } from 'react-router-dom';
 
 const InspiringContentSection: React.FC = () => {
   const stories = [
@@ -116,9 +117,11 @@ const InspiringContentSection: React.FC = () => {
               </div>
             </GlassCardContent>
             <GlassCardFooter>
-              <GlassButton variant="primary" size="md" className="w-full">
-                Xem tất cả tin tức
-              </GlassButton>
+              <Link to="/faq">
+                <GlassButton variant="primary" size="lg">
+                  Xem tất cả câu hỏi
+                </GlassButton>
+              </Link>
             </GlassCardFooter>
           </GlassCard>
 
