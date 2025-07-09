@@ -152,8 +152,10 @@ const InspiringContentSection: React.FC = () => {
               </p>
             </GlassCardContent>
             <GlassCardFooter>
-              <GlassButton variant="primary" size="md" className="w-full">
-                Xem thư viện
+              <GlassButton asChild variant="primary" size="md" className="w-full">
+                <Link to="/gallery">
+                  Xem thư viện
+                </Link>
               </GlassButton>
             </GlassCardFooter>
           </GlassCard>

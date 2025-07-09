@@ -12,6 +12,8 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Faq from "./pages/Faq";
 import News from "./pages/News";
+import Gallery from "./pages/Gallery";
+import GalleryGroup from "./pages/GalleryGroup";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/news" element={<News />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/faq" element={<Faq />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/gallery/:groupId" element={<GalleryGroup />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
