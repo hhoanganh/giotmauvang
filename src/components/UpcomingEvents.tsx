@@ -84,25 +84,6 @@ const UpcomingEvents: React.FC = () => {
             </GlassButton>
           </Link>
         </div>
-
-        {/* Call to Action */}
-        <div className="flex justify-center">
-          <GlassCard className="max-w-lg mx-auto p-8 text-center">
-            <GlassCardHeader className="pb-4">
-              <GlassCardTitle className="text-2xl mb-3">
-                Không tìm thấy sự kiện phù hợp?
-              </GlassCardTitle>
-            </GlassCardHeader>
-            <GlassCardContent>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Đăng ký nhận thông báo về các sự kiện hiến máu mới tại khu vực của bạn
-              </p>
-              <GlassButton variant="secondary" size="lg" className="w-full">
-                Đăng ký thông báo
-              </GlassButton>
-            </GlassCardContent>
-          </GlassCard>
-        </div>
       </div>
     </section>
   );
