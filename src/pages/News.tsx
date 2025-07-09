@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Header } from '@/components/Header';
+import Header from '@/components/Header';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
 

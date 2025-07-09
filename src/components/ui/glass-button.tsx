@@ -1,15 +1,17 @@
 
 import React from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@/lib/utils';
 
 interface GlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
+  asChild?: boolean;
   children: React.ReactNode;
 }
 
 const GlassButton = React.forwardRef<HTMLButtonElement, GlassButtonProps>(
-  ({ className, variant = 'default', size = 'md', children, ...props }, ref) => {
+  ({ className, variant = 'default', size = 'md', asChild = false, children, ...props }, ref) => {
     const baseClasses = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl font-inter font-medium tracking-tight transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none";
     
     const variants = {
@@ -25,14 +27,16 @@ const GlassButton = React.forwardRef<HTMLButtonElement, GlassButtonProps>(
       lg: "text-base h-12 px-8 py-3"
     };
 
+    const Comp = asChild ? Slot : "button";
+
     return (
-      <button
+      <Comp
         className={cn(baseClasses, variants[variant], sizes[size], className)}
         ref={ref}
         {...props}
       >
         {children}
-      </button>
+      </Comp>
     );
   }
 );
