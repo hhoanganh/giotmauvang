@@ -118,8 +118,22 @@ const Gallery: React.FC = () => {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Khám phá các album ảnh từ sự kiện và trung tâm hiến máu
             </p>
+            <div className="text-xs text-gray-400 mt-2">Debug: profile?.primary_role = {profile?.primary_role?.toString() ?? 'null'}, isAdmin = {isAdmin ? 'true' : 'false'}</div>
             {error && <div className="mt-4 text-red-600 font-medium">{error}</div>}
             {success && <div className="mt-4 text-green-600 font-medium">{success}</div>}
+            {isAdmin && (
+              <button
+                className="mt-6 px-6 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition-colors"
+                onClick={() => {
+                  // setShowCreateModal(true); // This state is not defined in the original file
+                  // setFormTitle(''); // This state is not defined in the original file
+                  // setFormDescription(''); // This state is not defined in the original file
+                  // setFormCover(null); // This state is not defined in the original file
+                }}
+              >
+                + Tạo album mới
+              </button>
+            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {galleries.map((gallery) => (
