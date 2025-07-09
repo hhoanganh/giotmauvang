@@ -1,11 +1,12 @@
 
 import React, { useState, useMemo } from 'react';
-import { ArrowLeft, MapPin, Phone, Navigation, Search } from 'lucide-react';
+import { MapPin, Phone, Navigation, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Header from '@/components/Header';
 
 interface DonationCenter {
   id: string;
@@ -113,48 +114,51 @@ const Centers: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-red-100">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-10">
-        <div className="container-custom py-4">
-          <div className="flex items-center gap-4 mb-4">
-            <Link to="/" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <ArrowLeft className="h-5 w-5 text-gray-600" />
-            </Link>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                Tất cả trung tâm hiến máu
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Tìm trung tâm gần bạn để tham gia hiến máu!
-              </p>
-            </div>
-          </div>
+      {/* Consistent Header */}
+      <Header />
 
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Chọn quận" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả quận</SelectItem>
-                {districts.map(district => (
-                  <SelectItem key={district} value={district}>
-                    {district}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      {/* Title & Subtitle Section (matching Events.tsx) */}
+      <div className="section-padding">
+        <div className="container-custom">
+          <div className="text-center mb-8 space-y-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-inter font-bold text-gray-900 tracking-tight leading-tight">
+              Tất Cả Trung Tâm
+              <span className="block bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent mt-2">
+                Hiến Máu
+              </span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Tìm trung tâm gần bạn để tham gia hiến máu!
+            </p>
           </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="container-custom">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue placeholder="Chọn quận" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả quận</SelectItem>
+              {districts.map(district => (
+                <SelectItem key={district} value={district}>
+                  {district}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
