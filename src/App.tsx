@@ -11,6 +11,7 @@ import Centers from "./pages/Centers";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Faq from "./pages/Faq";
+import News from "./pages/News";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/events" element={<Events />} />
             <Route path="/centers" element={<Centers />} />
+            <Route path="/news" element={<News />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/faq" element={<Faq />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
