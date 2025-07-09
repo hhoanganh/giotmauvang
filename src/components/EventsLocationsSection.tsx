@@ -104,10 +104,18 @@ const EventsLocationsSection: React.FC = () => {
                       <p className="text-gray-600 mb-2">📍 {center.address}</p>
                       <p className="text-gray-600">📞 {center.phone}</p>
                     </div>
-                    
-                    {/* Right: Small Map */}
-                    <div className="w-32 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <span className="text-gray-500 text-sm">🗺️</span>
+                    {/* Right: Google Map Embed */}
+                    <div className="w-32 h-24 rounded-lg overflow-hidden flex items-center justify-center bg-gray-100">
+                      <iframe
+                        title={`Bản đồ ${center.name}`}
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                        allowFullScreen
+                        referrerPolicy="no-referrer-when-downgrade"
+                        src={`https://www.google.com/maps?q=${encodeURIComponent(center.address)}&output=embed`}
+                      ></iframe>
                     </div>
                   </div>
                 </GlassCard>
