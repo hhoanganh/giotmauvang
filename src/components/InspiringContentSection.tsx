@@ -1,8 +1,15 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle, GlassCardFooter } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+
+type GalleryImage = {
+  id: string;
+  url: string;
+  caption?: string;
+};
 
 const InspiringContentSection: React.FC = () => {
   const stories = [
@@ -43,6 +50,21 @@ const InspiringContentSection: React.FC = () => {
       date: "15/12/2024"
     }
   ];
+
+  const [latestImages, setLatestImages] = useState<GalleryImage[]>([]);
+
+  useEffect(() => {
+    const fetchLatestImages = async () => {
+      const { data, error } = await supabase
+        .from('gallery_images')
+        .select('id, url, caption')
+        .order('uploaded_at', { ascending: false })
+        .limit(4);
+      if (!error && data) setLatestImages(data);
+      else setLatestImages([]);
+    };
+    fetchLatestImages();
+  }, []);
 
   return (
     <section className="py-16 px-4 bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -134,18 +156,27 @@ const InspiringContentSection: React.FC = () => {
             </GlassCardHeader>
             <GlassCardContent variant="with-bottom-button">
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="aspect-square bg-gradient-to-br from-red-100 to-pink-100 rounded-xl flex items-center justify-center text-4xl">
-                  🏥
-                </div>
-                <div className="aspect-square bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center text-4xl">
-                  👥
-                </div>
-                <div className="aspect-square bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center text-4xl">
-                  🩸
-                </div>
-                <div className="aspect-square bg-gradient-to-br from-orange-100 to-yellow-100 rounded-xl flex items-center justify-center text-4xl">
-                  ❤️
-                </div>
+                {latestImages.length > 0
+                  ? latestImages.map((img, idx) => (
+                      <div
+                        key={img.id}
+                        className="aspect-square bg-gradient-to-br from-red-100 to-pink-100 rounded-xl flex items-center justify-center overflow-hidden"
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.caption || `Ảnh ${idx + 1}`}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    ))
+                  : [1, 2, 3, 4].map((n) => (
+                      <div
+                        key={n}
+                        className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center text-4xl text-gray-300"
+                      >
+                        🖼️
+                      </div>
+                    ))}
               </div>
               <p className="text-gray-600 text-sm text-center">
                 Hình ảnh từ các trung tâm hiến máu và sự kiện cộng đồng
