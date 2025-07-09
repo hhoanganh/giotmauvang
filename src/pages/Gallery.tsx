@@ -30,15 +30,25 @@ const Gallery: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Modal state
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editGallery, setEditGallery] = useState<Gallery | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteGalleryId, setDeleteGalleryId] = useState<string | null>(null);
+
+  // Form state
+  const [formTitle, setFormTitle] = useState('');
+  const [formDescription, setFormDescription] = useState('');
+  const [formCover, setFormCover] = useState<File | null>(null);
+
   // Fetch all galleries on mount
-  useEffect(() => {
-    const fetchGalleries = async () => {
-      const { data, error } = await supabase.from('galleries').select('*').order('created_at', { ascending: false });
-      if (error) setError('Lỗi khi tải danh sách album: ' + error.message);
-      else setGalleries(data || []);
-    };
-    fetchGalleries();
-  }, []);
+  const fetchGalleries = async () => {
+    const { data, error } = await supabase.from('galleries').select('*').order('created_at', { ascending: false });
+    if (error) setError('Lỗi khi tải danh sách album: ' + error.message);
+    else setGalleries(data || []);
+  };
+  useEffect(() => { fetchGalleries(); }, []);
 
   // Fetch images for each gallery
   useEffect(() => {
@@ -58,6 +68,99 @@ const Gallery: React.FC = () => {
     if (galleries.length > 0) fetchAllImages();
   }, [galleries]);
 
+  // Upload image to storage and return public URL
+  const uploadImage = async (galleryId: string, file: File) => {
+    const filePath = `${galleryId}/${Date.now()}_${file.name}`;
+    const { error: uploadError } = await supabase.storage.from(BUCKET).upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+    if (uploadError) throw uploadError;
+    const { data: publicUrlData } = supabase.storage.from(BUCKET).getPublicUrl(filePath);
+    const publicUrl = publicUrlData?.publicUrl;
+    if (!publicUrl) throw new Error('Không lấy được đường dẫn ảnh sau khi upload.');
+    return publicUrl;
+  };
+
+  // Album creation
+  const handleCreateAlbum = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    try {
+      if (!formTitle.trim()) throw new Error('Tiêu đề album là bắt buộc.');
+      let coverUrl = '';
+      const newId = formTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+      if (formCover) {
+        coverUrl = await uploadImage(newId, formCover);
+      }
+      const { error: insertError } = await supabase.from('galleries').insert([
+        {
+          id: newId,
+          title: formTitle,
+          description: formDescription,
+          cover_image: coverUrl,
+        },
+      ]);
+      if (insertError) throw insertError;
+      setShowCreateModal(false);
+      setFormTitle('');
+      setFormDescription('');
+      setFormCover(null);
+      setSuccess('Tạo album thành công!');
+      fetchGalleries();
+    } catch (err: any) {
+      setError('Lỗi khi tạo album: ' + (err.message || err));
+    }
+  };
+
+  // Album editing
+  const handleEditAlbum = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editGallery) return;
+    setError(null);
+    setSuccess(null);
+    try {
+      let coverUrl = editGallery.cover_image || '';
+      if (formCover) {
+        coverUrl = await uploadImage(editGallery.id, formCover);
+      }
+      const { error: updateError } = await supabase.from('galleries').update({
+        title: formTitle,
+        description: formDescription,
+        cover_image: coverUrl,
+      }).eq('id', editGallery.id);
+      if (updateError) throw updateError;
+      setShowEditModal(false);
+      setEditGallery(null);
+      setFormTitle('');
+      setFormDescription('');
+      setFormCover(null);
+      setSuccess('Cập nhật album thành công!');
+      fetchGalleries();
+    } catch (err: any) {
+      setError('Lỗi khi cập nhật album: ' + (err.message || err));
+    }
+  };
+
+  // Album deletion
+  const handleDeleteAlbum = async () => {
+    if (!deleteGalleryId) return;
+    setError(null);
+    setSuccess(null);
+    try {
+      const { error: deleteError } = await supabase.from('galleries').delete().eq('id', deleteGalleryId);
+      if (deleteError) throw deleteError;
+      setShowDeleteConfirm(false);
+      setDeleteGalleryId(null);
+      setSuccess('Xóa album thành công!');
+      fetchGalleries();
+    } catch (err: any) {
+      setError('Lỗi khi xóa album: ' + (err.message || err));
+    }
+  };
+
+  // Image upload for each album
   const handleUploadClick = (galleryId: string) => {
     fileInputs.current[galleryId]?.click();
   };
@@ -69,18 +172,7 @@ const Gallery: React.FC = () => {
     setSuccess(null);
     setUploading((prev) => ({ ...prev, [galleryId]: true }));
     try {
-      // 1. Upload to storage
-      const filePath = `${galleryId}/${Date.now()}_${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage.from(BUCKET).upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false,
-      });
-      if (uploadError) throw uploadError;
-      // 2. Get public URL
-      const { data: publicUrlData } = supabase.storage.from(BUCKET).getPublicUrl(filePath);
-      const publicUrl = publicUrlData?.publicUrl;
-      if (!publicUrl) throw new Error('Không lấy được đường dẫn ảnh sau khi upload.');
-      // 3. Insert into gallery_images
+      const publicUrl = await uploadImage(galleryId, file);
       const { error: insertError } = await supabase.from('gallery_images').insert([
         {
           gallery_id: galleryId,
@@ -89,7 +181,7 @@ const Gallery: React.FC = () => {
       ]);
       if (insertError) throw insertError;
       setSuccess('Tải ảnh lên thành công!');
-      // 4. Refetch images for this gallery
+      // Refetch images for this gallery
       const { data: newImages, error: fetchError } = await supabase
         .from('gallery_images')
         .select('*')
@@ -104,6 +196,15 @@ const Gallery: React.FC = () => {
       setUploading((prev) => ({ ...prev, [galleryId]: false }));
       if (fileInputs.current[galleryId]) fileInputs.current[galleryId]!.value = '';
     }
+  };
+
+  // Modal helpers
+  const openEditModal = (gallery: Gallery) => {
+    setEditGallery(gallery);
+    setFormTitle(gallery.title);
+    setFormDescription(gallery.description || '');
+    setFormCover(null);
+    setShowEditModal(true);
   };
 
   return (
@@ -125,10 +226,10 @@ const Gallery: React.FC = () => {
               <button
                 className="mt-6 px-6 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition-colors"
                 onClick={() => {
-                  // setShowCreateModal(true); // This state is not defined in the original file
-                  // setFormTitle(''); // This state is not defined in the original file
-                  // setFormDescription(''); // This state is not defined in the original file
-                  // setFormCover(null); // This state is not defined in the original file
+                  setShowCreateModal(true);
+                  setFormTitle('');
+                  setFormDescription('');
+                  setFormCover(null);
                 }}
               >
                 + Tạo album mới
@@ -162,9 +263,24 @@ const Gallery: React.FC = () => {
                   </div>
                 </Link>
                 {isAdmin && (
-                  <>
+                  <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
                     <button
-                      className="absolute top-3 right-3 z-10 bg-red-600 text-white px-3 py-1 rounded shadow hover:bg-red-700 transition-colors text-xs font-semibold disabled:opacity-60"
+                      className="bg-blue-600 text-white px-2 py-1 rounded shadow hover:bg-blue-700 text-xs font-semibold"
+                      onClick={() => openEditModal(gallery)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bg-gray-600 text-white px-2 py-1 rounded shadow hover:bg-gray-700 text-xs font-semibold"
+                      onClick={() => {
+                        setDeleteGalleryId(gallery.id);
+                        setShowDeleteConfirm(true);
+                      }}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className="bg-red-600 text-white px-2 py-1 rounded shadow hover:bg-red-700 text-xs font-semibold disabled:opacity-60"
                       onClick={() => handleUploadClick(gallery.id)}
                       disabled={uploading[gallery.id]}
                     >
@@ -177,7 +293,7 @@ const Gallery: React.FC = () => {
                       ref={el => (fileInputs.current[gallery.id] = el)}
                       onChange={e => handleFileChange(gallery.id, e)}
                     />
-                  </>
+                  </div>
                 )}
                 {/* Show images for this album */}
                 {images[gallery.id] && images[gallery.id].length > 0 && (
@@ -201,6 +317,121 @@ const Gallery: React.FC = () => {
             </div>
           )}
         </div>
+        {/* Create Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <form
+              className="bg-white rounded-lg p-8 shadow-lg w-full max-w-md"
+              onSubmit={handleCreateAlbum}
+            >
+              <h2 className="text-xl font-bold mb-4">Tạo album mới</h2>
+              <label className="block mb-2 font-medium">Tiêu đề *</label>
+              <input
+                className="w-full border rounded px-3 py-2 mb-4"
+                value={formTitle}
+                onChange={e => setFormTitle(e.target.value)}
+                required
+              />
+              <label className="block mb-2 font-medium">Mô tả</label>
+              <textarea
+                className="w-full border rounded px-3 py-2 mb-4"
+                value={formDescription}
+                onChange={e => setFormDescription(e.target.value)}
+              />
+              <label className="block mb-2 font-medium">Ảnh bìa</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="mb-4"
+                onChange={e => setFormCover(e.target.files?.[0] || null)}
+              />
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="bg-red-600 text-white px-4 py-2 rounded font-semibold hover:bg-red-700"
+                >
+                  Tạo album
+                </button>
+                <button
+                  type="button"
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded font-semibold hover:bg-gray-400"
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+        {/* Edit Modal */}
+        {showEditModal && editGallery && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <form
+              className="bg-white rounded-lg p-8 shadow-lg w-full max-w-md"
+              onSubmit={handleEditAlbum}
+            >
+              <h2 className="text-xl font-bold mb-4">Chỉnh sửa album</h2>
+              <label className="block mb-2 font-medium">Tiêu đề *</label>
+              <input
+                className="w-full border rounded px-3 py-2 mb-4"
+                value={formTitle}
+                onChange={e => setFormTitle(e.target.value)}
+                required
+              />
+              <label className="block mb-2 font-medium">Mô tả</label>
+              <textarea
+                className="w-full border rounded px-3 py-2 mb-4"
+                value={formDescription}
+                onChange={e => setFormDescription(e.target.value)}
+              />
+              <label className="block mb-2 font-medium">Ảnh bìa (chọn để thay đổi)</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="mb-4"
+                onChange={e => setFormCover(e.target.files?.[0] || null)}
+              />
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-4 py-2 rounded font-semibold hover:bg-blue-700"
+                >
+                  Lưu thay đổi
+                </button>
+                <button
+                  type="button"
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded font-semibold hover:bg-gray-400"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+        {/* Delete Confirm */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 shadow-lg w-full max-w-md text-center">
+              <h2 className="text-xl font-bold mb-4">Xóa album?</h2>
+              <p className="mb-6">Bạn có chắc chắn muốn xóa album này? Tất cả ảnh trong album cũng sẽ bị xóa.</p>
+              <div className="flex gap-2 justify-center">
+                <button
+                  className="bg-red-600 text-white px-4 py-2 rounded font-semibold hover:bg-red-700"
+                  onClick={handleDeleteAlbum}
+                >
+                  Xóa
+                </button>
+                <button
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded font-semibold hover:bg-gray-400"
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  Hủy
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
