@@ -31,13 +31,16 @@ const GalleryGroup: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingGallery, setLoadingGallery] = useState(true);
 
   // Fetch gallery info
   useEffect(() => {
     const fetchGallery = async () => {
+      setLoadingGallery(true);
       const { data, error } = await supabase.from('galleries').select('*').eq('id', groupId).single();
       if (!error && data) setGallery(data);
       else setGallery(null);
+      setLoadingGallery(false);
     };
     if (groupId) fetchGallery();
   }, [groupId]);
@@ -104,6 +107,14 @@ const GalleryGroup: React.FC = () => {
     }
   };
 
+  if (loadingGallery) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-50/30 to-orange-50/30">
+        <Header />
+        <div className="text-center mt-20 text-gray-400">Đang tải album...</div>
+      </div>
+    );
+  }
   if (!gallery) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-50/30 to-orange-50/30">

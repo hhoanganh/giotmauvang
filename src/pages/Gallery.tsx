@@ -222,7 +222,6 @@ const Gallery: React.FC = () => {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Khám phá các album ảnh từ sự kiện và trung tâm hiến máu
             </p>
-            <div className="text-xs text-gray-400 mt-2">Debug: profile?.primary_role = {profile?.primary_role?.toString() ?? 'null'}, isAdmin = {isAdmin ? 'true' : 'false'}</div>
             {error && <div className="mt-4 text-red-600 font-medium">{error}</div>}
             {success && <div className="mt-4 text-green-600 font-medium">{success}</div>}
             {isAdmin && (
