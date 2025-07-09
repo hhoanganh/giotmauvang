@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
@@ -138,4 +139,4 @@ const News: React.FC = () => {
   );
 };
 
-export default News; 
+export default News;
