@@ -117,9 +117,9 @@ const InspiringContentSection: React.FC = () => {
               </div>
             </GlassCardContent>
             <GlassCardFooter>
-              <GlassButton asChild variant="primary" size="lg">
-                <Link to="/faq">Xem tất cả câu hỏi</Link>
-              </GlassButton>
+              <a href="/faq" style={{ display: 'block', padding: 16, background: 'red', color: 'white', textAlign: 'center', borderRadius: 8 }}>
+                Xem tất cả câu hỏi
+              </a>
             </GlassCardFooter>
           </GlassCard>
 
