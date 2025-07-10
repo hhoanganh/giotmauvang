@@ -11,47 +11,20 @@ type GalleryImage = {
   caption?: string;
 };
 
+type NewsArticle = {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  image_url: string | null;
+  category: string | null;
+  published_at: string | null;
+  type: string | null;
+};
+
 const InspiringContentSection: React.FC = () => {
-  const stories = [
-    {
-      title: "Em bé được cứu sống nhờ hiến máu kịp thời",
-      excerpt: "Câu chuyện cảm động về em bé 6 tháng tuổi được cứu sống nhờ những giọt máu quý giá từ cộng đồng...",
-      image: "👶",
-      date: "15/12/2024"
-    },
-    {
-      title: "Anh tài xế hiến máu cứu nạn nhân tai nạn",
-      excerpt: "Trong tình huống khẩn cấp, anh Minh đã không ngần ngại hiến máu để cứu một nạn nhân tai nạn giao thông...",
-      image: "🚑",
-      date: "12/12/2024"
-    },
-    {
-      title: "Đại học Y khoa tổ chức ngày hiến máu",
-      excerpt: "Hơn 200 sinh viên y khoa đã tham gia hiến máu trong ngày hội hiến máu nhân đạo...",
-      image: "🎓",
-      date: "08/12/2024"
-    }
-  ];
-
-  const news = [
-    {
-      title: "TP.HCM thiếu hụt máu nhóm O trong dịp Tết",
-      category: "Tin tức",
-      date: "20/12/2024"
-    },
-    {
-      title: "Công nghệ mới giúp bảo quản máu lâu hơn",
-      category: "Khoa học",
-      date: "18/12/2024"
-    },
-    {
-      title: "Lễ tôn vinh người hiến máu tiêu biểu 2024",
-      category: "Sự kiện",
-      date: "15/12/2024"
-    }
-  ];
-
   const [latestImages, setLatestImages] = useState<GalleryImage[]>([]);
+  const [latestArticles, setLatestArticles] = useState<NewsArticle[]>([]);
+  const [isLoadingArticles, setIsLoadingArticles] = useState(true);
 
   useEffect(() => {
     const fetchLatestImages = async () => {
@@ -65,6 +38,44 @@ const InspiringContentSection: React.FC = () => {
     };
     fetchLatestImages();
   }, []);
+
+  useEffect(() => {
+    const fetchLatestArticles = async () => {
+      setIsLoadingArticles(true);
+      const { data, error } = await supabase
+        .from('news_articles')
+        .select('id, title, excerpt, image_url, category, published_at, type')
+        .eq('status', 'published')
+        .order('published_at', { ascending: false })
+        .limit(3);
+      
+      if (!error && data) {
+        setLatestArticles(data);
+      } else {
+        console.error('Error fetching articles:', error);
+        setLatestArticles([]);
+      }
+      setIsLoadingArticles(false);
+    };
+    fetchLatestArticles();
+  }, []);
+
+  const getCategoryColor = (category: string | null) => {
+    switch (category) {
+      case "news":
+        return "bg-blue-100 text-blue-600";
+      case "story":
+        return "bg-purple-100 text-purple-600";
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+  };
 
   return (
     <section className="py-16 px-4 bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -81,27 +92,68 @@ const InspiringContentSection: React.FC = () => {
         {/* Success Stories */}
         <div className="mb-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {stories.map((story, index) => (
-              <GlassCard key={index} className="overflow-hidden hover:shadow-xl transition-all duration-300">
-                <div className="h-32 bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-6xl">
-                  {story.image}
-                </div>
-                <GlassCardHeader className="pb-4">
-                  <GlassCardTitle className="text-lg leading-tight">
-                    {story.title}
-                  </GlassCardTitle>
-                  <p className="text-sm text-gray-500">{story.date}</p>
-                </GlassCardHeader>
-                <GlassCardContent>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                    {story.excerpt}
-                  </p>
-                  <GlassButton variant="ghost" size="sm" className="w-full">
-                    Đọc tiếp
-                  </GlassButton>
-                </GlassCardContent>
-              </GlassCard>
-            ))}
+            {isLoadingArticles ? (
+              // Loading skeleton
+              Array.from({ length: 3 }).map((_, index) => (
+                <GlassCard key={index} className="overflow-hidden">
+                  <div className="h-32 bg-gray-200 animate-pulse"></div>
+                  <GlassCardHeader className="pb-4">
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                  </GlassCardHeader>
+                  <GlassCardContent>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                    </div>
+                  </GlassCardContent>
+                </GlassCard>
+              ))
+            ) : latestArticles.length > 0 ? (
+              latestArticles.map((article, index) => (
+                <GlassCard key={article.id} className="overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div className="h-32 bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center overflow-hidden">
+                    {article.image_url ? (
+                      <img
+                        src={article.image_url}
+                        alt={article.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-6xl">
+                        {article.type === 'story' ? '📖' : '📰'}
+                      </span>
+                    )}
+                  </div>
+                  <GlassCardHeader className="pb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(article.category)}`}>
+                        {article.category === 'story' ? 'Câu chuyện' : 'Tin tức'}
+                      </span>
+                      <span className="text-sm text-gray-500">{formatDate(article.published_at)}</span>
+                    </div>
+                    <GlassCardTitle className="text-lg leading-tight">
+                      {article.title}
+                    </GlassCardTitle>
+                  </GlassCardHeader>
+                  <GlassCardContent>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                      {article.excerpt || 'Không có tóm tắt...'}
+                    </p>
+                    <Link to={`/news/${article.id}`}>
+                      <GlassButton variant="ghost" size="sm" className="w-full">
+                        Đọc tiếp
+                      </GlassButton>
+                    </Link>
+                  </GlassCardContent>
+                </GlassCard>
+              ))
+            ) : (
+              // Empty state
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500">Chưa có tin tức nào được đăng tải.</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -116,23 +168,35 @@ const InspiringContentSection: React.FC = () => {
             </GlassCardHeader>
             <GlassCardContent variant="with-bottom-button">
               <div className="space-y-4">
-                {news.map((article, index) => (
-                  <div key={index} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 mb-1 leading-tight">
-                          {article.title}
-                        </h4>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-600 rounded-full text-xs">
-                            {article.category}
-                          </span>
-                          <span>{article.date}</span>
+                {isLoadingArticles ? (
+                  // Loading skeleton for news list
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
+                      <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded animate-pulse w-1/3"></div>
+                    </div>
+                  ))
+                ) : latestArticles.length > 0 ? (
+                  latestArticles.slice(0, 3).map((article, index) => (
+                    <div key={article.id} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900 mb-1 leading-tight">
+                            {article.title}
+                          </h4>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <span className={`px-2 py-1 rounded-full text-xs ${getCategoryColor(article.category)}`}>
+                              {article.category === 'story' ? 'Câu chuyện' : 'Tin tức'}
+                            </span>
+                            <span>{formatDate(article.published_at)}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center py-4">Chưa có tin tức nào.</p>
+                )}
               </div>
             </GlassCardContent>
             <GlassCardFooter>
