@@ -5,7 +5,7 @@ import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 
-// Define the type for news articles
+// Define the type for news articles (no read_time)
 interface NewsArticle {
   id: string;
   title: string;
@@ -13,7 +13,6 @@ interface NewsArticle {
   image_url: string | null;
   category: string | null;
   published_at: string | null;
-  read_time?: string | null;
 }
 
 const News: React.FC = () => {
@@ -32,7 +31,7 @@ const News: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('news_articles')
-          .select('id, title, excerpt, image_url, category, published_at, read_time')
+          .select('id, title, excerpt, image_url, category, published_at') // removed read_time
           .eq('status', 'published')
           .order('published_at', { ascending: false })
           .limit(12);
@@ -66,6 +65,13 @@ const News: React.FC = () => {
         return 'bg-gray-100 text-gray-600';
     }
   };
+
+  // Optional: Calculate estimated read time from excerpt/content length
+  // function estimateReadTime(text: string) {
+  //   const words = text.split(/\s+/).length;
+  //   const minutes = Math.ceil(words / 200); // 200 words per minute
+  //   return `${minutes} phút`;
+  // }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -121,7 +127,8 @@ const News: React.FC = () => {
                       <Badge className={getCategoryColor(article.category)}>
                         {article.category || 'Khác'}
                       </Badge>
-                      <span className="text-sm text-gray-500">{article.read_time || ''}</span>
+                      {/* Optionally show estimated read time here */}
+                      {/* <span className="text-sm text-gray-500">{estimateReadTime(article.excerpt || '')}</span> */}
                     </div>
                     <GlassCardTitle className="text-lg leading-tight">
                       {article.title}
