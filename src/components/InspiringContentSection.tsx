@@ -28,13 +28,23 @@ const InspiringContentSection: React.FC = () => {
 
   useEffect(() => {
     const fetchLatestImages = async () => {
-      const { data, error } = await supabase
-        .from('gallery_images')
-        .select('id, url, caption')
-        .order('uploaded_at', { ascending: false })
-        .limit(4);
-      if (!error && data) setLatestImages(data);
-      else setLatestImages([]);
+      try {
+        const { data, error } = await supabase
+          .from('gallery_images')
+          .select('id, url, caption')
+          .order('uploaded_at', { ascending: false })
+          .limit(4);
+        
+        if (error) {
+          console.error('Error fetching gallery images:', error);
+          setLatestImages([]);
+        } else {
+          setLatestImages(data || []);
+        }
+      } catch (err) {
+        console.error('Unexpected error fetching gallery images:', err);
+        setLatestImages([]);
+      }
     };
     fetchLatestImages();
   }, []);
@@ -44,7 +54,7 @@ const InspiringContentSection: React.FC = () => {
       setIsLoadingArticles(true);
       try {
         console.log('Fetching articles from Supabase...');
-        // Removed faulty test query
+        
         const { data, error } = await supabase
           .from('news_articles')
           .select('id, title, excerpt, image_url, category, published_at, type')
@@ -53,7 +63,7 @@ const InspiringContentSection: React.FC = () => {
           .limit(3);
         
         if (error) {
-          console.error('Supabase error:', error);
+          console.error('Supabase error fetching articles:', error);
           setLatestArticles([]);
         } else {
           console.log('Articles fetched successfully:', data);
@@ -66,6 +76,7 @@ const InspiringContentSection: React.FC = () => {
         setIsLoadingArticles(false);
       }
     };
+
     fetchLatestArticles();
   }, []);
 
