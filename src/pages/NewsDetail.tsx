@@ -80,7 +80,19 @@ const NewsDetail: React.FC = () => {
         <div className="container-custom max-w-2xl mx-auto">
           <Link to="/news" className="text-red-600 hover:underline text-sm mb-6 inline-block">← Quay lại Tin tức</Link>
           {loading ? (
-            <div className="text-center py-24 text-gray-400">Đang tải bài viết...</div>
+            <article>
+              <div className="w-full h-64 bg-gray-200 rounded-lg mb-6 animate-pulse" />
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-6 w-24 bg-gray-200 rounded-full animate-pulse" />
+                <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+              </div>
+              <div className="h-10 w-3/4 bg-gray-200 rounded mb-4 animate-pulse" />
+              <div className="space-y-3">
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" />
+              </div>
+            </article>
           ) : error ? (
             <div className="text-center py-24 text-red-500">{error}</div>
           ) : article ? (
