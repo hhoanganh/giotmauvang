@@ -24,7 +24,9 @@ type NewsArticle = {
 const InspiringContentSection: React.FC = () => {
   const [latestImages, setLatestImages] = useState<GalleryImage[]>([]);
   const [latestArticles, setLatestArticles] = useState<NewsArticle[]>([]);
+  const [latestNews, setLatestNews] = useState<NewsArticle[]>([]);
   const [isLoadingArticles, setIsLoadingArticles] = useState(true);
+  const [isLoadingNews, setIsLoadingNews] = useState(true);
 
   useEffect(() => {
     const fetchLatestImages = async () => {
@@ -53,7 +55,7 @@ const InspiringContentSection: React.FC = () => {
     const fetchLatestArticles = async () => {
       setIsLoadingArticles(true);
       try {
-        console.log('Fetching articles from Supabase...');
+        console.log('Fetching stories from Supabase...');
         
         const { data, error } = await supabase
           .from('news_articles')
@@ -64,14 +66,14 @@ const InspiringContentSection: React.FC = () => {
           .limit(3);
         
         if (error) {
-          console.error('Supabase error fetching articles:', error);
+          console.error('Supabase error fetching stories:', error);
           setLatestArticles([]);
         } else {
-          console.log('Articles fetched successfully:', data);
+          console.log('Stories fetched successfully:', data);
           setLatestArticles(data || []);
         }
       } catch (err) {
-        console.error('Unexpected error fetching articles:', err);
+        console.error('Unexpected error fetching stories:', err);
         setLatestArticles([]);
       } finally {
         setIsLoadingArticles(false);
@@ -79,6 +81,37 @@ const InspiringContentSection: React.FC = () => {
     };
 
     fetchLatestArticles();
+  }, []);
+
+  useEffect(() => {
+    const fetchLatestNews = async () => {
+      setIsLoadingNews(true);
+      try {
+        console.log('Fetching news from Supabase...');
+        
+        const { data, error } = await supabase
+          .from('news_articles')
+          .select('id, title, excerpt, image_url, category, published_at, type')
+          .eq('status', 'published')
+          .order('published_at', { ascending: false })
+          .limit(6);
+        
+        if (error) {
+          console.error('Supabase error fetching news:', error);
+          setLatestNews([]);
+        } else {
+          console.log('News fetched successfully:', data);
+          setLatestNews(data || []);
+        }
+      } catch (err) {
+        console.error('Unexpected error fetching news:', err);
+        setLatestNews([]);
+      } finally {
+        setIsLoadingNews(false);
+      }
+    };
+
+    fetchLatestNews();
   }, []);
 
   const getCategoryColor = (category: string | null) => {
@@ -189,16 +222,16 @@ const InspiringContentSection: React.FC = () => {
             </GlassCardHeader>
             <GlassCardContent variant="with-bottom-button">
               <div className="space-y-4">
-                {isLoadingArticles ? (
+                {isLoadingNews ? (
                   // Loading skeleton for news list
-                  Array.from({ length: 3 }).map((_, index) => (
+                  Array.from({ length: 6 }).map((_, index) => (
                     <div key={index} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
                       <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
                       <div className="h-3 bg-gray-200 rounded animate-pulse w-1/3"></div>
                     </div>
                   ))
-                ) : latestArticles.length > 0 ? (
-                  latestArticles.slice(0, 3).map((article, index) => (
+                ) : latestNews.length > 0 ? (
+                  latestNews.map((article, index) => (
                     <div key={article.id} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
