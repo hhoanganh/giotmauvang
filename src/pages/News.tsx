@@ -1,83 +1,69 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+
+// Define the type for news articles
+interface NewsArticle {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  image_url: string | null;
+  category: string | null;
+  published_at: string | null;
+  read_time?: string | null;
+}
 
 const News: React.FC = () => {
+  const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const newsArticles = [
-    {
-      id: 1,
-      title: "TP.HCM thiếu hụt máu nhóm O trong dịp Tết",
-      excerpt: "Tình trạng thiếu hụt máu nhóm O đang trở nên nghiêm trọng tại các bệnh viện TP.HCM trong dịp Tết Nguyên đán...",
-      category: "Tin tức",
-      date: "20/12/2024",
-      image: "🏥",
-      readTime: "3 phút"
-    },
-    {
-      id: 2,
-      title: "Công nghệ mới giúp bảo quản máu lâu hơn",
-      excerpt: "Các nhà khoa học đã phát triển công nghệ mới giúp bảo quản máu hiến tặng trong thời gian dài hơn...",
-      category: "Khoa học",
-      date: "18/12/2024",
-      image: "🔬",
-      readTime: "5 phút"
-    },
-    {
-      id: 3,
-      title: "Lễ tôn vinh người hiến máu tiêu biểu 2024",
-      excerpt: "Buổi lễ tôn vinh những người hiến máu tiêu biểu đã được tổ chức tại Hà Nội với sự tham gia của hơn 500 người...",
-      category: "Sự kiện",
-      date: "15/12/2024",
-      image: "🏆",
-      readTime: "4 phút"
-    },
-    {
-      id: 4,
-      title: "Chiến dịch hiến máu tình nguyện tại các trường đại học",
-      excerpt: "Hơn 50 trường đại học trên cả nước đã tham gia chiến dịch hiến máu tình nguyện mùa hè 2024...",
-      category: "Tin tức",
-      date: "12/12/2024",
-      image: "🎓",
-      readTime: "3 phút"
-    },
-    {
-      id: 5,
-      title: "Hướng dẫn mới về quy trình hiến máu an toàn",
-      excerpt: "Bộ Y tế vừa ban hành hướng dẫn mới về quy trình hiến máu an toàn với nhiều cải tiến quan trọng...",
-      category: "Hướng dẫn",
-      date: "10/12/2024",
-      image: "📋",
-      readTime: "6 phút"
-    },
-    {
-      id: 6,
-      title: "Thành lập trung tâm hiến máu mới tại Đà Nẵng",
-      excerpt: "Trung tâm hiến máu mới với công nghệ hiện đại đã được khánh thành tại Đà Nẵng...",
-      category: "Tin tức",
-      date: "08/12/2024",
-      image: "🏢",
-      readTime: "3 phút"
-    }
-  ];
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, error } = await supabase
+          .from('news_articles')
+          .select('id, title, excerpt, image_url, category, published_at, read_time')
+          .eq('status', 'published')
+          .order('published_at', { ascending: false })
+          .limit(12);
+        if (error) {
+          setError('Không thể tải tin tức.');
+          setArticles([]);
+        } else {
+          setArticles(data || []);
+        }
+      } catch (err) {
+        setError('Có lỗi xảy ra khi tải tin tức.');
+        setArticles([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchArticles();
+  }, []);
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category: string | null) => {
     switch (category) {
-      case "Tin tức":
-        return "bg-blue-100 text-blue-600";
-      case "Khoa học":
-        return "bg-purple-100 text-purple-600";
-      case "Sự kiện":
-        return "bg-green-100 text-green-600";
-      case "Hướng dẫn":
-        return "bg-orange-100 text-orange-600";
+      case 'Tin tức':
+        return 'bg-blue-100 text-blue-600';
+      case 'Khoa học':
+        return 'bg-purple-100 text-purple-600';
+      case 'Sự kiện':
+        return 'bg-green-100 text-green-600';
+      case 'Hướng dẫn':
+        return 'bg-orange-100 text-orange-600';
       default:
-        return "bg-gray-100 text-gray-600";
+        return 'bg-gray-100 text-gray-600';
     }
   };
 
@@ -98,38 +84,67 @@ const News: React.FC = () => {
 
           {/* News Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {newsArticles.map((article) => (
-              <GlassCard key={article.id} className="overflow-hidden hover:shadow-xl transition-all duration-300">
-                <div className="h-32 bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-6xl">
-                  {article.image}
-                </div>
-                <GlassCardHeader className="pb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge className={getCategoryColor(article.category)}>
-                      {article.category}
-                    </Badge>
-                    <span className="text-sm text-gray-500">{article.readTime}</span>
+            {loading ? (
+              Array.from({ length: 6 }).map((_, idx) => (
+                <GlassCard key={idx} className="overflow-hidden animate-pulse">
+                  <div className="h-32 bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-6xl" />
+                  <GlassCardHeader className="pb-4">
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                  </GlassCardHeader>
+                  <GlassCardContent>
+                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                  </GlassCardContent>
+                </GlassCard>
+              ))
+            ) : error ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-red-500">{error}</p>
+              </div>
+            ) : articles.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500">Chưa có tin tức nào được đăng tải.</p>
+              </div>
+            ) : (
+              articles.map((article) => (
+                <GlassCard key={article.id} className="overflow-hidden hover:shadow-xl transition-all duration-300">
+                  <div className="h-32 bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-6xl">
+                    {article.image_url ? (
+                      <img src={article.image_url} alt={article.title} className="h-24 w-24 object-cover rounded" />
+                    ) : (
+                      <span role="img" aria-label="news">📰</span>
+                    )}
                   </div>
-                  <GlassCardTitle className="text-lg leading-tight">
-                    {article.title}
-                  </GlassCardTitle>
-                  <p className="text-sm text-gray-500">{article.date}</p>
-                </GlassCardHeader>
-                <GlassCardContent>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                    {article.excerpt}
-                  </p>
-                  <button className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors">
-                    Đọc tiếp →
-                  </button>
-                </GlassCardContent>
-              </GlassCard>
-            ))}
+                  <GlassCardHeader className="pb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge className={getCategoryColor(article.category)}>
+                        {article.category || 'Khác'}
+                      </Badge>
+                      <span className="text-sm text-gray-500">{article.read_time || ''}</span>
+                    </div>
+                    <GlassCardTitle className="text-lg leading-tight">
+                      {article.title}
+                    </GlassCardTitle>
+                    <p className="text-sm text-gray-500">{article.published_at ? new Date(article.published_at).toLocaleDateString() : ''}</p>
+                  </GlassCardHeader>
+                  <GlassCardContent>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                      {article.excerpt}
+                    </p>
+                    {/* TODO: Link to detail page in future phase */}
+                    <button className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors">
+                      Đọc tiếp →
+                    </button>
+                  </GlassCardContent>
+                </GlassCard>
+              ))
+            )}
           </div>
 
           {/* Load More Button */}
           <div className="text-center mt-12">
-            <button className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+            <button className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium" disabled={loading}>
               Tải thêm tin tức
             </button>
           </div>
