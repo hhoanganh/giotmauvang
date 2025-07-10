@@ -6,7 +6,6 @@ import HeroSection from '@/components/HeroSection';
 import EventsLocationsSection from '@/components/EventsLocationsSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import InspiringContentSection from '@/components/InspiringContentSection';
-import UpcomingEvents from '@/components/UpcomingEvents';
 import ContactSupportSection from '@/components/ContactSupportSection';
 
 const Index = () => {
@@ -44,9 +43,6 @@ const Index = () => {
         
         {/* 5. Inspiring Content Section (F1.1.3) */}
         <InspiringContentSection />
-        
-        {/* 6. "No Event Found?" Section */}
-        <UpcomingEvents />
         
         {/* 7. Contact & Support Section (F1.1.4) */}
         <ContactSupportSection />
