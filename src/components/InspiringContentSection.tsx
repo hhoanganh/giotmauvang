@@ -42,20 +42,41 @@ const InspiringContentSection: React.FC = () => {
   useEffect(() => {
     const fetchLatestArticles = async () => {
       setIsLoadingArticles(true);
-      const { data, error } = await supabase
-        .from('news_articles')
-        .select('id, title, excerpt, image_url, category, published_at, type')
-        .eq('status', 'published')
-        .order('published_at', { ascending: false })
-        .limit(3);
-      
-      if (!error && data) {
-        setLatestArticles(data);
-      } else {
-        console.error('Error fetching articles:', error);
+      try {
+        console.log('Fetching articles from Supabase...');
+        
+        // Test connection first
+        const { data: testData, error: testError } = await supabase
+          .from('news_articles')
+          .select('count')
+          .limit(1);
+        
+        if (testError) {
+          console.error('Supabase connection test failed:', testError);
+        } else {
+          console.log('Supabase connection test successful');
+        }
+        
+        const { data, error } = await supabase
+          .from('news_articles')
+          .select('id, title, excerpt, image_url, category, published_at, type')
+          .eq('status', 'published')
+          .order('published_at', { ascending: false })
+          .limit(3);
+        
+        if (error) {
+          console.error('Supabase error:', error);
+          setLatestArticles([]);
+        } else {
+          console.log('Articles fetched successfully:', data);
+          setLatestArticles(data || []);
+        }
+      } catch (err) {
+        console.error('Unexpected error fetching articles:', err);
         setLatestArticles([]);
+      } finally {
+        setIsLoadingArticles(false);
       }
-      setIsLoadingArticles(false);
     };
     fetchLatestArticles();
   }, []);

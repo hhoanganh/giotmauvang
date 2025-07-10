@@ -7,6 +7,7 @@ import EventsLocationsSection from '@/components/EventsLocationsSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import InspiringContentSection from '@/components/InspiringContentSection';
 import ContactSupportSection from '@/components/ContactSupportSection';
+import DatabaseStatus from '@/components/DatabaseStatus';
 
 const Index = () => {
   const location = useLocation();
@@ -31,6 +32,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      <DatabaseStatus />
       <main>
         {/* 1. Hero Section */}
         <HeroSection />
