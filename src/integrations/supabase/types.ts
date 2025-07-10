@@ -331,6 +331,7 @@ export type Database = {
       news_articles: {
         Row: {
           author_id: string | null
+          category: string | null
           content: string
           created_at: string | null
           excerpt: string | null
@@ -344,6 +345,7 @@ export type Database = {
         }
         Insert: {
           author_id?: string | null
+          category?: string | null
           content: string
           created_at?: string | null
           excerpt?: string | null
@@ -357,6 +359,7 @@ export type Database = {
         }
         Update: {
           author_id?: string | null
+          category?: string | null
           content?: string
           created_at?: string | null
           excerpt?: string | null
