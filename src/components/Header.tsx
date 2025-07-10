@@ -218,7 +218,11 @@ const Header: React.FC = () => {
                 >
                   {getUserIcon(profile?.primary_role)}
                   <span className="max-w-32 truncate text-sm text-gray-700">
-                    {profileLoading ? 'Đang tải...' : (profile?.full_name || 'Người dùng')}
+                    {profileLoading ? (
+                      <span className="inline-block w-16 h-4 bg-gray-200 rounded animate-pulse"></span>
+                    ) : (
+                      profile?.full_name || 'Người dùng'
+                    )}
                   </span>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </button>
