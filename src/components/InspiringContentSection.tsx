@@ -44,19 +44,7 @@ const InspiringContentSection: React.FC = () => {
       setIsLoadingArticles(true);
       try {
         console.log('Fetching articles from Supabase...');
-        
-        // Test connection first
-        const { data: testData, error: testError } = await supabase
-          .from('news_articles')
-          .select('count')
-          .limit(1);
-        
-        if (testError) {
-          console.error('Supabase connection test failed:', testError);
-        } else {
-          console.log('Supabase connection test successful');
-        }
-        
+        // Removed faulty test query
         const { data, error } = await supabase
           .from('news_articles')
           .select('id, title, excerpt, image_url, category, published_at, type')
