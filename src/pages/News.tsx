@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { Link } from 'react-router-dom';
 
 // Define the type for news articles (no read_time)
 interface NewsArticle {
@@ -139,10 +140,11 @@ const News: React.FC = () => {
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">
                       {article.excerpt}
                     </p>
-                    {/* TODO: Link to detail page in future phase */}
-                    <button className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors">
-                      Đọc tiếp →
-                    </button>
+                    <Link to={`/news/${article.id}`}>
+                      <button className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors">
+                        Đọc tiếp →
+                      </button>
+                    </Link>
                   </GlassCardContent>
                 </GlassCard>
               ))

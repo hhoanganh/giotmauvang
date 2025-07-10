@@ -14,6 +14,7 @@ import Faq from "./pages/Faq";
 import News from "./pages/News";
 import Gallery from "./pages/Gallery";
 import GalleryGroup from "./pages/GalleryGroup";
+import NewsDetail from "./pages/NewsDetail";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/events" element={<Events />} />
             <Route path="/centers" element={<Centers />} />
             <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/faq" element={<Faq />} />
             <Route path="/gallery" element={<Gallery />} />
