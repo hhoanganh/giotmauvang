@@ -25,11 +25,13 @@ const DatabaseStatus: React.FC = () => {
           console.log('Database connection successful');
           setStatus('connected');
           
-          // Get article count
-          const { count } = await supabase
+          // Get article count (fix: only select id)
+          const { count, error: countError } = await supabase
             .from('news_articles')
-            .select('*', { count: 'exact', head: true });
-          
+            .select('id', { count: 'exact', head: true });
+          if (countError) {
+            setError(countError.message);
+          }
           setArticleCount(count || 0);
         }
       } catch (err) {
