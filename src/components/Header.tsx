@@ -90,6 +90,7 @@ const Header: React.FC = () => {
           { label: 'Events', icon: <Calendar className="w-4 h-4" />, to: '/admin/events' },
           { label: 'Users', icon: <Users className="w-4 h-4" />, to: '/admin/users' },
           { label: 'Content', icon: <FileText className="w-4 h-4" />, to: '/admin/content' },
+          { label: 'Quản lý Tin tức', icon: <FileText className="w-4 h-4" />, to: '/admin/news' },
           { label: 'Reports', icon: <BarChart2 className="w-4 h-4" />, to: '/admin/reports' },
           { label: 'Logout', icon: <LogOut className="w-4 h-4" />, action: handleSignOut, danger: true },
         ];

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
+import ReactMarkdown from 'react-markdown';
 
 interface NewsArticle {
   id: string;
@@ -65,14 +66,6 @@ const NewsDetail: React.FC = () => {
     if (id) fetchArticle();
   }, [id]);
 
-  // Render content as paragraphs
-  const renderContent = (content: string | null) => {
-    if (!content) return null;
-    return content.split(/\n{2,}/).map((para, idx) => (
-      <p key={idx} className="mb-4 text-gray-800 leading-relaxed whitespace-pre-line">{para}</p>
-    ));
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
       <Header />
@@ -106,7 +99,7 @@ const NewsDetail: React.FC = () => {
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-4">{article.title}</h1>
               <div className="prose prose-lg max-w-none">
-                {renderContent(article.content)}
+                {article.content && <ReactMarkdown>{article.content}</ReactMarkdown>}
               </div>
             </article>
           ) : null}
