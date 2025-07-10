@@ -59,6 +59,7 @@ const InspiringContentSection: React.FC = () => {
           .from('news_articles')
           .select('id, title, excerpt, image_url, category, published_at, type')
           .eq('status', 'published')
+          .eq('type', 'story')
           .order('published_at', { ascending: false })
           .limit(3);
         
