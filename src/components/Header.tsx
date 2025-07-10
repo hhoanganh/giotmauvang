@@ -23,10 +23,20 @@ import { useToast } from '@/hooks/use-toast';
 const Header: React.FC = () => {
   const { user, profile, loading, signOut } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+
+  // Track profile loading state
+  useEffect(() => {
+    if (user && !profile) {
+      setProfileLoading(true);
+    } else {
+      setProfileLoading(false);
+    }
+  }, [user, profile]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -208,7 +218,7 @@ const Header: React.FC = () => {
                 >
                   {getUserIcon(profile?.primary_role)}
                   <span className="max-w-32 truncate text-sm text-gray-700">
-                    {profile?.full_name || user?.email}
+                    {profileLoading ? 'Đang tải...' : (profile?.full_name || 'Người dùng')}
                   </span>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </button>
