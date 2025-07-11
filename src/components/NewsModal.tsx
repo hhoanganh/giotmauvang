@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, Calendar, Tag, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Calendar, Tag, ArrowLeft } from 'lucide-react';
 import { GlassButton } from '@/components/ui/glass-button';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -18,14 +18,12 @@ interface NewsModalProps {
   isOpen: boolean;
   onClose: () => void;
   articleId: string | null;
-  onNavigateToDetail?: (articleId: string) => void;
 }
 
 const NewsModal: React.FC<NewsModalProps> = ({ 
   isOpen, 
   onClose, 
-  articleId, 
-  onNavigateToDetail 
+  articleId
 }) => {
   const [article, setArticle] = useState<NewsArticle | null>(null);
   const [loading, setLoading] = useState(false);
@@ -113,12 +111,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
   // Focus management
   useEffect(() => {
     if (isOpen) {
-      // Focus the close button when modal opens
-      const closeButton = document.querySelector('[data-modal-close]') as HTMLButtonElement;
-      if (closeButton) {
-        closeButton.focus();
-      }
-      
       // Prevent body scroll
       document.body.style.overflow = 'hidden';
     } else {
@@ -142,7 +134,7 @@ const NewsModal: React.FC<NewsModalProps> = ({
     >
       <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden modal-enter modal-mobile">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+        <div className="flex items-center p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <span className="text-2xl">
               {article?.type === 'story' ? '📖' : '📰'}
@@ -151,14 +143,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
               {loading ? 'Đang tải...' : article?.title || 'Bài viết'}
             </h2>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors modal-focus"
-            aria-label="Đóng"
-            data-modal-close
-          >
-            <X className="w-5 h-5 text-gray-500" />
-          </button>
         </div>
 
         {/* Content */}
@@ -225,8 +209,8 @@ const NewsModal: React.FC<NewsModalProps> = ({
                 )}
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+              {/* Action Button */}
+              <div className="flex items-center justify-center mt-8 pt-6 border-t border-gray-100">
                 <GlassButton 
                   onClick={onClose} 
                   variant="ghost"
@@ -235,17 +219,6 @@ const NewsModal: React.FC<NewsModalProps> = ({
                   <ArrowLeft className="w-4 h-4" />
                   Quay lại
                 </GlassButton>
-                
-                {onNavigateToDetail && (
-                  <GlassButton 
-                    onClick={() => onNavigateToDetail(article.id)}
-                    variant="primary"
-                    className="flex items-center gap-2"
-                  >
-                    Xem trang chi tiết
-                    <ArrowRight className="w-4 h-4" />
-                  </GlassButton>
-                )}
               </div>
             </div>
           ) : (

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle, GlassCardFooter } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import NewsModal from './NewsModal';
 
@@ -23,7 +23,6 @@ type NewsArticle = {
 };
 
 const InspiringContentSection: React.FC = () => {
-  const navigate = useNavigate();
   const [latestImages, setLatestImages] = useState<GalleryImage[]>([]);
   const [latestArticles, setLatestArticles] = useState<NewsArticle[]>([]);
   const [latestNews, setLatestNews] = useState<NewsArticle[]>([]);
@@ -154,11 +153,7 @@ const InspiringContentSection: React.FC = () => {
     setSelectedArticleId(null);
   };
 
-  const handleNavigateToDetail = (articleId: string) => {
-    setIsModalOpen(false);
-    setSelectedArticleId(null);
-    navigate(`/news/${articleId}`);
-  };
+
 
   return (
     <section className="py-16 px-4 bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -242,7 +237,7 @@ const InspiringContentSection: React.FC = () => {
 
         {/* News & Articles */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <GlassCard variant="with-bottom-button" className="p-8">
+          <GlassCard variant="with-bottom-button" className="p-6">
             <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">📰</span>
@@ -261,8 +256,8 @@ const InspiringContentSection: React.FC = () => {
                   ))
                 ) : latestNews.length > 0 ? (
                   latestNews.map((article, index) => (
-                    <div key={article.id} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
-                      <div className="flex items-start justify-between gap-4">
+                    <div key={article.id} className="border-b border-gray-100 last:border-b-0 pb-3 last:pb-0">
+                      <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
                           <button
                             onClick={() => handleArticleClick(article.id)}
@@ -279,12 +274,14 @@ const InspiringContentSection: React.FC = () => {
                             <span>{formatDate(article.published_at)}</span>
                           </div>
                         </div>
-                        <button
+                        <GlassButton
                           onClick={() => handleArticleClick(article.id)}
-                          className="text-red-600 hover:text-red-700 text-sm font-medium ml-2 transition-colors"
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700"
                         >
-                          Xem →
-                        </button>
+                          Đọc tiếp
+                        </GlassButton>
                       </div>
                     </div>
                   ))
@@ -302,7 +299,7 @@ const InspiringContentSection: React.FC = () => {
             </GlassCardFooter>
           </GlassCard>
 
-          <GlassCard variant="with-bottom-button" className="p-8">
+          <GlassCard variant="with-bottom-button" className="p-6">
             <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">📸</span>
@@ -353,7 +350,6 @@ const InspiringContentSection: React.FC = () => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         articleId={selectedArticleId}
-        onNavigateToDetail={handleNavigateToDetail}
       />
     </section>
   );
