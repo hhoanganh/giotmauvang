@@ -1,4 +1,5 @@
 
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +16,7 @@ import News from "./pages/News";
 import Gallery from "./pages/Gallery";
 import GalleryGroup from "./pages/GalleryGroup";
 import NewsDetail from "./pages/NewsDetail";
+import AdminNews from "./pages/AdminNews";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +37,7 @@ const App = () => (
             <Route path="/faq" element={<Faq />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/gallery/:groupId" element={<GalleryGroup />} />
+            <Route path="/admin/news" element={<AdminNews />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
