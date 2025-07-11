@@ -278,7 +278,6 @@ const InspiringContentSection: React.FC = () => {
                           onClick={() => handleArticleClick(article.id)}
                           variant="ghost"
                           size="sm"
-                          className="w-full"
                         >
                           Đọc tiếp
                         </GlassButton>
