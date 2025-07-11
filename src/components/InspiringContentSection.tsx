@@ -156,7 +156,7 @@ const InspiringContentSection: React.FC = () => {
 
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-br from-red-50/30 to-orange-50/30">
+    <section className="py-16 px-4 lg:py-24 bg-gradient-to-br from-red-50/30 to-orange-50/30">
       <div className="container-custom">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
