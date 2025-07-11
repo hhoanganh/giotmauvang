@@ -185,4 +185,51 @@ All colors MUST be HSL.
   .container-custom {
     @apply max-w-7xl mx-auto;
   }
+
+  /* Unified Grid System */
+  .homepage-grid {
+    @apply grid gap-6;
+  }
+
+  .homepage-grid-2 {
+    @apply homepage-grid grid-cols-1 md:grid-cols-2;
+  }
+
+  .homepage-grid-3 {
+    @apply homepage-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .homepage-grid-4 {
+    @apply homepage-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+  }
+
+  /* Centered Grid Containers */
+  .homepage-grid-centered {
+    @apply homepage-grid max-w-6xl mx-auto;
+  }
+
+  .homepage-grid-2-centered {
+    @apply homepage-grid-2 max-w-4xl mx-auto;
+  }
+
+  .homepage-grid-3-centered {
+    @apply homepage-grid-3 max-w-6xl mx-auto;
+  }
+
+  .homepage-grid-4-centered {
+    @apply homepage-grid-4 max-w-7xl mx-auto;
+  }
+
+  /* Section Content Widths */
+  .section-content-narrow {
+    @apply max-w-4xl mx-auto;
+  }
+
+  .section-content-medium {
+    @apply max-w-6xl mx-auto;
+  }
+
+  .section-content-wide {
+    @apply max-w-7xl mx-auto;
+  }
 }

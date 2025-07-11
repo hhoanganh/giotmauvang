@@ -63,7 +63,7 @@ const HowItWorksSection: React.FC = () => {
         </div>
 
         {/* Process Steps */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="homepage-grid-4-centered mb-16">
           {steps.map((step, index) => (
             <GlassCard key={index} className="text-center p-6 hover:shadow-xl transition-all duration-300">
               <div className="mb-2">
@@ -80,7 +80,7 @@ const HowItWorksSection: React.FC = () => {
         </div>
 
         {/* Information Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        <div className="homepage-grid-3-centered mb-12">
           <GlassCard variant="with-bottom-button" className="p-8">
             <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
@@ -166,7 +166,7 @@ const HowItWorksSection: React.FC = () => {
         </div>
 
         {/* FAQ Accordion */}
-        <GlassCard className="max-w-4xl mx-auto p-8">
+        <GlassCard className="section-content-narrow p-8">
           <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">
             Câu Hỏi Thường Gặp
           </h3>

@@ -39,7 +39,7 @@ const HeroSection: React.FC = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
+          <div className="homepage-grid-3-centered mt-16">
             <GlassCard className="text-center p-6 hover:shadow-xl transition-all duration-300">
               <h3 className="text-3xl font-bold text-red-600 mb-2">1,200+</h3>
               <p className="text-gray-600 font-medium">Người hiến máu</p>

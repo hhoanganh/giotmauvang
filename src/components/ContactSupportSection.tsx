@@ -43,7 +43,7 @@ const ContactSupportSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="homepage-grid-4-centered mb-12">
           {contacts.map((contact, index) => (
             <GlassCard key={index} className="text-center p-6 hover:shadow-xl transition-all duration-300">
               <div className="text-4xl mb-4">{contact.icon}</div>
@@ -55,7 +55,7 @@ const ContactSupportSection: React.FC = () => {
         </div>
 
         {/* Emergency Contact */}
-        <GlassCard className="max-w-3xl mx-auto p-8 text-center bg-gradient-to-r from-red-50 to-orange-50">
+        <GlassCard className="section-content-narrow p-8 text-center bg-gradient-to-r from-red-50 to-orange-50">
           <GlassCardHeader>
             <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <span className="text-2xl text-white">🚨</span>

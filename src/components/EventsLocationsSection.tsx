@@ -71,7 +71,7 @@ const EventsLocationsSection: React.FC = () => {
           </p>
         </div>
 
-        <GlassCard className="max-w-6xl mx-auto">
+        <GlassCard className="section-content-medium">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="events">Sự kiện</TabsTrigger>
@@ -80,7 +80,7 @@ const EventsLocationsSection: React.FC = () => {
             </TabsList>
             
             <TabsContent value="events" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="homepage-grid-2">
                 {events.map((event, index) => (
                   <EventCard key={index} {...event} />
                 ))}

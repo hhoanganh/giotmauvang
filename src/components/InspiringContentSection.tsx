@@ -169,7 +169,7 @@ const InspiringContentSection: React.FC = () => {
 
         {/* Success Stories */}
         <div className="mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="homepage-grid-2-centered">
             {isLoadingArticles ? (
               // Loading skeleton
               Array.from({ length: 3 }).map((_, index) => (
@@ -236,7 +236,7 @@ const InspiringContentSection: React.FC = () => {
         </div>
 
         {/* News & Articles */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="homepage-grid-2">
           <GlassCard variant="with-bottom-button" className="p-6">
             <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
