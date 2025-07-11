@@ -68,7 +68,7 @@ const InspiringContentSection: React.FC = () => {
           .eq('status', 'published')
           .eq('type', 'story')
           .order('published_at', { ascending: false })
-          .limit(3);
+          .limit(2);
         
         if (error) {
           console.error('Supabase error fetching stories:', error);
@@ -172,7 +172,7 @@ const InspiringContentSection: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isLoadingArticles ? (
               // Loading skeleton
-              Array.from({ length: 2 }).map((_, index) => (
+              Array.from({ length: 3 }).map((_, index) => (
                 <GlassCard key={index} className="overflow-hidden">
                   <div className="h-32 bg-gray-200 animate-pulse"></div>
                   <GlassCardHeader className="pb-4">
