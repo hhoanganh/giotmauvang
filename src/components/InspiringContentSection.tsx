@@ -169,7 +169,7 @@ const InspiringContentSection: React.FC = () => {
 
         {/* Success Stories */}
         <div className="mb-16">
-          <div className="homepage-grid-2-centered">
+          <div className="homepage-grid-2">
             {isLoadingArticles ? (
               // Loading skeleton
               Array.from({ length: 3 }).map((_, index) => (
