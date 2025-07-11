@@ -80,7 +80,7 @@ const HowItWorksSection: React.FC = () => {
         </div>
 
         {/* Information Cards */}
-        <div className="homepage-grid-3-centered mb-12">
+        <div className="homepage-grid-2 mb-12">
           <GlassCard variant="with-bottom-button" className="p-8">
             <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">

@@ -39,7 +39,7 @@ const HeroSection: React.FC = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto mt-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mt-16">
             <GlassCard className="text-center p-6 hover:shadow-xl transition-all duration-300">
               <h3 className="text-3xl font-bold text-red-600 mb-2">1,200+</h3>
               <p className="text-gray-600 font-medium">Người hiến máu</p>
@@ -48,10 +48,12 @@ const HeroSection: React.FC = () => {
               <h3 className="text-3xl font-bold text-blue-600 mb-2">45</h3>
               <p className="text-gray-600 font-medium">Trung tâm y tế</p>
             </GlassCard>
-            <GlassCard className="text-center p-6 hover:shadow-xl transition-all duration-300 md:col-span-2 lg:col-span-1 lg:col-start-2">
-              <h3 className="text-3xl font-bold text-orange-500 mb-2">2,800+</h3>
-              <p className="text-gray-600 font-medium">Đơn vị máu</p>
-            </GlassCard>
+            <div className="md:col-span-2 flex justify-center">
+              <GlassCard className="text-center p-6 hover:shadow-xl transition-all duration-300 w-full md:w-1/2 lg:w-1/3">
+                <h3 className="text-3xl font-bold text-orange-500 mb-2">2,800+</h3>
+                <p className="text-gray-600 font-medium">Đơn vị máu</p>
+              </GlassCard>
+            </div>
           </div>
         </div>
       </div>
