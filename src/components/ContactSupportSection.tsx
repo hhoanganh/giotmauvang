@@ -55,7 +55,7 @@ const ContactSupportSection: React.FC = () => {
         </div>
 
         {/* Emergency Contact */}
-        <GlassCard className="section-content-narrow p-8 text-center bg-gradient-to-r from-red-50 to-orange-50">
+        <GlassCard className="w-full max-w-none p-8 text-center bg-gradient-to-r from-red-50 to-orange-50">
           <GlassCardHeader>
             <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
               <span className="text-2xl text-white">🚨</span>
