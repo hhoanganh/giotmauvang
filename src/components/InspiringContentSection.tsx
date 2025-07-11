@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle, GlassCardFooter } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import NewsModal from './NewsModal';
 
 type GalleryImage = {
   id: string;
@@ -22,11 +23,16 @@ type NewsArticle = {
 };
 
 const InspiringContentSection: React.FC = () => {
+  const navigate = useNavigate();
   const [latestImages, setLatestImages] = useState<GalleryImage[]>([]);
   const [latestArticles, setLatestArticles] = useState<NewsArticle[]>([]);
   const [latestNews, setLatestNews] = useState<NewsArticle[]>([]);
   const [isLoadingArticles, setIsLoadingArticles] = useState(true);
   const [isLoadingNews, setIsLoadingNews] = useState(true);
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLatestImages = async () => {
@@ -129,6 +135,29 @@ const InspiringContentSection: React.FC = () => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('vi-VN');
+  };
+
+  const handleArticleClick = (articleId: string) => {
+    setSelectedArticleId(articleId);
+    setIsModalOpen(true);
+    // Scroll to top of modal for better UX
+    setTimeout(() => {
+      const modalContent = document.querySelector('.modal-scrollbar');
+      if (modalContent) {
+        modalContent.scrollTop = 0;
+      }
+    }, 100);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedArticleId(null);
+  };
+
+  const handleNavigateToDetail = (articleId: string) => {
+    setIsModalOpen(false);
+    setSelectedArticleId(null);
+    navigate(`/news/${articleId}`);
   };
 
   return (
@@ -235,9 +264,14 @@ const InspiringContentSection: React.FC = () => {
                     <div key={article.id} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900 mb-1 leading-tight">
-                            {article.title}
-                          </h4>
+                          <button
+                            onClick={() => handleArticleClick(article.id)}
+                            className="text-left w-full"
+                          >
+                            <h4 className="font-medium text-gray-900 mb-1 leading-tight hover:text-red-600 transition-colors cursor-pointer">
+                              {article.title}
+                            </h4>
+                          </button>
                           <div className="flex items-center gap-2 text-sm text-gray-500">
                             <span className={`px-2 py-1 rounded-full text-xs ${getCategoryColor(article.category)}`}>
                               {article.category === 'story' ? 'Câu chuyện' : 'Tin tức'}
@@ -245,6 +279,12 @@ const InspiringContentSection: React.FC = () => {
                             <span>{formatDate(article.published_at)}</span>
                           </div>
                         </div>
+                        <button
+                          onClick={() => handleArticleClick(article.id)}
+                          className="text-red-600 hover:text-red-700 text-sm font-medium ml-2 transition-colors"
+                        >
+                          Xem →
+                        </button>
                       </div>
                     </div>
                   ))
@@ -307,6 +347,14 @@ const InspiringContentSection: React.FC = () => {
           </GlassCard>
         </div>
       </div>
+
+      {/* News Modal */}
+      <NewsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        articleId={selectedArticleId}
+        onNavigateToDetail={handleNavigateToDetail}
+      />
     </section>
   );
 };
