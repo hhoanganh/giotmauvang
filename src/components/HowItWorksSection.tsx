@@ -107,36 +107,6 @@ const HowItWorksSection: React.FC = () => {
           <GlassCard variant="with-bottom-button" className="p-8">
             <GlassCardHeader variant="with-bottom-button">
               <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
-                <span className="text-2xl">🛡️</span>
-                An Toàn & Bảo Đảm
-              </GlassCardTitle>
-            </GlassCardHeader>
-            <GlassCardContent variant="with-bottom-button">
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <span className="text-green-600 text-xl">✓</span>
-                  <p className="text-gray-600">Thiết bị y tế hiện đại, vô trùng</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-green-600 text-xl">✓</span>
-                  <p className="text-gray-600">Đội ngũ y bác sĩ chuyên nghiệp</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-green-600 text-xl">✓</span>
-                  <p className="text-gray-600">Tuân thủ tiêu chuẩn y tế quốc tế</p>
-                </div>
-              </div>
-            </GlassCardContent>
-            <GlassCardFooter>
-              <GlassButton variant="primary" size="lg" className="w-full">
-                Xem chi tiết an toàn
-              </GlassButton>
-            </GlassCardFooter>
-          </GlassCard>
-
-          <GlassCard variant="with-bottom-button" className="p-8">
-            <GlassCardHeader variant="with-bottom-button">
-              <GlassCardTitle className="text-2xl mb-4 flex items-center gap-3">
                 <span className="text-2xl">💝</span>
                 Lợi Ích Khi Hiến Máu
               </GlassCardTitle>
