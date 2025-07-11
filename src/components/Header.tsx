@@ -107,12 +107,13 @@ const Header: React.FC = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      setDropdownOpen(false);
       toast({
         title: 'Đăng xuất thành công',
         description: 'Hẹn gặp lại bạn!',
       });
-      setDropdownOpen(false);
+      // Sign out and redirect to homepage
+      await signOut('/');
     } catch (error) {
       toast({
         title: 'Có lỗi xảy ra',

@@ -12,7 +12,7 @@ interface AuthContextType {
   user: any;
   profile: UserProfile | null;
   loading: boolean;
-  signOut: () => Promise<void>;
+  signOut: (redirectTo?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -94,10 +94,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signOut = async () => {
+  const signOut = async (redirectTo: string = '/') => {
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
+    
+    // Navigate to the specified page (default to homepage)
+    if (typeof window !== 'undefined') {
+      window.location.href = redirectTo;
+    }
   };
 
   return (

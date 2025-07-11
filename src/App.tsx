@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Events from "./pages/Events";
 import Centers from "./pages/Centers";
@@ -37,7 +38,29 @@ const App = () => (
             <Route path="/faq" element={<Faq />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/gallery/:groupId" element={<GalleryGroup />} />
-            <Route path="/admin/news" element={<AdminNews />} />
+            <Route 
+              path="/admin/news" 
+              element={
+                <ProtectedRoute requiredRole="system_admin">
+                  <AdminNews />
+                </ProtectedRoute>
+              } 
+            />
+            {/* 
+              ADMIN ROUTES PATTERN:
+              All admin routes should use ProtectedRoute with requiredRole="system_admin"
+              This ensures proper authentication and authorization before rendering admin components.
+              
+              Example for future admin routes:
+              <Route 
+                path="/admin/users" 
+                element={
+                  <ProtectedRoute requiredRole="system_admin">
+                    <AdminUsers />
+                  </ProtectedRoute>
+                } 
+              />
+            */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

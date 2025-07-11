@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
-import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Badge } from '@/components/ui/badge';
@@ -31,8 +30,6 @@ const getCategoryColor = (category: string | null) => {
 };
 
 const AdminNews: React.FC = () => {
-  const { profile } = useAuth();
-  const isAdmin = profile?.primary_role === 'system_admin';
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,9 +40,9 @@ const AdminNews: React.FC = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isAdmin) fetchArticles();
+    fetchArticles();
     // eslint-disable-next-line
-  }, [isAdmin]);
+  }, []);
 
   const fetchArticles = async () => {
     setLoading(true);
@@ -102,7 +99,15 @@ const AdminNews: React.FC = () => {
         // Create
         const { error } = await supabase
           .from('news_articles')
-          .insert([{ ...form, status: 'published', published_at: form.published_at || new Date().toISOString() }]);
+          .insert([{ 
+            title: form.title || '', 
+            content: form.content || '', 
+            excerpt: form.excerpt || '', 
+            image_url: form.image_url || '', 
+            category: form.category || '', 
+            status: 'published', 
+            published_at: form.published_at || new Date().toISOString() 
+          }]);
         if (error) throw error;
       }
       closeModal();
@@ -127,17 +132,7 @@ const AdminNews: React.FC = () => {
     }
   };
 
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <Header />
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">403 - Không có quyền truy cập</h1>
-          <p className="text-gray-600">Chỉ quản trị viên mới được phép quản lý tin tức.</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -166,8 +161,8 @@ const AdminNews: React.FC = () => {
                     <div className="text-gray-600 text-sm line-clamp-2">{article.excerpt}</div>
                   </div>
                   <div className="flex gap-2 md:flex-col md:gap-2">
-                    <GlassButton variant="outline" size="sm" onClick={() => openEdit(article)}>Sửa</GlassButton>
-                    <GlassButton variant="destructive" size="sm" onClick={() => handleDelete(article.id)} disabled={deletingId === article.id}>
+                    <GlassButton variant="secondary" size="sm" onClick={() => openEdit(article)}>Sửa</GlassButton>
+                    <GlassButton variant="primary" size="sm" onClick={() => handleDelete(article.id)} disabled={deletingId === article.id} className="bg-red-600 hover:bg-red-700">
                       {deletingId === article.id ? 'Đang xóa...' : 'Xóa'}
                     </GlassButton>
                   </div>
