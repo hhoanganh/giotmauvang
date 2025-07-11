@@ -136,7 +136,7 @@ const HowItWorksSection: React.FC = () => {
         </div>
 
         {/* FAQ Accordion */}
-        <GlassCard className="section-content-narrow p-8">
+        <GlassCard className="w-full max-w-none p-8">
           <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">
             Câu Hỏi Thường Gặp
           </h3>
