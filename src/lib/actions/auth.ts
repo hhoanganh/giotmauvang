@@ -227,7 +227,8 @@ export async function loginUser(email: string, password: string): Promise<AuthRe
  */
 export async function logoutUser(): Promise<AuthResponse> {
   try {
-    const { error } = await supabase.auth.signOut();
+    // Sign out with global scope to clear all sessions
+    const { error } = await supabase.auth.signOut({ scope: 'global' });
     
     if (error) {
       return {
@@ -237,7 +238,23 @@ export async function logoutUser(): Promise<AuthResponse> {
       };
     }
 
-    // Cache invalidation handled by client-side navigation
+    // Clear any remaining auth data from localStorage
+    if (typeof window !== 'undefined') {
+      // Clear Supabase auth tokens
+      localStorage.removeItem('supabase.auth.token');
+      localStorage.removeItem('supabase.auth.expires_at');
+      localStorage.removeItem('supabase.auth.refresh_token');
+      
+      // Clear any other potential auth-related items
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.includes('supabase') && key.includes('auth')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+    }
 
     return {
       success: true,
@@ -246,6 +263,13 @@ export async function logoutUser(): Promise<AuthResponse> {
 
   } catch (error) {
     console.error('Logout error:', error);
+    
+    // Even if there's an error, try to clear localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('supabase.auth.token');
+      localStorage.removeItem('supabase.auth.expires_at');
+      localStorage.removeItem('supabase.auth.refresh_token');
+    }
     
     return {
       success: false,
