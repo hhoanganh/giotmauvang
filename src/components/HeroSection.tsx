@@ -1,9 +1,29 @@
 
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { GlassButton } from '@/components/ui/glass-button';
 import { GlassCard } from '@/components/ui/glass-card';
 
 const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleFindCenters = () => {
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: 'centers' } });
+    } else {
+      const eventsSection = document.getElementById('events-locations-section');
+      if (eventsSection) {
+        eventsSection.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+          if ((window as any).switchToCentersTab) {
+            (window as any).switchToCentersTab();
+          }
+        }, 500);
+      }
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
       {/* Background elements */}
@@ -33,7 +53,7 @@ const HeroSection: React.FC = () => {
             <GlassButton variant="primary" size="lg" className="w-full sm:w-auto min-w-[200px]">
               🩸 Hiến máu ngay
             </GlassButton>
-            <GlassButton variant="secondary" size="lg" className="w-full sm:w-auto min-w-[200px]">
+            <GlassButton variant="secondary" size="lg" className="w-full sm:w-auto min-w-[200px]" onClick={handleFindCenters}>
               📍 Tìm trung tâm
             </GlassButton>
           </div>
