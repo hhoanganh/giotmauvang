@@ -16,17 +16,17 @@ interface NewsArticle {
 
 const getCategoryColor = (category: string | null) => {
   switch (category) {
-    case 'Tin tức':
-      return 'bg-blue-100 text-blue-600';
-    case 'Khoa học':
-      return 'bg-purple-100 text-purple-600';
-    case 'Sự kiện':
-      return 'bg-green-100 text-green-600';
-    case 'Hướng dẫn':
-      return 'bg-orange-100 text-orange-600';
+    case "news":
+      return "bg-blue-100 text-blue-600";
+    case "story":
+      return "bg-purple-100 text-purple-600";
     default:
-      return 'bg-gray-100 text-gray-600';
+      return "bg-gray-100 text-gray-600";
   }
+};
+
+const getCategoryLabel = (category: string | null) => {
+  return category === 'story' ? 'Câu chuyện' : 'Tin tức';
 };
 
 const AdminNews: React.FC = () => {
@@ -79,7 +79,7 @@ const AdminNews: React.FC = () => {
     setForm({});
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -154,7 +154,7 @@ const AdminNews: React.FC = () => {
                 <div key={article.id} className="bg-white/80 rounded-lg shadow p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <Badge className={getCategoryColor(article.category)}>{article.category || 'Khác'}</Badge>
+                      <Badge className={getCategoryColor(article.category)}>{getCategoryLabel(article.category)}</Badge>
                       <span className="text-gray-500 text-xs">{article.published_at ? new Date(article.published_at).toLocaleDateString() : ''}</span>
                     </div>
                     <div className="font-semibold text-lg text-gray-900">{article.title}</div>
@@ -185,7 +185,17 @@ const AdminNews: React.FC = () => {
               <label className="block mb-2 font-medium">Ảnh (URL)</label>
               <input className="w-full border rounded px-3 py-2 mb-4" name="image_url" value={form.image_url || ''} onChange={handleChange} />
               <label className="block mb-2 font-medium">Chuyên mục</label>
-              <input className="w-full border rounded px-3 py-2 mb-4" name="category" value={form.category || ''} onChange={handleChange} />
+              <select 
+                className="w-full border rounded px-3 py-2 mb-4" 
+                name="category" 
+                value={form.category || ''} 
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn chuyên mục</option>
+                <option value="news">Tin tức</option>
+                <option value="story">Câu chuyện</option>
+              </select>
               <label className="block mb-2 font-medium">Ngày đăng (yyyy-mm-dd)</label>
               <input className="w-full border rounded px-3 py-2 mb-4" name="published_at" value={form.published_at || ''} onChange={handleChange} type="date" />
               <div className="flex gap-2 mt-4">
