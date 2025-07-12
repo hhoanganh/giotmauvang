@@ -182,23 +182,25 @@ const Centers: React.FC = () => {
           {filteredCenters.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCenters.map((center) => (
-                <GlassCard key={center.id} className="p-6 hover:shadow-xl transition-all duration-300">
-                  <div className="space-y-4">
-                    {/* Center Name */}
-                    <h3 className="text-lg font-semibold text-gray-900 leading-tight">
-                      {center.name}
-                    </h3>
+                <GlassCard key={center.id} className="p-6 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                  <div className="flex flex-col h-full">
+                    {/* Center Name - Fixed 2 rows */}
+                    <div className="mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900 leading-tight line-clamp-2 min-h-[3rem]">
+                        {center.name}
+                      </h3>
+                    </div>
 
-                    {/* Address */}
-                    <div className="flex items-start gap-3">
+                    {/* Address - Fixed 2 rows */}
+                    <div className="flex items-start gap-3 mb-4 flex-grow">
                       <MapPin className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
-                      <p className="text-gray-600 text-sm leading-relaxed">
+                      <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 min-h-[2.5rem]">
                         {center.address}
                       </p>
                     </div>
 
-                    {/* Phone */}
-                    <div className="flex items-center gap-3">
+                    {/* Phone - Fixed 1 row */}
+                    <div className="flex items-center gap-3 mb-6">
                       <Phone className="h-4 w-4 text-gray-500 flex-shrink-0" />
                       <button
                         onClick={() => handleCall(center.phone)}
@@ -208,8 +210,8 @@ const Centers: React.FC = () => {
                       </button>
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex gap-2 pt-2">
+                    {/* Actions - Always at bottom */}
+                    <div className="flex gap-2 mt-auto">
                       <GlassButton
                         variant="primary"
                         size="sm"
