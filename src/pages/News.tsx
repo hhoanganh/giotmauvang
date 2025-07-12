@@ -54,17 +54,17 @@ const News: React.FC = () => {
 
   const getCategoryColor = (category: string | null) => {
     switch (category) {
-      case 'Tin tức':
-        return 'bg-blue-100 text-blue-600';
-      case 'Khoa học':
-        return 'bg-purple-100 text-purple-600';
-      case 'Sự kiện':
-        return 'bg-green-100 text-green-600';
-      case 'Hướng dẫn':
-        return 'bg-orange-100 text-orange-600';
+      case "news":
+        return "bg-blue-100 text-blue-600";
+      case "story":
+        return "bg-purple-100 text-purple-600";
       default:
-        return 'bg-gray-100 text-gray-600';
+        return "bg-gray-100 text-gray-600";
     }
+  };
+
+  const getCategoryLabel = (category: string | null) => {
+    return category === 'story' ? 'Câu chuyện' : 'Tin tức';
   };
 
   // Optional: Calculate estimated read time from excerpt/content length
@@ -126,7 +126,7 @@ const News: React.FC = () => {
                   <GlassCardHeader className="pb-4">
                     <div className="flex items-center justify-between mb-2">
                       <Badge className={getCategoryColor(article.category)}>
-                        {article.category || 'Khác'}
+                        {getCategoryLabel(article.category)}
                       </Badge>
                       {/* Optionally show estimated read time here */}
                       {/* <span className="text-sm text-gray-500">{estimateReadTime(article.excerpt || '')}</span> */}
