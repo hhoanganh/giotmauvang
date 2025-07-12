@@ -63,7 +63,7 @@ const AdminNews: React.FC = () => {
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ title: '', content: '', excerpt: '', image_url: '', category: '', published_at: '' });
+    setForm({ title: '', content: '', excerpt: '', image_url: '', category: '' });
     setShowModal(true);
   };
 
@@ -106,7 +106,7 @@ const AdminNews: React.FC = () => {
             image_url: form.image_url || '', 
             category: form.category || '', 
             status: 'published', 
-            published_at: form.published_at || new Date().toISOString() 
+            published_at: new Date().toISOString() 
           }]);
         if (error) throw error;
       }
@@ -196,8 +196,6 @@ const AdminNews: React.FC = () => {
                 <option value="news">Tin tức</option>
                 <option value="story">Câu chuyện</option>
               </select>
-              <label className="block mb-2 font-medium">Ngày đăng (yyyy-mm-dd)</label>
-              <input className="w-full border rounded px-3 py-2 mb-4" name="published_at" value={form.published_at || ''} onChange={handleChange} type="date" />
               <div className="flex gap-2 mt-4">
                 <button type="submit" className="bg-red-600 text-white px-4 py-2 rounded font-semibold hover:bg-red-700" disabled={saving}>
                   {saving ? 'Đang lưu...' : 'Lưu'}
