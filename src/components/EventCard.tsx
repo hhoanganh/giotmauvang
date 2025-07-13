@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 
@@ -22,6 +23,7 @@ const EventCard: React.FC<EventCardProps> = ({
   bloodTypesNeeded = [],
   spotsAvailable
 }) => {
+  const navigate = useNavigate();
   return (
     <GlassCard className="w-full hover:shadow-xl transition-all duration-300">
       <GlassCardHeader className="pb-4">
@@ -73,7 +75,7 @@ const EventCard: React.FC<EventCardProps> = ({
         )}
         
         <div className="flex gap-3 pt-2">
-          <GlassButton variant="primary" size="md" className="flex-1">
+          <GlassButton variant="primary" size="md" className="flex-1" onClick={() => navigate('/donate')}>
             Đăng ký hiến máu
           </GlassButton>
           <GlassButton variant="secondary" size="md">

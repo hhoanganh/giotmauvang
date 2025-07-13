@@ -50,7 +50,7 @@ const HeroSection: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <GlassButton variant="primary" size="lg" className="w-full sm:w-auto min-w-[200px]">
+            <GlassButton variant="primary" size="lg" className="w-full sm:w-auto min-w-[200px]" onClick={() => navigate('/donate')}>
               🩸 Hiến máu ngay
             </GlassButton>
             <GlassButton variant="secondary" size="lg" className="w-full sm:w-auto min-w-[200px]" onClick={handleFindCenters}>
