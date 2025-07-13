@@ -40,6 +40,8 @@ const Profile: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [donationRecords, setDonationRecords] = useState<DonationRecord[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  // Store generated QR code images for each appointment
+  const [qrImages, setQrImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!loading && user) {
@@ -126,6 +128,30 @@ const Profile: React.FC = () => {
     }
   };
 
+  // Generate QR code images from JSON data after appointments are loaded
+  useEffect(() => {
+    const generateQRCodes = async () => {
+      if (!appointments.length) return;
+      const QRCode = (await import('qrcode')).default;
+      const newQrImages: Record<string, string> = {};
+      for (const apt of appointments) {
+        if (apt.qr_code) {
+          try {
+            newQrImages[apt.id] = await QRCode.toDataURL(apt.qr_code, {
+              width: 256,
+              margin: 2,
+              color: { dark: '#000000', light: '#FFFFFF' }
+            });
+          } catch (e) {
+            newQrImages[apt.id] = '';
+          }
+        }
+      }
+      setQrImages(newQrImages);
+    };
+    generateQRCodes();
+  }, [appointments]);
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'scheduled':
@@ -156,6 +182,7 @@ const Profile: React.FC = () => {
 
   const handleDownloadQR = (qrDataUrl: string, appointmentDate: string, donorName: string) => {
     try {
+      if (!qrDataUrl) throw new Error('No QR image');
       // Create a link to download the QR code image
       const link = document.createElement('a');
       link.href = qrDataUrl;
@@ -163,7 +190,6 @@ const Profile: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
       toast({
         title: 'Tải xuống thành công',
         description: 'Mã QR đã được tải xuống',
@@ -179,6 +205,7 @@ const Profile: React.FC = () => {
 
   const handlePrintQR = (qrDataUrl: string, appointmentDate: string, donorName: string) => {
     try {
+      if (!qrDataUrl) throw new Error('No QR image');
       const printWindow = window.open('', '_blank');
       if (printWindow) {
         printWindow.document.write(`
@@ -186,27 +213,11 @@ const Profile: React.FC = () => {
             <head>
               <title>QR Code Check-in - ${donorName}</title>
               <style>
-                body { 
-                  font-family: Arial, sans-serif; 
-                  padding: 20px; 
-                  text-align: center;
-                }
-                .qr-container { 
-                  margin: 20px 0; 
-                }
-                .qr-image { 
-                  max-width: 300px; 
-                  height: auto; 
-                }
-                .info { 
-                  margin: 10px 0; 
-                  text-align: left;
-                }
-                @media print { 
-                  body { 
-                    margin: 0; 
-                  } 
-                }
+                body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+                .qr-container { margin: 20px 0; }
+                .qr-image { max-width: 300px; height: auto; }
+                .info { margin: 10px 0; text-align: left; }
+                @media print { body { margin: 0; } }
               </style>
             </head>
             <body>
@@ -347,7 +358,7 @@ const Profile: React.FC = () => {
                                     <GlassButton
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() => handleDownloadQR(appointment.qr_code, appointment.appointment_date, profile?.full_name || '')}
+                                      onClick={() => handleDownloadQR(qrImages[appointment.id], appointment.appointment_date, profile?.full_name || '')}
                                       className="h-8 px-2"
                                     >
                                       <Download className="h-3 w-3" />
@@ -355,7 +366,7 @@ const Profile: React.FC = () => {
                                     <GlassButton
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() => handlePrintQR(appointment.qr_code, appointment.appointment_date, profile?.full_name || '')}
+                                      onClick={() => handlePrintQR(qrImages[appointment.id], appointment.appointment_date, profile?.full_name || '')}
                                       className="h-8 px-2"
                                     >
                                       <Printer className="h-3 w-3" />
@@ -364,11 +375,17 @@ const Profile: React.FC = () => {
                                 </div>
                                 <div className="bg-white p-3 rounded border-2 border-dashed border-gray-300 text-center">
                                   <div className="text-xs text-gray-500 mb-2">Quét mã này tại trung tâm</div>
-                                  <img 
-                                    src={appointment.qr_code} 
-                                    alt="QR Code for check-in" 
-                                    className="mx-auto max-w-full h-32 object-contain"
-                                  />
+                                  {qrImages[appointment.id] ? (
+                                    <img 
+                                      src={qrImages[appointment.id]} 
+                                      alt="QR Code for check-in" 
+                                      className="mx-auto max-w-full h-32 object-contain"
+                                    />
+                                  ) : (
+                                    <div className="font-mono text-xs text-gray-500 break-all">
+                                      {appointment.qr_code}
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="text-xs text-gray-500 mt-2 text-center">
                                   Chứa thông tin: Tên, SĐT, Ngày hẹn, Giờ hẹn, Trung tâm
