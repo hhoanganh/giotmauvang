@@ -15,6 +15,7 @@ interface Appointment {
   time_slot: string;
   status: string;
   qr_code: string;
+  created_at?: string;
   center: {
     name: string;
     address: string;
@@ -62,6 +63,7 @@ const Profile: React.FC = () => {
           time_slot,
           status,
           qr_code,
+          created_at,
           donation_centers (
             name,
             address
@@ -97,6 +99,7 @@ const Profile: React.FC = () => {
         time_slot: apt.time_slot,
         status: apt.status || '',
         qr_code: apt.qr_code || '',
+        created_at: apt.created_at,
         center: {
           name: apt.donation_centers?.name || '',
           address: apt.donation_centers?.address || ''
@@ -336,6 +339,11 @@ const Profile: React.FC = () => {
                                 {new Date(appointment.appointment_date).toLocaleDateString('vi-VN')}
                               </span>
                             </div>
+                            {appointment.created_at && (
+                              <div className="text-xs text-gray-500 ml-6">
+                                Đặt lúc: {new Date(appointment.created_at).toLocaleTimeString('vi-VN')} {new Date(appointment.created_at).toLocaleDateString('vi-VN')}
+                              </div>
+                            )}
                             {getStatusBadge(appointment.status)}
                           </div>
                           <div className="space-y-1 text-sm text-gray-600">
