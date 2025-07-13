@@ -341,7 +341,7 @@ const Profile: React.FC = () => {
                             </div>
                             {appointment.created_at && (
                               <div className="text-xs text-gray-500 ml-6">
-                                Đặt lúc: {new Date(appointment.created_at).toLocaleTimeString('vi-VN')} {new Date(appointment.created_at).toLocaleDateString('vi-VN')}
+                                Đăng ký lúc: {new Date(appointment.created_at).toLocaleTimeString('vi-VN')} {new Date(appointment.created_at).toLocaleDateString('vi-VN')}
                               </div>
                             )}
                             {getStatusBadge(appointment.status)}
