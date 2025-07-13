@@ -23,6 +23,57 @@ interface TimeSlot {
   label: string;
 }
 
+interface HealthDeclarationForm {
+  // Question 1
+  hasDonatedBefore: 'yes' | 'no' | null;
+  
+  // Question 2
+  hasCurrentDisease: 'yes' | 'no' | null;
+  currentDiseaseDetails: string;
+  
+  // Question 3
+  hasPreviousDisease: 'yes' | 'no' | 'other' | null;
+  previousDiseaseDetails: string;
+  
+  // Question 4 (multiple selection)
+  last12Months: {
+    recoveredFromDisease: boolean;
+    receivedBloodTransfusion: boolean;
+    receivedVaccine: boolean;
+    vaccineDetails: string;
+    none: boolean;
+  };
+  
+  // Question 5 (multiple selection)
+  last6Months: {
+    recoveredFromDisease: boolean;
+    rapidWeightLoss: boolean;
+    persistentLymphNodes: boolean;
+    invasiveMedicalProcedure: boolean;
+    tattooOrPiercing: boolean;
+    drugUse: boolean;
+    bloodExposure: boolean;
+    livingWithHepatitisB: boolean;
+    sexualContactWithInfected: boolean;
+    sameSexContact: boolean;
+    none: boolean;
+  };
+  
+  // Question 6
+  last1Month: 'yes' | 'no' | null;
+  
+  // Question 7
+  last14Days: 'yes' | 'no' | 'other' | null;
+  last14DaysDetails: string;
+  
+  // Question 8
+  last7Days: 'yes' | 'no' | 'other' | null;
+  last7DaysDetails: string;
+  
+  // Question 9 (women only, optional)
+  womenSpecific: 'pregnant' | 'breastfeeding' | 'terminatedPregnancy' | 'no' | null;
+}
+
 
 
 const Donate: React.FC = () => {
@@ -43,7 +94,43 @@ const Donate: React.FC = () => {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     personal: true,
     center: false,
-    schedule: false
+    schedule: false,
+    healthDeclaration: false
+  });
+
+  // Health declaration form state
+  const [healthForm, setHealthForm] = useState<HealthDeclarationForm>({
+    hasDonatedBefore: null,
+    hasCurrentDisease: null,
+    currentDiseaseDetails: '',
+    hasPreviousDisease: null,
+    previousDiseaseDetails: '',
+    last12Months: {
+      recoveredFromDisease: false,
+      receivedBloodTransfusion: false,
+      receivedVaccine: false,
+      vaccineDetails: '',
+      none: false
+    },
+    last6Months: {
+      recoveredFromDisease: false,
+      rapidWeightLoss: false,
+      persistentLymphNodes: false,
+      invasiveMedicalProcedure: false,
+      tattooOrPiercing: false,
+      drugUse: false,
+      bloodExposure: false,
+      livingWithHepatitisB: false,
+      sexualContactWithInfected: false,
+      sameSexContact: false,
+      none: false
+    },
+    last1Month: null,
+    last14Days: null,
+    last14DaysDetails: '',
+    last7Days: null,
+    last7DaysDetails: '',
+    womenSpecific: null
   });
 
   // Time slots (2-hour intervals)
@@ -179,6 +266,15 @@ const Donate: React.FC = () => {
       return;
     }
 
+    if (!isHealthDeclarationComplete()) {
+      toast({
+        title: 'Lỗi',
+        description: 'Vui lòng hoàn thành phiếu đăng ký hiến máu',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setBookingLoading(true);
     
     try {
@@ -197,7 +293,17 @@ const Donate: React.FC = () => {
 
       if (appointmentError) throw appointmentError;
 
+      // Create health declaration
+      const { error: healthError } = await supabase
+        .from('health_declarations')
+        .insert([{
+          user_id: user.id,
+          appointment_id: appointment.id,
+          answers: JSON.parse(JSON.stringify(healthForm)),
+          is_eligible: true // Will be determined by medical staff
+        }]);
 
+      if (healthError) throw healthError;
 
       // Generate QR code (simple implementation)
       const qrCode = `DONATE-${appointment.id.slice(0, 8).toUpperCase()}`;
@@ -239,9 +345,71 @@ const Donate: React.FC = () => {
     }));
   };
 
+  // Handle health form updates
+  const updateHealthForm = (field: keyof HealthDeclarationForm, value: any) => {
+    setHealthForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const updateLast12Months = (field: keyof HealthDeclarationForm['last12Months'], value: boolean) => {
+    setHealthForm(prev => ({
+      ...prev,
+      last12Months: {
+        ...prev.last12Months,
+        [field]: value,
+        // If "none" is selected, uncheck others
+        ...(field === 'none' && value ? {
+          recoveredFromDisease: false,
+          receivedBloodTransfusion: false,
+          receivedVaccine: false
+        } : {}),
+        // If other option is selected, uncheck "none"
+        ...(field !== 'none' && value ? { none: false } : {})
+      }
+    }));
+  };
+
+  const updateLast6Months = (field: keyof HealthDeclarationForm['last6Months'], value: boolean) => {
+    setHealthForm(prev => ({
+      ...prev,
+      last6Months: {
+        ...prev.last6Months,
+        [field]: value,
+        // If "none" is selected, uncheck others
+        ...(field === 'none' && value ? {
+          recoveredFromDisease: false,
+          rapidWeightLoss: false,
+          persistentLymphNodes: false,
+          invasiveMedicalProcedure: false,
+          tattooOrPiercing: false,
+          drugUse: false,
+          bloodExposure: false,
+          livingWithHepatitisB: false,
+          sexualContactWithInfected: false,
+          sameSexContact: false
+        } : {}),
+        // If other option is selected, uncheck "none"
+        ...(field !== 'none' && value ? { none: false } : {})
+      }
+    }));
+  };
+
   // Check if form is complete
   const isFormComplete = () => {
     return selectedCenter && selectedDate && selectedTimeSlot;
+  };
+
+  // Check if health declaration is complete (required fields only)
+  const isHealthDeclarationComplete = () => {
+    return healthForm.hasDonatedBefore !== null &&
+           healthForm.hasCurrentDisease !== null &&
+           (healthForm.hasCurrentDisease !== 'yes' || healthForm.currentDiseaseDetails.trim() !== '') &&
+           healthForm.hasPreviousDisease !== null &&
+           (healthForm.hasPreviousDisease !== 'other' || healthForm.previousDiseaseDetails.trim() !== '') &&
+           healthForm.last1Month !== null &&
+           healthForm.last14Days !== null &&
+           (healthForm.last14Days !== 'other' || healthForm.last14DaysDetails.trim() !== '') &&
+           healthForm.last7Days !== null &&
+           (healthForm.last7Days !== 'other' || healthForm.last7DaysDetails.trim() !== '');
   };
 
   if (loading) {
@@ -469,22 +637,492 @@ const Donate: React.FC = () => {
                     {selectedDate && (
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Chọn giờ</h3>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-3">
                           {timeSlots.map((slot) => (
                             <div
                               key={slot.id}
-                              className={`p-4 cursor-pointer transition-all duration-300 rounded-lg border-2 text-center ${
+                              className={`p-3 cursor-pointer transition-all duration-300 rounded-lg border-2 text-center ${
                                 selectedTimeSlot === slot.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                               }`}
                               onClick={() => setSelectedTimeSlot(slot.id)}
                             >
-                              <Clock className="h-6 w-6 text-gray-500 mx-auto mb-2" />
-                              <p className="font-semibold text-gray-900">{slot.label}</p>
+                              <p className="font-semibold text-gray-900 text-sm">{slot.label}</p>
                             </div>
                           ))}
                         </div>
                       </div>
                     )}
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+
+            {/* Health Declaration Form Section */}
+            <GlassCard className="overflow-hidden">
+              <div 
+                className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
+                onClick={() => toggleSection('healthDeclaration')}
+              >
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="h-6 w-6 text-red-600" />
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Phiếu đăng ký hiến máu</h2>
+                    <p className="text-sm text-gray-600">
+                      {isHealthDeclarationComplete() ? 'Đã hoàn thành' : 'Chưa hoàn thành'}
+                    </p>
+                  </div>
+                </div>
+                {expandedSections.healthDeclaration ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
+              </div>
+              
+              {expandedSections.healthDeclaration && (
+                <div className="px-6 pb-6 border-t border-gray-200">
+                  <div className="pt-6 space-y-8">
+                    {/* Question 1 */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">1. Anh/chị từng hiến máu chưa?</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="hasDonatedBefore"
+                            value="yes"
+                            checked={healthForm.hasDonatedBefore === 'yes'}
+                            onChange={(e) => updateHealthForm('hasDonatedBefore', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Có</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="hasDonatedBefore"
+                            value="no"
+                            checked={healthForm.hasDonatedBefore === 'no'}
+                            onChange={(e) => updateHealthForm('hasDonatedBefore', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Question 2 */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">2. Hiện tại, anh/chị có mắc bệnh lý nào không?</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="hasCurrentDisease"
+                            value="yes"
+                            checked={healthForm.hasCurrentDisease === 'yes'}
+                            onChange={(e) => updateHealthForm('hasCurrentDisease', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Có</span>
+                        </label>
+                        {healthForm.hasCurrentDisease === 'yes' && (
+                          <div className="ml-7">
+                            <Input
+                              placeholder="Vui lòng mô tả bệnh lý"
+                              value={healthForm.currentDiseaseDetails}
+                              onChange={(e) => updateHealthForm('currentDiseaseDetails', e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="hasCurrentDisease"
+                            value="no"
+                            checked={healthForm.hasCurrentDisease === 'no'}
+                            onChange={(e) => updateHealthForm('hasCurrentDisease', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Question 3 */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">3. Trước đây, anh/chị có từng mắc một trong các bệnh: viêm gan siêu vi B, C, HIV, vảy nến, phì đại tiền liệt tuyến, sốc phản vệ, tai biến mạch máu não, nhồi máu cơ tim, lupus ban đỏ, động kinh, ung thư, hen, được cấy ghép mô tạng?</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="hasPreviousDisease"
+                            value="yes"
+                            checked={healthForm.hasPreviousDisease === 'yes'}
+                            onChange={(e) => updateHealthForm('hasPreviousDisease', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Có</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="hasPreviousDisease"
+                            value="no"
+                            checked={healthForm.hasPreviousDisease === 'no'}
+                            onChange={(e) => updateHealthForm('hasPreviousDisease', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="hasPreviousDisease"
+                            value="other"
+                            checked={healthForm.hasPreviousDisease === 'other'}
+                            onChange={(e) => updateHealthForm('hasPreviousDisease', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Bệnh khác</span>
+                        </label>
+                        {healthForm.hasPreviousDisease === 'other' && (
+                          <div className="ml-7">
+                            <Input
+                              placeholder="Vui lòng mô tả bệnh"
+                              value={healthForm.previousDiseaseDetails}
+                              onChange={(e) => updateHealthForm('previousDiseaseDetails', e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Question 4 */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">4. Trong 12 tháng gần đây, anh/chị có:</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last12Months.recoveredFromDisease}
+                            onChange={(e) => updateLast12Months('recoveredFromDisease', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Khỏi bệnh sau khi mắc một trong các bệnh: sốt rét, giang mai, lao, viêm não-màng não, uốn ván, phẫu thuật ngoại khoa?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last12Months.receivedBloodTransfusion}
+                            onChange={(e) => updateLast12Months('receivedBloodTransfusion', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Được truyền máu hoặc các chế phẩm máu?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last12Months.receivedVaccine}
+                            onChange={(e) => updateLast12Months('receivedVaccine', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Tiêm Vacxin?</span>
+                        </label>
+                        {healthForm.last12Months.receivedVaccine && (
+                          <div className="ml-7">
+                            <Input
+                              placeholder="Loại vacxin"
+                              value={healthForm.last12Months.vaccineDetails}
+                              onChange={(e) => updateHealthForm('last12Months', { ...healthForm.last12Months, vaccineDetails: e.target.value })}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last12Months.none}
+                            onChange={(e) => updateLast12Months('none', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Question 5 */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">5. Trong 06 tháng gần đây, anh/chị có:</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.recoveredFromDisease}
+                            onChange={(e) => updateLast6Months('recoveredFromDisease', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Khỏi bệnh sau khi mắc một trong các bệnh: thương hàn, nhiễm trùng máu, bị rắn cắn, viêm tắc động mạch, viêm tắc tĩnh mạch, viêm tụy, viêm tủy xương?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.rapidWeightLoss}
+                            onChange={(e) => updateLast6Months('rapidWeightLoss', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Sút cân nhanh không rõ nguyên nhân?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.persistentLymphNodes}
+                            onChange={(e) => updateLast6Months('persistentLymphNodes', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Nổi hạch kéo dài?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.invasiveMedicalProcedure}
+                            onChange={(e) => updateLast6Months('invasiveMedicalProcedure', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Thực hiện thủ thuật y tế xâm lấn (chữa răng, châm cứu, lăn kim, nội soi,...)?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.tattooOrPiercing}
+                            onChange={(e) => updateLast6Months('tattooOrPiercing', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Xăm, xỏ lỗ tai, lỗ mũi hoặc các vị trí khác trên cơ thể?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.drugUse}
+                            onChange={(e) => updateLast6Months('drugUse', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Sử dụng ma túy?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.bloodExposure}
+                            onChange={(e) => updateLast6Months('bloodExposure', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Tiếp xúc trực tiếp với máu, dịch tiết của người khác hoặc bị thương bởi kim tiêm?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.livingWithHepatitisB}
+                            onChange={(e) => updateLast6Months('livingWithHepatitisB', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Sinh sống chung với người nhiễm Bệnh viêm gan siêu vi B?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.sexualContactWithInfected}
+                            onChange={(e) => updateLast6Months('sexualContactWithInfected', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Quan hệ tình dục với người nhiễm viêm gan siêu vi B, C, HIV, giang mai hoặc người có nguy cơ nhiễm viêm gan siêu vi B, C, HIV, giang mai?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.sameSexContact}
+                            onChange={(e) => updateLast6Months('sameSexContact', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Quan hệ tình dục với người cùng giới?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={healthForm.last6Months.none}
+                            onChange={(e) => updateLast6Months('none', e.target.checked)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Question 6 */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">6. Trong 01 tháng gần đây, anh/chị có:</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="last1Month"
+                            value="yes"
+                            checked={healthForm.last1Month === 'yes'}
+                            onChange={(e) => updateHealthForm('last1Month', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Khỏi bệnh sau khi mắc bệnh viêm đường tiết niệu, viêm da nhiễm trùng, viêm phế quản, viêm phổi, sởi, ho gà, quai bị, sốt xuất huyết, kiết lỵ, tả, Rubella?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="last1Month"
+                            value="no"
+                            checked={healthForm.last1Month === 'no'}
+                            onChange={(e) => updateHealthForm('last1Month', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Question 7 */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">7. Trong 14 ngày gần đây, anh/chị có:</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="last14Days"
+                            value="yes"
+                            checked={healthForm.last14Days === 'yes'}
+                            onChange={(e) => updateHealthForm('last14Days', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Bị cúm, cảm lạnh, ho, nhức đầu, sốt, đau họng?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="last14Days"
+                            value="no"
+                            checked={healthForm.last14Days === 'no'}
+                            onChange={(e) => updateHealthForm('last14Days', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="last14Days"
+                            value="other"
+                            checked={healthForm.last14Days === 'other'}
+                            onChange={(e) => updateHealthForm('last14Days', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Khác (cụ thể)</span>
+                        </label>
+                        {healthForm.last14Days === 'other' && (
+                          <div className="ml-7">
+                            <Input
+                              placeholder="Vui lòng mô tả"
+                              value={healthForm.last14DaysDetails}
+                              onChange={(e) => updateHealthForm('last14DaysDetails', e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Question 8 */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">8. Trong 07 ngày gần đây, anh/chị có:</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="last7Days"
+                            value="yes"
+                            checked={healthForm.last7Days === 'yes'}
+                            onChange={(e) => updateHealthForm('last7Days', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Dùng thuốc kháng sinh, kháng viêm, Aspirin, Corticoid?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="last7Days"
+                            value="no"
+                            checked={healthForm.last7Days === 'no'}
+                            onChange={(e) => updateHealthForm('last7Days', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="last7Days"
+                            value="other"
+                            checked={healthForm.last7Days === 'other'}
+                            onChange={(e) => updateHealthForm('last7Days', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Khác (cụ thể)</span>
+                        </label>
+                        {healthForm.last7Days === 'other' && (
+                          <div className="ml-7">
+                            <Input
+                              placeholder="Vui lòng mô tả"
+                              value={healthForm.last7DaysDetails}
+                              onChange={(e) => updateHealthForm('last7DaysDetails', e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Question 9 - Women only */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">9. Câu hỏi dành cho phụ nữ: (không bắt buộc)</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="womenSpecific"
+                            value="pregnant"
+                            checked={healthForm.womenSpecific === 'pregnant'}
+                            onChange={(e) => updateHealthForm('womenSpecific', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Hiện chị đang mang thai hoặc nuôi con dưới 12 tháng tuổi?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="womenSpecific"
+                            value="terminatedPregnancy"
+                            checked={healthForm.womenSpecific === 'terminatedPregnancy'}
+                            onChange={(e) => updateHealthForm('womenSpecific', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Chấm dứt thai kỳ trong 12 tháng gần đây (sảy thai, phá thai, thai ngoài tử cung)?</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="womenSpecific"
+                            value="no"
+                            checked={healthForm.womenSpecific === 'no'}
+                            onChange={(e) => updateHealthForm('womenSpecific', e.target.value)}
+                            className="w-4 h-4 text-blue-600"
+                          />
+                          <span>Không</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -504,10 +1142,13 @@ const Donate: React.FC = () => {
             </div>
 
             {/* Form Status */}
-            {!isFormComplete() && (
+            {(!isFormComplete() || !isHealthDeclarationComplete()) && (
               <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  Vui lòng chọn trung tâm, ngày và giờ để có thể đăng ký hiến máu
+                  {!isFormComplete() 
+                    ? 'Vui lòng chọn trung tâm, ngày và giờ để có thể đăng ký hiến máu'
+                    : 'Vui lòng hoàn thành phiếu đăng ký hiến máu để có thể đăng ký'
+                  }
                 </p>
               </div>
             )}
