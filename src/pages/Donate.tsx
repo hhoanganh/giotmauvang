@@ -599,7 +599,14 @@ const Donate: React.FC = () => {
                         className={`p-4 cursor-pointer transition-all duration-300 rounded-lg border-2 ${
                           selectedCenter === center.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                         }`}
-                        onClick={() => setSelectedCenter(center.id)}
+                        onClick={() => {
+                          setSelectedCenter(center.id);
+                          // Auto-collapse the section when a center is selected
+                          setExpandedSections(prev => ({
+                            ...prev,
+                            center: false
+                          }));
+                        }}
                       >
                         <div className="flex items-start gap-3">
                           <MapPin className="h-5 w-5 text-gray-500 mt-1 flex-shrink-0" />
