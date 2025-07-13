@@ -14,7 +14,6 @@ interface DonationCenter {
   id: string;
   name: string;
   address: string;
-  district: string;
   phone: string;
 }
 
@@ -36,7 +35,7 @@ const Donate: React.FC = () => {
   const { toast } = useToast();
 
   // Booking state
-  const [step, setStep] = useState<'auth' | 'eligibility' | 'info' | 'center' | 'date' | 'time' | 'confirm'>('auth');
+  const [step, setStep] = useState<'auth' | 'info' | 'center' | 'date' | 'time' | 'confirm'>('auth');
   const [centers, setCenters] = useState<DonationCenter[]>([]);
   const [selectedCenter, setSelectedCenter] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -63,55 +62,55 @@ const Donate: React.FC = () => {
       id: 1,
       text: "Hiện tại, anh/chị có bị các bệnh: viêm khớp, đau dạ dày, viêm gan/ vàng da, bệnh tim, huyết áp thấp/cao, hen, ho kéo dài, bệnh máu, lao?",
       options: [
-        { value: 'yes', label: 'Có' },
-        { value: 'no', label: 'Không' },
-        { value: 'uncertain', label: 'Không chắc chắn' }
+        { value: 'yes' as const, label: 'Có' },
+        { value: 'no' as const, label: 'Không' },
+        { value: 'uncertain' as const, label: 'Không chắc chắn' }
       ]
     },
     {
       id: 2,
       text: "Trong vòng 12 tháng gần đây, anh/chị có mắc các bệnh và đã được điều trị khỏi: Sốt rét, Giang mai, Lao, Viêm não, Phẫu thuật ngoại khoa? Được truyền máu và các chế phẩm máu? Tiêm Vacxin bệnh dại?",
       options: [
-        { value: 'yes', label: 'Có' },
-        { value: 'no', label: 'Không' },
-        { value: 'uncertain', label: 'Không chắc chắn' }
+        { value: 'yes' as const, label: 'Có' },
+        { value: 'no' as const, label: 'Không' },
+        { value: 'uncertain' as const, label: 'Không chắc chắn' }
       ]
     },
     {
       id: 3,
       text: "Trong vòng 06 tháng gần đây, anh/chị có bị một trong số các triệu chứng sau không? Sút cân nhanh không rõ nguyên nhân? Nổi hạch kéo dài? Chữa răng, châm cứu? Xăm mình, xỏ lỗ tai, lỗ mũi? Sử dụng ma túy? Quan hệ tình dục với người nhiễm HIV hoặc người có hành vi nguy cơ lây nhiễm HIV? Quan hệ tình dục với người cùng giới?",
       options: [
-        { value: 'yes', label: 'Có' },
-        { value: 'no', label: 'Không' },
-        { value: 'uncertain', label: 'Không chắc chắn' }
+        { value: 'yes' as const, label: 'Có' },
+        { value: 'no' as const, label: 'Không' },
+        { value: 'uncertain' as const, label: 'Không chắc chắn' }
       ]
     },
     {
       id: 4,
       text: "Trong 01 tháng gần đây anh/chị có: Khỏi bệnh sau khi mắc bệnh viêm đường tiết niệu, viêm da nhiễm trùng viêm phế quản, viêm phổi, sởi, quai bị, Rubella? Tiêm vắc xin phòng bệnh? Đi vào vùng có dịch bệnh lưu hành (sốt rét, sốt xuất huyết, Zika,..)?",
       options: [
-        { value: 'yes', label: 'Có' },
-        { value: 'no', label: 'Không' },
-        { value: 'uncertain', label: 'Không chắc chắn' }
+        { value: 'yes' as const, label: 'Có' },
+        { value: 'no' as const, label: 'Không' },
+        { value: 'uncertain' as const, label: 'Không chắc chắn' }
       ]
     },
     {
       id: 5,
       text: "Trong 07 ngày gần đây anh/chị có: Bị cảm cúm (ho, nhức đầu, sốt...)? Dùng thuốc kháng sinh, Aspirin, Corticoid? Tiêm Vacxin phòng Viêm gan siêu vi B, Human Papilloma Virus?",
       options: [
-        { value: 'yes', label: 'Có' },
-        { value: 'no', label: 'Không' },
-        { value: 'uncertain', label: 'Không chắc chắn' }
+        { value: 'yes' as const, label: 'Có' },
+        { value: 'no' as const, label: 'Không' },
+        { value: 'uncertain' as const, label: 'Không chắc chắn' }
       ]
     },
     {
       id: 6,
       text: "Câu hỏi dành cho phụ nữ: Hiện có thai, hoặc nuôi con dưới 12 tháng tuổi? Có kinh nguyệt trong vòng một tuần hay không?",
       options: [
-        { value: 'yes', label: 'Có' },
-        { value: 'no', label: 'Không' },
-        { value: 'uncertain', label: 'Không chắc chắn' },
-        { value: 'not-applicable', label: 'Không áp dụng (Nam giới)' }
+        { value: 'yes' as const, label: 'Có' },
+        { value: 'no' as const, label: 'Không' },
+        { value: 'uncertain' as const, label: 'Không chắc chắn' },
+        { value: 'not-applicable' as const, label: 'Không áp dụng (Nam giới)' }
       ]
     }
   ];
@@ -124,7 +123,7 @@ const Donate: React.FC = () => {
       } else if (profile?.primary_role !== 'donor') {
         setStep('auth');
       } else {
-        setStep('eligibility');
+        setStep('info');
         fetchCenters();
         fetchUserLastCenter();
       }
@@ -361,147 +360,165 @@ const Donate: React.FC = () => {
     </div>
   );
 
-  // Render eligibility step
-  const renderEligibilityStep = () => (
-    <div className="max-w-2xl mx-auto">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Kiểm tra điều kiện hiến máu
-        </h2>
-        <p className="text-gray-600">
-          Câu hỏi {currentQuestion + 1} / {eligibilityQuestions.length}
-        </p>
-        <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
-          <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentQuestion + 1) / eligibilityQuestions.length) * 100}%` }}
-          />
-        </div>
-      </div>
 
-      {isEligible === null ? (
-        <GlassCard className="p-6">
-          <GlassCardHeader className="text-center">
-            <GlassCardTitle className="text-lg leading-relaxed mb-6">
-              {eligibilityQuestions[currentQuestion].text}
-            </GlassCardTitle>
-          </GlassCardHeader>
-          
-          <GlassCardContent className="space-y-4">
-            {eligibilityQuestions[currentQuestion].options.map((option) => (
-              <GlassButton
-                key={option.value}
-                variant="default"
-                size="lg"
-                className="w-full py-4 text-left justify-start"
-                onClick={() => handleEligibilityAnswer(eligibilityQuestions[currentQuestion].id, option.value)}
-              >
-                {option.label}
-              </GlassButton>
-            ))}
-          </GlassCardContent>
-        </GlassCard>
-      ) : (
-        <div className="text-center">
-          {isEligible ? (
-            <div>
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Chúc mừng! Bạn có thể hiến máu
-              </h3>
-              <p className="text-gray-600 mb-8">
-                Hãy tiếp tục để đăng ký lịch hiến máu
-              </p>
-              <GlassButton 
-                variant="primary" 
-                size="lg" 
-                onClick={() => setStep('info')}
-              >
-                Tiếp tục
-              </GlassButton>
-            </div>
-          ) : (
-            <div>
-              <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Hiện tại bạn chưa đủ điều kiện hiến máu
-              </h3>
-              <p className="text-gray-600 mb-8">
-                Hãy tìm hiểu thêm về các điều kiện và thử lại sau
-              </p>
-              <GlassButton 
-                variant="secondary" 
-                size="lg" 
-                onClick={() => navigate('/')}
-              >
-                Về trang chủ
-              </GlassButton>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
 
-  // Render personal info step
+  // Render personal info step with eligibility checker
   const renderInfoStep = () => (
-    <div className="max-w-2xl mx-auto">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Thông tin cá nhân
-        </h2>
-        <p className="text-gray-600">
-          Thông tin này được lấy từ hồ sơ của bạn
-        </p>
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Personal Info Section */}
+      <div>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Thông tin cá nhân
+          </h2>
+          <p className="text-gray-600">
+            Thông tin này được lấy từ hồ sơ của bạn
+          </p>
+        </div>
+
+        <GlassCard className="p-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <User className="h-5 w-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Họ và tên</p>
+                <p className="font-medium">{profile?.full_name || 'Chưa cập nhật'}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Phone className="h-5 w-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Số điện thoại</p>
+                <p className="font-medium">{profile?.phone_number || 'Chưa cập nhật'}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Mail className="h-5 w-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="font-medium">{profile?.email || 'Chưa cập nhật'}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <p className="text-sm text-gray-500 mb-4">
+              Để thay đổi thông tin, vui lòng cập nhật trong hồ sơ cá nhân
+            </p>
+            <div className="flex gap-3">
+              <GlassButton 
+                variant="ghost" 
+                onClick={() => navigate('/profile')}
+              >
+                Cập nhật hồ sơ
+              </GlassButton>
+            </div>
+          </div>
+        </GlassCard>
       </div>
 
-      <GlassCard className="p-6">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <User className="h-5 w-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Họ và tên</p>
-              <p className="font-medium">{profile?.full_name || 'Chưa cập nhật'}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <Phone className="h-5 w-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Số điện thoại</p>
-              <p className="font-medium">{profile?.phone_number || 'Chưa cập nhật'}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <Mail className="h-5 w-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium">{profile?.email || 'Chưa cập nhật'}</p>
-            </div>
-          </div>
+      {/* Eligibility Checker Section */}
+      <div>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Kiểm tra điều kiện hiến máu
+          </h2>
+          <p className="text-gray-600">
+            Vui lòng trả lời các câu hỏi sau để kiểm tra điều kiện hiến máu
+          </p>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-500 mb-4">
-            Để thay đổi thông tin, vui lòng cập nhật trong hồ sơ cá nhân
-          </p>
-          <div className="flex gap-3">
-            <GlassButton 
-              variant="ghost" 
-              onClick={() => navigate('/profile')}
-            >
-              Cập nhật hồ sơ
-            </GlassButton>
-            <GlassButton 
-              variant="primary" 
-              onClick={() => setStep('center')}
-            >
-              Tiếp tục
-            </GlassButton>
-          </div>
-        </div>
-      </GlassCard>
+        {isEligible === null ? (
+          <GlassCard className="p-6">
+            <div className="text-center mb-6">
+              <p className="text-lg font-medium text-gray-900 mb-2">
+                Câu hỏi {currentQuestion + 1} / {eligibilityQuestions.length}
+              </p>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${((currentQuestion + 1) / eligibilityQuestions.length) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="text-center mb-6">
+              <h3 className="text-lg leading-relaxed mb-6">
+                {eligibilityQuestions[currentQuestion].text}
+              </h3>
+            </div>
+            
+            <div className="space-y-4">
+              {eligibilityQuestions[currentQuestion].options.map((option) => (
+                <GlassButton
+                  key={option.value}
+                  variant="default"
+                  size="lg"
+                  className="w-full py-4 text-left justify-start"
+                  onClick={() => handleEligibilityAnswer(eligibilityQuestions[currentQuestion].id, option.value)}
+                >
+                  {option.label}
+                </GlassButton>
+              ))}
+            </div>
+          </GlassCard>
+        ) : (
+          <GlassCard className="p-6">
+            <div className="text-center">
+              {isEligible ? (
+                <div>
+                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    Chúc mừng! Bạn có thể hiến máu
+                  </h3>
+                  <p className="text-gray-600 mb-8">
+                    Hãy tiếp tục để đăng ký lịch hiến máu
+                  </p>
+                  <GlassButton 
+                    variant="primary" 
+                    size="lg" 
+                    onClick={() => setStep('center')}
+                  >
+                    Tiếp tục đăng ký
+                  </GlassButton>
+                </div>
+              ) : (
+                <div>
+                  <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    Hiện tại bạn chưa đủ điều kiện hiến máu
+                  </h3>
+                  <p className="text-gray-600 mb-8">
+                    Hãy tìm hiểu thêm về các điều kiện và thử lại sau
+                  </p>
+                  <div className="space-y-4">
+                    <GlassButton 
+                      variant="secondary" 
+                      size="lg" 
+                      onClick={() => navigate('/')}
+                    >
+                      Về trang chủ
+                    </GlassButton>
+                    <GlassButton 
+                      variant="ghost" 
+                      size="lg" 
+                      onClick={() => {
+                        setCurrentQuestion(0);
+                        setEligibilityAnswers({});
+                        setIsEligible(null);
+                      }}
+                    >
+                      Kiểm tra lại
+                    </GlassButton>
+                  </div>
+                </div>
+              )}
+            </div>
+          </GlassCard>
+        )}
+      </div>
     </div>
   );
 
@@ -764,7 +781,6 @@ const Donate: React.FC = () => {
       <main className="section-padding">
         <div className="container-custom">
           {step === 'auth' && renderAuthStep()}
-          {step === 'eligibility' && renderEligibilityStep()}
           {step === 'info' && renderInfoStep()}
           {step === 'center' && renderCenterStep()}
           {step === 'date' && renderDateStep()}
