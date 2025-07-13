@@ -305,8 +305,20 @@ const Donate: React.FC = () => {
 
       if (healthError) throw healthError;
 
-      // Generate QR code (simple implementation)
-      const qrCode = `DONATE-${appointment.id.slice(0, 8).toUpperCase()}`;
+      // Generate comprehensive QR code with all necessary data for check-in
+      const qrCodeData = {
+        appointmentId: appointment.id,
+        userId: user.id,
+        centerId: selectedCenter,
+        appointmentDate: selectedDate,
+        timeSlot: selectedTimeSlot,
+        donorName: profile?.full_name || '',
+        donorPhone: profile?.phone_number || '',
+        qrType: 'donation_checkin',
+        timestamp: new Date().toISOString()
+      };
+      
+      const qrCode = JSON.stringify(qrCodeData);
       
       const { error: qrError } = await supabase
         .from('appointments')

@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Badge } from '@/components/ui/badge';
-import { User, Calendar, MapPin, Heart, Clock, CheckCircle, XCircle, ArrowRight } from 'lucide-react';
+import { User, Calendar, MapPin, Heart, Clock, CheckCircle, XCircle, ArrowRight, Download, Printer } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -154,6 +154,90 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleDownloadQR = (qrData: string, appointmentDate: string, donorName: string) => {
+    try {
+      const qrInfo = {
+        donorName,
+        appointmentDate: new Date(appointmentDate).toLocaleDateString('vi-VN'),
+        qrCode: qrData,
+        generatedAt: new Date().toLocaleString('vi-VN')
+      };
+      
+      const blob = new Blob([JSON.stringify(qrInfo, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `qr-checkin-${donorName}-${appointmentDate}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: 'Tải xuống thành công',
+        description: 'Mã QR đã được tải xuống',
+      });
+    } catch (error) {
+      toast({
+        title: 'Lỗi',
+        description: 'Không thể tải xuống mã QR',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handlePrintQR = (qrData: string, appointmentDate: string, donorName: string) => {
+    try {
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        const qrInfo = {
+          donorName,
+          appointmentDate: new Date(appointmentDate).toLocaleDateString('vi-VN'),
+          qrCode: qrData,
+          generatedAt: new Date().toLocaleString('vi-VN')
+        };
+        
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>QR Code Check-in - ${donorName}</title>
+              <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .qr-container { text-align: center; margin: 20px 0; }
+                .qr-code { font-family: monospace; background: #f5f5f5; padding: 15px; border: 2px dashed #ccc; margin: 10px 0; word-break: break-all; }
+                .info { margin: 10px 0; }
+                @media print { body { margin: 0; } }
+              </style>
+            </head>
+            <body>
+              <h2>Mã QR Check-in Hiến Máu</h2>
+              <div class="info">
+                <p><strong>Người hiến máu:</strong> ${qrInfo.donorName}</p>
+                <p><strong>Ngày hẹn:</strong> ${qrInfo.appointmentDate}</p>
+                <p><strong>Mã QR:</strong></p>
+              </div>
+              <div class="qr-container">
+                <div class="qr-code">${qrInfo.qrCode}</div>
+              </div>
+              <div class="info">
+                <p><small>Quét mã này tại trung tâm để check-in</small></p>
+                <p><small>Được tạo lúc: ${qrInfo.generatedAt}</small></p>
+              </div>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+      }
+    } catch (error) {
+      toast({
+        title: 'Lỗi',
+        description: 'Không thể in mã QR',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (loading || loadingData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -254,9 +338,40 @@ const Profile: React.FC = () => {
                               <span>{appointment.center?.name}</span>
                             </div>
                             {appointment.qr_code && (
-                              <div className="flex items-center gap-2">
-                                <CheckCircle className="h-4 w-4 text-green-600" />
-                                <span>Mã QR: {appointment.qr_code}</span>
+                              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                    <span className="text-sm font-medium text-gray-700">Mã QR Check-in</span>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <GlassButton
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleDownloadQR(appointment.qr_code, appointment.appointment_date, profile?.full_name || '')}
+                                      className="h-8 px-2"
+                                    >
+                                      <Download className="h-3 w-3" />
+                                    </GlassButton>
+                                    <GlassButton
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handlePrintQR(appointment.qr_code, appointment.appointment_date, profile?.full_name || '')}
+                                      className="h-8 px-2"
+                                    >
+                                      <Printer className="h-3 w-3" />
+                                    </GlassButton>
+                                  </div>
+                                </div>
+                                <div className="bg-white p-3 rounded border-2 border-dashed border-gray-300 text-center">
+                                  <div className="text-xs text-gray-500 mb-1">Quét mã này tại trung tâm</div>
+                                  <div className="font-mono text-sm font-bold text-gray-800 break-all">
+                                    {appointment.qr_code}
+                                  </div>
+                                </div>
+                                <div className="text-xs text-gray-500 mt-2 text-center">
+                                  Chứa thông tin: Tên, SĐT, Ngày hẹn, Giờ hẹn, Trung tâm
+                                </div>
                               </div>
                             )}
                           </div>
