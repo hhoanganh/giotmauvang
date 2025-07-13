@@ -23,10 +23,7 @@ interface TimeSlot {
   label: string;
 }
 
-interface HealthDeclaration {
-  answers: Record<number, 'yes' | 'no' | 'uncertain' | 'not-applicable'>;
-  isEligible: boolean;
-}
+
 
 const Donate: React.FC = () => {
   const { user, profile, loading } = useAuth();
@@ -42,15 +39,9 @@ const Donate: React.FC = () => {
   const [dateRegistrations, setDateRegistrations] = useState<Record<string, number>>({});
   const [bookingLoading, setBookingLoading] = useState(false);
 
-  // Eligibility state
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [eligibilityAnswers, setEligibilityAnswers] = useState<Record<number, 'yes' | 'no' | 'uncertain' | 'not-applicable'>>({});
-  const [isEligible, setIsEligible] = useState<boolean | null>(null);
-
   // Form sections state
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     personal: true,
-    eligibility: false,
     center: false,
     schedule: false
   });
@@ -63,64 +54,7 @@ const Donate: React.FC = () => {
     { id: '15:00-17:00', time: '15:00-17:00', label: 'Chiều (15:00 - 17:00)' },
   ];
 
-  // Eligibility questions (same as EligibilityCheckerModal)
-  const eligibilityQuestions = [
-    {
-      id: 1,
-      text: "Hiện tại, anh/chị có bị các bệnh: viêm khớp, đau dạ dày, viêm gan/ vàng da, bệnh tim, huyết áp thấp/cao, hen, ho kéo dài, bệnh máu, lao?",
-      options: [
-        { value: 'yes' as const, label: 'Có' },
-        { value: 'no' as const, label: 'Không' },
-        { value: 'uncertain' as const, label: 'Không chắc chắn' }
-      ]
-    },
-    {
-      id: 2,
-      text: "Trong vòng 12 tháng gần đây, anh/chị có mắc các bệnh và đã được điều trị khỏi: Sốt rét, Giang mai, Lao, Viêm não, Phẫu thuật ngoại khoa? Được truyền máu và các chế phẩm máu? Tiêm Vacxin bệnh dại?",
-      options: [
-        { value: 'yes' as const, label: 'Có' },
-        { value: 'no' as const, label: 'Không' },
-        { value: 'uncertain' as const, label: 'Không chắc chắn' }
-      ]
-    },
-    {
-      id: 3,
-      text: "Trong vòng 06 tháng gần đây, anh/chị có bị một trong số các triệu chứng sau không? Sút cân nhanh không rõ nguyên nhân? Nổi hạch kéo dài? Chữa răng, châm cứu? Xăm mình, xỏ lỗ tai, lỗ mũi? Sử dụng ma túy? Quan hệ tình dục với người nhiễm HIV hoặc người có hành vi nguy cơ lây nhiễm HIV? Quan hệ tình dục với người cùng giới?",
-      options: [
-        { value: 'yes' as const, label: 'Có' },
-        { value: 'no' as const, label: 'Không' },
-        { value: 'uncertain' as const, label: 'Không chắc chắn' }
-      ]
-    },
-    {
-      id: 4,
-      text: "Trong 01 tháng gần đây anh/chị có: Khỏi bệnh sau khi mắc bệnh viêm đường tiết niệu, viêm da nhiễm trùng viêm phế quản, viêm phổi, sởi, quai bị, Rubella? Tiêm vắc xin phòng bệnh? Đi vào vùng có dịch bệnh lưu hành (sốt rét, sốt xuất huyết, Zika,..)?",
-      options: [
-        { value: 'yes' as const, label: 'Có' },
-        { value: 'no' as const, label: 'Không' },
-        { value: 'uncertain' as const, label: 'Không chắc chắn' }
-      ]
-    },
-    {
-      id: 5,
-      text: "Trong 07 ngày gần đây anh/chị có: Bị cảm cúm (ho, nhức đầu, sốt...)? Dùng thuốc kháng sinh, Aspirin, Corticoid? Tiêm Vacxin phòng Viêm gan siêu vi B, Human Papilloma Virus?",
-      options: [
-        { value: 'yes' as const, label: 'Có' },
-        { value: 'no' as const, label: 'Không' },
-        { value: 'uncertain' as const, label: 'Không chắc chắn' }
-      ]
-    },
-    {
-      id: 6,
-      text: "Câu hỏi dành cho phụ nữ: Hiện có thai, hoặc nuôi con dưới 12 tháng tuổi? Có kinh nguyệt trong vòng một tuần hay không?",
-      options: [
-        { value: 'yes' as const, label: 'Có' },
-        { value: 'no' as const, label: 'Không' },
-        { value: 'uncertain' as const, label: 'Không chắc chắn' },
-        { value: 'not-applicable' as const, label: 'Không áp dụng (Nam giới)' }
-      ]
-    }
-  ];
+
 
   // Check authentication and role on mount
   useEffect(() => {
@@ -200,44 +134,7 @@ const Donate: React.FC = () => {
     }
   };
 
-  // Handle eligibility answer
-  const handleEligibilityAnswer = (questionId: number, answer: 'yes' | 'no' | 'uncertain' | 'not-applicable') => {
-    const newAnswers = { ...eligibilityAnswers, [questionId]: answer };
-    setEligibilityAnswers(newAnswers);
 
-    // Check for immediate ineligibility
-    if (answer === 'yes' && questionId <= 5) {
-      setIsEligible(false);
-      return;
-    }
-
-    // Move to next question or calculate result
-    if (currentQuestion < eligibilityQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      calculateEligibility(newAnswers);
-    }
-  };
-
-  // Calculate eligibility result
-  const calculateEligibility = (answers: Record<number, 'yes' | 'no' | 'uncertain' | 'not-applicable'>) => {
-    // Check for any "yes" answers to questions 1-5
-    for (let i = 1; i <= 5; i++) {
-      if (answers[i] === 'yes') {
-        setIsEligible(false);
-        return;
-      }
-    }
-
-    // Check question 6 (women-specific)
-    if (answers[6] === 'yes') {
-      setIsEligible(false);
-    } else if (answers[6] === 'uncertain') {
-      setIsEligible(false); // Require consultation
-    } else {
-      setIsEligible(true);
-    }
-  };
 
   // Handle date selection
   const handleDateSelect = (date: string) => {
@@ -245,12 +142,12 @@ const Donate: React.FC = () => {
     fetchDateRegistrations(date);
   };
 
-  // Generate available dates (next 30 days)
+  // Generate available dates (next 7 days)
   const generateAvailableDates = () => {
     const dates = [];
     const today = new Date();
     
-    for (let i = 1; i <= 30; i++) {
+    for (let i = 1; i <= 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
       
@@ -300,17 +197,7 @@ const Donate: React.FC = () => {
 
       if (appointmentError) throw appointmentError;
 
-      // Create health declaration
-      const { error: healthError } = await supabase
-        .from('health_declarations')
-        .insert([{
-          user_id: user.id,
-          appointment_id: appointment.id,
-          answers: eligibilityAnswers,
-          is_eligible: isEligible
-        }]);
 
-      if (healthError) throw healthError;
 
       // Generate QR code (simple implementation)
       const qrCode = `DONATE-${appointment.id.slice(0, 8).toUpperCase()}`;
@@ -453,122 +340,7 @@ const Donate: React.FC = () => {
               )}
             </GlassCard>
 
-            {/* Eligibility Checker Section */}
-            <GlassCard className="overflow-hidden">
-              <div 
-                className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
-                onClick={() => toggleSection('eligibility')}
-              >
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-6 w-6 text-orange-600" />
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-900">Kiểm tra điều kiện hiến máu (Tùy chọn)</h2>
-                    <p className="text-sm text-gray-600">
-                      {isEligible === null ? 'Chưa kiểm tra' : 
-                       isEligible ? 'Đủ điều kiện' : 'Không đủ điều kiện'}
-                    </p>
-                  </div>
-                </div>
-                {expandedSections.eligibility ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
-              </div>
-              
-              {expandedSections.eligibility && (
-                <div className="px-6 pb-6 border-t border-gray-200">
-                  <div className="pt-6">
-                    {isEligible === null ? (
-                      <div>
-                        <div className="text-center mb-6">
-                          <p className="text-lg font-medium text-gray-900 mb-2">
-                            Câu hỏi {currentQuestion + 1} / {eligibilityQuestions.length}
-                          </p>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                              style={{ width: `${((currentQuestion + 1) / eligibilityQuestions.length) * 100}%` }}
-                            />
-                          </div>
-                        </div>
 
-                        <div className="text-center mb-6">
-                          <h3 className="text-lg leading-relaxed mb-6">
-                            {eligibilityQuestions[currentQuestion].text}
-                          </h3>
-                        </div>
-                        
-                        <div className="space-y-4">
-                          {eligibilityQuestions[currentQuestion].options.map((option) => (
-                            <GlassButton
-                              key={option.value}
-                              variant="default"
-                              size="lg"
-                              className="w-full py-4 text-left justify-start"
-                              onClick={() => handleEligibilityAnswer(eligibilityQuestions[currentQuestion].id, option.value)}
-                            >
-                              {option.label}
-                            </GlassButton>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        {isEligible ? (
-                          <div>
-                            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                              Chúc mừng! Bạn có thể hiến máu
-                            </h3>
-                            <p className="text-gray-600 mb-6">
-                              Bạn đã hoàn thành kiểm tra điều kiện sức khỏe
-                            </p>
-                            <GlassButton 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => {
-                                setCurrentQuestion(0);
-                                setEligibilityAnswers({});
-                                setIsEligible(null);
-                              }}
-                            >
-                              Kiểm tra lại
-                            </GlassButton>
-                          </div>
-                        ) : (
-                          <div>
-                            <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                              Hiện tại bạn chưa đủ điều kiện hiến máu
-                            </h3>
-                            <p className="text-gray-600 mb-6">
-                              Hãy tìm hiểu thêm về các điều kiện và thử lại sau
-                            </p>
-                            <div className="space-y-3">
-                              <GlassButton 
-                                variant="ghost" 
-                                size="sm"
-                                onClick={() => {
-                                  setCurrentQuestion(0);
-                                  setEligibilityAnswers({});
-                                  setIsEligible(null);
-                                }}
-                              >
-                                Kiểm tra lại
-                              </GlassButton>
-                              <GlassButton 
-                                variant="secondary" 
-                                size="sm"
-                                onClick={() => navigate('/')}
-                              >
-                                Về trang chủ
-                              </GlassButton>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </GlassCard>
 
             {/* Center Selection Section */}
             <GlassCard className="overflow-hidden">
