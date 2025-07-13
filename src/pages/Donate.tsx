@@ -6,7 +6,7 @@ import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/
 import { GlassButton } from '@/components/ui/glass-button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, MapPin, Clock, User, Phone, Mail, Heart, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, MapPin, Clock, User, Phone, Mail, Heart, AlertCircle, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -34,8 +34,7 @@ const Donate: React.FC = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  // Booking state
-  const [step, setStep] = useState<'auth' | 'info' | 'center' | 'date' | 'time' | 'confirm'>('auth');
+  // Form state
   const [centers, setCenters] = useState<DonationCenter[]>([]);
   const [selectedCenter, setSelectedCenter] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -47,6 +46,14 @@ const Donate: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [eligibilityAnswers, setEligibilityAnswers] = useState<Record<number, 'yes' | 'no' | 'uncertain' | 'not-applicable'>>({});
   const [isEligible, setIsEligible] = useState<boolean | null>(null);
+
+  // Form sections state
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    personal: true,
+    eligibility: false,
+    center: false,
+    schedule: false
+  });
 
   // Time slots (2-hour intervals)
   const timeSlots: TimeSlot[] = [
@@ -118,17 +125,14 @@ const Donate: React.FC = () => {
   // Check authentication and role on mount
   useEffect(() => {
     if (!loading) {
-      if (!user) {
-        setStep('auth');
-      } else if (profile?.primary_role !== 'donor') {
-        setStep('auth');
+      if (!user || profile?.primary_role !== 'donor') {
+        navigate('/auth');
       } else {
-        setStep('info');
         fetchCenters();
         fetchUserLastCenter();
       }
     }
-  }, [user, profile, loading]);
+  }, [user, profile, loading, navigate]);
 
   // Fetch centers
   const fetchCenters = async () => {
@@ -759,6 +763,19 @@ const Donate: React.FC = () => {
     );
   };
 
+  // Toggle section expansion
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  // Check if form is complete
+  const isFormComplete = () => {
+    return isEligible === true && selectedCenter && selectedDate && selectedTimeSlot;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -780,12 +797,361 @@ const Donate: React.FC = () => {
       <Header />
       <main className="section-padding">
         <div className="container-custom">
-          {step === 'auth' && renderAuthStep()}
-          {step === 'info' && renderInfoStep()}
-          {step === 'center' && renderCenterStep()}
-          {step === 'date' && renderDateStep()}
-          {step === 'time' && renderTimeStep()}
-          {step === 'confirm' && renderConfirmStep()}
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Form Header */}
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="h-8 w-8 text-red-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Đăng ký hiến máu
+              </h1>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Vui lòng điền đầy đủ thông tin bên dưới để đăng ký hiến máu. 
+                Quá trình này bao gồm kiểm tra điều kiện sức khỏe và chọn lịch hẹn.
+              </p>
+            </div>
+
+            {/* Personal Information Section */}
+            <GlassCard className="overflow-hidden">
+              <div 
+                className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
+                onClick={() => toggleSection('personal')}
+              >
+                <div className="flex items-center gap-3">
+                  <User className="h-6 w-6 text-blue-600" />
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Thông tin cá nhân</h2>
+                    <p className="text-sm text-gray-600">Thông tin từ hồ sơ của bạn</p>
+                  </div>
+                </div>
+                {expandedSections.personal ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
+              </div>
+              
+              {expandedSections.personal && (
+                <div className="px-6 pb-6 border-t border-gray-200">
+                  <div className="pt-6 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <User className="h-5 w-5 text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-500">Họ và tên</p>
+                        <p className="font-medium">{profile?.full_name || 'Chưa cập nhật'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <Phone className="h-5 w-5 text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-500">Số điện thoại</p>
+                        <p className="font-medium">{profile?.phone_number || 'Chưa cập nhật'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <Mail className="h-5 w-5 text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-500">Email</p>
+                        <p className="font-medium">{profile?.email || 'Chưa cập nhật'}</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <p className="text-sm text-gray-500 mb-3">
+                        Để thay đổi thông tin, vui lòng cập nhật trong hồ sơ cá nhân
+                      </p>
+                      <GlassButton 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => navigate('/profile')}
+                      >
+                        Cập nhật hồ sơ
+                      </GlassButton>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+
+            {/* Eligibility Checker Section */}
+            <GlassCard className="overflow-hidden">
+              <div 
+                className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
+                onClick={() => toggleSection('eligibility')}
+              >
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="h-6 w-6 text-orange-600" />
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Kiểm tra điều kiện hiến máu</h2>
+                    <p className="text-sm text-gray-600">
+                      {isEligible === null ? 'Chưa hoàn thành' : 
+                       isEligible ? 'Đủ điều kiện' : 'Không đủ điều kiện'}
+                    </p>
+                  </div>
+                </div>
+                {expandedSections.eligibility ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
+              </div>
+              
+              {expandedSections.eligibility && (
+                <div className="px-6 pb-6 border-t border-gray-200">
+                  <div className="pt-6">
+                    {isEligible === null ? (
+                      <div>
+                        <div className="text-center mb-6">
+                          <p className="text-lg font-medium text-gray-900 mb-2">
+                            Câu hỏi {currentQuestion + 1} / {eligibilityQuestions.length}
+                          </p>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${((currentQuestion + 1) / eligibilityQuestions.length) * 100}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="text-center mb-6">
+                          <h3 className="text-lg leading-relaxed mb-6">
+                            {eligibilityQuestions[currentQuestion].text}
+                          </h3>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          {eligibilityQuestions[currentQuestion].options.map((option) => (
+                            <GlassButton
+                              key={option.value}
+                              variant="default"
+                              size="lg"
+                              className="w-full py-4 text-left justify-start"
+                              onClick={() => handleEligibilityAnswer(eligibilityQuestions[currentQuestion].id, option.value)}
+                            >
+                              {option.label}
+                            </GlassButton>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        {isEligible ? (
+                          <div>
+                            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                              Chúc mừng! Bạn có thể hiến máu
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                              Bạn đã hoàn thành kiểm tra điều kiện sức khỏe
+                            </p>
+                            <GlassButton 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => {
+                                setCurrentQuestion(0);
+                                setEligibilityAnswers({});
+                                setIsEligible(null);
+                              }}
+                            >
+                              Kiểm tra lại
+                            </GlassButton>
+                          </div>
+                        ) : (
+                          <div>
+                            <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                              Hiện tại bạn chưa đủ điều kiện hiến máu
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                              Hãy tìm hiểu thêm về các điều kiện và thử lại sau
+                            </p>
+                            <div className="space-y-3">
+                              <GlassButton 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => {
+                                  setCurrentQuestion(0);
+                                  setEligibilityAnswers({});
+                                  setIsEligible(null);
+                                }}
+                              >
+                                Kiểm tra lại
+                              </GlassButton>
+                              <GlassButton 
+                                variant="secondary" 
+                                size="sm"
+                                onClick={() => navigate('/')}
+                              >
+                                Về trang chủ
+                              </GlassButton>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+
+            {/* Center Selection Section */}
+            <GlassCard className="overflow-hidden">
+              <div 
+                className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
+                onClick={() => toggleSection('center')}
+              >
+                <div className="flex items-center gap-3">
+                  <MapPin className="h-6 w-6 text-green-600" />
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Chọn trung tâm hiến máu</h2>
+                    <p className="text-sm text-gray-600">
+                      {selectedCenter ? 
+                        centers.find(c => c.id === selectedCenter)?.name : 
+                        'Chưa chọn trung tâm'}
+                    </p>
+                  </div>
+                </div>
+                {expandedSections.center ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
+              </div>
+              
+              {expandedSections.center && (
+                <div className="px-6 pb-6 border-t border-gray-200">
+                  <div className="pt-6 space-y-4">
+                    {centers.map((center) => (
+                      <div
+                        key={center.id} 
+                        className={`p-4 cursor-pointer transition-all duration-300 rounded-lg border-2 ${
+                          selectedCenter === center.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                        }`}
+                        onClick={() => setSelectedCenter(center.id)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <MapPin className="h-5 w-5 text-gray-500 mt-1 flex-shrink-0" />
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-900">{center.name}</h3>
+                            <p className="text-sm text-gray-600">{center.address}</p>
+                            <p className="text-sm text-gray-500">{center.phone}</p>
+                          </div>
+                          {selectedCenter === center.id && (
+                            <CheckCircle className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+
+            {/* Schedule Selection Section */}
+            <GlassCard className="overflow-hidden">
+              <div 
+                className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
+                onClick={() => toggleSection('schedule')}
+              >
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-6 w-6 text-purple-600" />
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">Chọn lịch hẹn</h2>
+                    <p className="text-sm text-gray-600">
+                      {selectedDate && selectedTimeSlot ? 
+                        `${new Date(selectedDate).toLocaleDateString('vi-VN')} - ${timeSlots.find(t => t.id === selectedTimeSlot)?.label}` : 
+                        'Chưa chọn lịch hẹn'}
+                    </p>
+                  </div>
+                </div>
+                {expandedSections.schedule ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
+              </div>
+              
+              {expandedSections.schedule && (
+                <div className="px-6 pb-6 border-t border-gray-200">
+                  <div className="pt-6 space-y-6">
+                    {/* Date Selection */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Chọn ngày</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {generateAvailableDates().map((dateInfo) => {
+                          const registrationCount = dateRegistrations[dateInfo.date] || 0;
+                          const isOverbooked = registrationCount > 20;
+                          
+                          return (
+                            <div
+                              key={dateInfo.date}
+                              className={`p-4 cursor-pointer transition-all duration-300 rounded-lg border-2 text-center ${
+                                selectedDate === dateInfo.date ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                              }`}
+                              onClick={() => handleDateSelect(dateInfo.date)}
+                            >
+                              <p className="font-semibold text-gray-900">{dateInfo.label}</p>
+                              <p className="text-sm text-gray-500 mt-1">
+                                {registrationCount} người đã đăng ký
+                              </p>
+                              {isOverbooked && (
+                                <div className="flex items-center justify-center gap-1 mt-2 text-orange-600 text-xs">
+                                  <AlertCircle className="h-3 w-3" />
+                                  <span>Đã quá tải</span>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {selectedDate && dateRegistrations[selectedDate] > 20 && (
+                        <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                          <div className="flex items-center gap-2 text-orange-800">
+                            <AlertCircle className="h-4 w-4" />
+                            <span className="text-sm font-medium">
+                              Ngày này đã có {dateRegistrations[selectedDate]} người đăng ký (quá tải). 
+                              Bạn có muốn chọn ngày khác?
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Time Selection */}
+                    {selectedDate && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Chọn giờ</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          {timeSlots.map((slot) => (
+                            <div
+                              key={slot.id}
+                              className={`p-4 cursor-pointer transition-all duration-300 rounded-lg border-2 text-center ${
+                                selectedTimeSlot === slot.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                              }`}
+                              onClick={() => setSelectedTimeSlot(slot.id)}
+                            >
+                              <Clock className="h-6 w-6 text-gray-500 mx-auto mb-2" />
+                              <p className="font-semibold text-gray-900">{slot.label}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+
+            {/* Form Actions */}
+            <div className="flex justify-center pt-6">
+              <GlassButton 
+                variant="primary" 
+                size="lg"
+                onClick={handleBooking}
+                disabled={!isFormComplete() || bookingLoading}
+                className="px-8 py-3"
+              >
+                {bookingLoading ? 'Đang đăng ký...' : 'Đăng ký hiến máu'}
+              </GlassButton>
+            </div>
+
+            {/* Form Status */}
+            {!isFormComplete() && (
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  Vui lòng hoàn thành tất cả các bước trên để có thể đăng ký hiến máu
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>
