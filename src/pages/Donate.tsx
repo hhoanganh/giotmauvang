@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, MapPin, Clock, User, Phone, Mail, Heart, AlertCircle, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import QRCode from 'qrcode';
 
 interface DonationCenter {
   id: string;
@@ -318,21 +317,11 @@ const Donate: React.FC = () => {
         qrType: 'donation_checkin',
         timestamp: new Date().toISOString()
       };
-      
-      // Generate actual QR code image as data URL
-      const qrCodeDataUrl = await QRCode.toDataURL(JSON.stringify(qrCodeData), {
-        width: 256,
-        margin: 2,
-        color: {
-          dark: '#000000',
-          light: '#FFFFFF'
-        }
-      });
-      
-      // Update appointment with QR code
+      // Store only the JSON string in the database (not the image)
+      const qrCodeJson = JSON.stringify(qrCodeData);
       const { error: qrError } = await supabase
         .from('appointments')
-        .update({ qr_code: qrCodeDataUrl })
+        .update({ qr_code: qrCodeJson })
         .eq('id', appointment.id);
 
       if (qrError) throw qrError;
