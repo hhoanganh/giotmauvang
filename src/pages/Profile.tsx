@@ -154,24 +154,15 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleDownloadQR = (qrData: string, appointmentDate: string, donorName: string) => {
+  const handleDownloadQR = (qrDataUrl: string, appointmentDate: string, donorName: string) => {
     try {
-      const qrInfo = {
-        donorName,
-        appointmentDate: new Date(appointmentDate).toLocaleDateString('vi-VN'),
-        qrCode: qrData,
-        generatedAt: new Date().toLocaleString('vi-VN')
-      };
-      
-      const blob = new Blob([JSON.stringify(qrInfo, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `qr-checkin-${donorName}-${appointmentDate}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Create a link to download the QR code image
+      const link = document.createElement('a');
+      link.href = qrDataUrl;
+      link.download = `qr-checkin-${donorName}-${appointmentDate}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
       toast({
         title: 'Tải xuống thành công',
@@ -186,42 +177,50 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handlePrintQR = (qrData: string, appointmentDate: string, donorName: string) => {
+  const handlePrintQR = (qrDataUrl: string, appointmentDate: string, donorName: string) => {
     try {
       const printWindow = window.open('', '_blank');
       if (printWindow) {
-        const qrInfo = {
-          donorName,
-          appointmentDate: new Date(appointmentDate).toLocaleDateString('vi-VN'),
-          qrCode: qrData,
-          generatedAt: new Date().toLocaleString('vi-VN')
-        };
-        
         printWindow.document.write(`
           <html>
             <head>
               <title>QR Code Check-in - ${donorName}</title>
               <style>
-                body { font-family: Arial, sans-serif; padding: 20px; }
-                .qr-container { text-align: center; margin: 20px 0; }
-                .qr-code { font-family: monospace; background: #f5f5f5; padding: 15px; border: 2px dashed #ccc; margin: 10px 0; word-break: break-all; }
-                .info { margin: 10px 0; }
-                @media print { body { margin: 0; } }
+                body { 
+                  font-family: Arial, sans-serif; 
+                  padding: 20px; 
+                  text-align: center;
+                }
+                .qr-container { 
+                  margin: 20px 0; 
+                }
+                .qr-image { 
+                  max-width: 300px; 
+                  height: auto; 
+                }
+                .info { 
+                  margin: 10px 0; 
+                  text-align: left;
+                }
+                @media print { 
+                  body { 
+                    margin: 0; 
+                  } 
+                }
               </style>
             </head>
             <body>
               <h2>Mã QR Check-in Hiến Máu</h2>
               <div class="info">
-                <p><strong>Người hiến máu:</strong> ${qrInfo.donorName}</p>
-                <p><strong>Ngày hẹn:</strong> ${qrInfo.appointmentDate}</p>
-                <p><strong>Mã QR:</strong></p>
+                <p><strong>Người hiến máu:</strong> ${donorName}</p>
+                <p><strong>Ngày hẹn:</strong> ${new Date(appointmentDate).toLocaleDateString('vi-VN')}</p>
               </div>
               <div class="qr-container">
-                <div class="qr-code">${qrInfo.qrCode}</div>
+                <img src="${qrDataUrl}" alt="QR Code" class="qr-image" />
               </div>
               <div class="info">
                 <p><small>Quét mã này tại trung tâm để check-in</small></p>
-                <p><small>Được tạo lúc: ${qrInfo.generatedAt}</small></p>
+                <p><small>Được tạo lúc: ${new Date().toLocaleString('vi-VN')}</small></p>
               </div>
             </body>
           </html>
@@ -364,10 +363,12 @@ const Profile: React.FC = () => {
                                   </div>
                                 </div>
                                 <div className="bg-white p-3 rounded border-2 border-dashed border-gray-300 text-center">
-                                  <div className="text-xs text-gray-500 mb-1">Quét mã này tại trung tâm</div>
-                                  <div className="font-mono text-sm font-bold text-gray-800 break-all">
-                                    {appointment.qr_code}
-                                  </div>
+                                  <div className="text-xs text-gray-500 mb-2">Quét mã này tại trung tâm</div>
+                                  <img 
+                                    src={appointment.qr_code} 
+                                    alt="QR Code for check-in" 
+                                    className="mx-auto max-w-full h-32 object-contain"
+                                  />
                                 </div>
                                 <div className="text-xs text-gray-500 mt-2 text-center">
                                   Chứa thông tin: Tên, SĐT, Ngày hẹn, Giờ hẹn, Trung tâm
@@ -467,4 +468,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile; 
+export default Profile;
