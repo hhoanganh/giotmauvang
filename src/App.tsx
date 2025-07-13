@@ -19,6 +19,7 @@ import GalleryGroup from "./pages/GalleryGroup";
 import NewsDetail from "./pages/NewsDetail";
 import AdminNews from "./pages/AdminNews";
 import Donate from "./pages/Donate";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/events" element={<Events />} />
             <Route path="/centers" element={<Centers />} />
             <Route path="/donate" element={<Donate />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/auth" element={<Auth />} />
