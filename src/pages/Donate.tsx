@@ -305,15 +305,9 @@ const Donate: React.FC = () => {
 
       if (healthError) throw healthError;
 
-      // Generate comprehensive QR code data for check-in
+      // Generate minimal QR code data for check-in (privacy best practice)
       const qrCodeData = {
         appointmentId: appointment.id,
-        userId: user.id,
-        centerId: selectedCenter,
-        appointmentDate: selectedDate,
-        timeSlot: selectedTimeSlot,
-        donorName: profile?.full_name || '',
-        donorPhone: profile?.phone_number || '',
         qrType: 'donation_checkin',
         timestamp: new Date().toISOString()
       };
