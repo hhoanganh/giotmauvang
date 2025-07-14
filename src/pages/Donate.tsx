@@ -1197,10 +1197,18 @@ const Donate: React.FC = () => {
             )}
             {/* Optionally, show a message if blocked */}
             {!canProceed && (
-              <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg text-center">
+              <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg text-center flex flex-col items-center gap-2">
                 <span className="text-orange-800 text-sm font-medium">
                   Bạn đã có một lịch hẹn hiến máu đang chờ. Vui lòng hủy lịch cũ trước khi đặt lịch mới.
                 </span>
+                <GlassButton
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => navigate('/profile')}
+                  className="mt-2"
+                >
+                  Xem hoặc hủy lịch hẹn trong hồ sơ của bạn
+                </GlassButton>
               </div>
             )}
           </div>
