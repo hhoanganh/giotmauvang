@@ -611,8 +611,8 @@ const Donate: React.FC = () => {
             <GlassCard className="overflow-hidden">
               <div 
                 className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
-                onClick={() => canProceed && toggleSection('schedule')}
-                style={{ opacity: canProceed ? 1 : 0.5, pointerEvents: canProceed ? 'auto' : 'none' }}
+                onClick={() => selectedCenter && canProceed && toggleSection('schedule')}
+                style={{ opacity: selectedCenter && canProceed ? 1 : 0.5, pointerEvents: selectedCenter && canProceed ? 'auto' : 'none' }}
               >
                 <div className="flex items-center gap-3">
                   <Calendar className="h-6 w-6 text-purple-600" />
@@ -703,7 +703,8 @@ const Donate: React.FC = () => {
             <GlassCard className="overflow-hidden">
               <div 
                 className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
-                onClick={() => toggleSection('healthDeclaration')}
+                onClick={() => selectedCenter && selectedDate && selectedTimeSlot && canProceed && toggleSection('healthDeclaration')}
+                style={{ opacity: selectedCenter && selectedDate && selectedTimeSlot && canProceed ? 1 : 0.5, pointerEvents: selectedCenter && selectedDate && selectedTimeSlot && canProceed ? 'auto' : 'none' }}
               >
                 <div className="flex items-center gap-3">
                   <AlertCircle className="h-6 w-6 text-red-600" />
