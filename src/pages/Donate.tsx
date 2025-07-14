@@ -423,10 +423,6 @@ const Donate: React.FC = () => {
   // Update the center selection logic to check for existing scheduled appointment
   const handleSelectCenter = async (centerId: string) => {
     setSelectedCenter(centerId);
-    setExpandedSections(prev => ({
-      ...prev,
-      center: false
-    }));
 
     // Check for existing scheduled appointment
     if (user) {
@@ -456,6 +452,11 @@ const Donate: React.FC = () => {
         return;
       }
       setCanProceed(true);
+      // Auto-collapse the section when a center is selected and eligible
+      setExpandedSections(prev => ({
+        ...prev,
+        center: false
+      }));
     }
   };
 
