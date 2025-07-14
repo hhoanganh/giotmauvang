@@ -90,6 +90,9 @@ const Donate: React.FC = () => {
   const [dateRegistrations, setDateRegistrations] = useState<Record<string, number>>({});
   const [bookingLoading, setBookingLoading] = useState(false);
 
+  // Add a new state to track eligibility
+  const [canProceed, setCanProceed] = useState(true);
+
   // Form sections state
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     personal: true,
@@ -417,6 +420,45 @@ const Donate: React.FC = () => {
            (healthForm.last7Days !== 'other' || healthForm.last7DaysDetails.trim() !== '');
   };
 
+  // Update the center selection logic to check for existing scheduled appointment
+  const handleSelectCenter = async (centerId: string) => {
+    setSelectedCenter(centerId);
+    setExpandedSections(prev => ({
+      ...prev,
+      center: false
+    }));
+
+    // Check for existing scheduled appointment
+    if (user) {
+      const { data: existingAppointments, error: checkError } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'scheduled');
+
+      if (checkError) {
+        toast({
+          title: 'Lỗi',
+          description: 'Không thể kiểm tra lịch hẹn. Vui lòng thử lại.',
+          variant: 'destructive',
+        });
+        setCanProceed(false);
+        return;
+      }
+
+      if (existingAppointments && existingAppointments.length > 0) {
+        toast({
+          title: 'Bạn đã có lịch hẹn',
+          description: 'Bạn đã có một lịch hẹn hiến máu đang chờ. Vui lòng hủy lịch cũ trước khi đặt lịch mới.',
+          variant: 'destructive',
+        });
+        setCanProceed(false);
+        return;
+      }
+      setCanProceed(true);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -544,14 +586,7 @@ const Donate: React.FC = () => {
                         className={`p-4 cursor-pointer transition-all duration-300 rounded-lg border-2 ${
                           selectedCenter === center.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                         }`}
-                        onClick={() => {
-                          setSelectedCenter(center.id);
-                          // Auto-collapse the section when a center is selected
-                          setExpandedSections(prev => ({
-                            ...prev,
-                            center: false
-                          }));
-                        }}
+                        onClick={() => handleSelectCenter(center.id)}
                       >
                         <div className="flex items-start gap-3">
                           <MapPin className="h-5 w-5 text-gray-500 mt-1 flex-shrink-0" />
@@ -575,7 +610,8 @@ const Donate: React.FC = () => {
             <GlassCard className="overflow-hidden">
               <div 
                 className="p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors"
-                onClick={() => toggleSection('schedule')}
+                onClick={() => canProceed && toggleSection('schedule')}
+                style={{ opacity: canProceed ? 1 : 0.5, pointerEvents: canProceed ? 'auto' : 'none' }}
               >
                 <div className="flex items-center gap-3">
                   <Calendar className="h-6 w-6 text-purple-600" />
@@ -1155,6 +1191,14 @@ const Donate: React.FC = () => {
                     : 'Vui lòng hoàn thành phiếu đăng ký hiến máu để có thể đăng ký'
                   }
                 </p>
+              </div>
+            )}
+            {/* Optionally, show a message if blocked */}
+            {!canProceed && (
+              <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg text-center">
+                <span className="text-orange-800 text-sm font-medium">
+                  Bạn đã có một lịch hẹn hiến máu đang chờ. Vui lòng hủy lịch cũ trước khi đặt lịch mới.
+                </span>
               </div>
             )}
           </div>
