@@ -644,9 +644,6 @@ const Profile: React.FC = () => {
                     <DialogContent className="max-w-lg w-full">
                       <DialogHeader>
                         <DialogTitle>Chi tiết tờ khai sức khỏe</DialogTitle>
-                        <DialogClose asChild>
-                          <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">×</button>
-                        </DialogClose>
                       </DialogHeader>
                       {selectedDeclaration && (
                         <div className="overflow-x-auto max-h-[60vh]">
