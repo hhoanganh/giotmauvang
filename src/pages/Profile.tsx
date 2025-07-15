@@ -522,24 +522,41 @@ const Profile: React.FC = () => {
                     </GlassCardHeader>
                     <GlassCardContent>
                       {healthDeclarations.length > 0 ? (
-                        <div className="divide-y divide-gray-200">
-                          {healthDeclarations.map((decl) => (
-                            <div key={decl.id} className="flex flex-col md:flex-row items-start md:items-center justify-between py-3 gap-2">
-                              <div className="flex flex-col md:flex-row md:items-center gap-2 flex-1 min-w-0">
-                                <span className="font-medium w-28 truncate">{decl.created_at ? new Date(decl.created_at).toLocaleDateString('vi-VN') : 'N/A'}</span>
-                                <span className="text-gray-600 w-40 truncate">{decl.appointment_id || 'Không có lịch hẹn'}</span>
-                                <Badge variant="secondary">{decl.is_eligible ? 'Đã khai báo' : 'Chưa khai báo'}</Badge>
-                              </div>
-                              <GlassButton
-                                variant="secondary"
-                                size="sm"
-                                onClick={() => { setSelectedDeclaration(decl); setModalOpen(true); }}
-                              >
-                                Xem chi tiết
-                              </GlassButton>
-                            </div>
-                          ))}
-                        </div>
+                        <>
+                          {/* Table header */}
+                          <div className="hidden md:grid grid-cols-4 gap-4 px-2 pb-2 text-xs font-semibold text-gray-500 border-b border-gray-200">
+                            <div>Ngày khai báo</div>
+                            <div>Trung tâm</div>
+                            <div>Trạng thái</div>
+                            <div></div>
+                          </div>
+                          <div className="divide-y divide-gray-200">
+                            {healthDeclarations.map((decl) => {
+                              // Find the appointment for this declaration (if any)
+                              const appointment = appointments.find(a => a.id === decl.appointment_id);
+                              return (
+                                <div key={decl.id} className="flex flex-col md:grid md:grid-cols-4 gap-2 md:gap-4 items-start md:items-center py-3 px-2">
+                                  {/* Ngày khai báo */}
+                                  <span className="font-medium w-full truncate">{decl.created_at ? new Date(decl.created_at).toLocaleDateString('vi-VN') : 'N/A'}</span>
+                                  {/* Trung tâm */}
+                                  <span className="text-gray-600 w-full truncate">{appointment ? appointment.center?.name : 'Không có lịch hẹn'}</span>
+                                  {/* Trạng thái */}
+                                  <span><Badge variant="secondary">{decl.is_eligible ? 'Đã khai báo' : 'Chưa khai báo'}</Badge></span>
+                                  {/* Xem chi tiết */}
+                                  <span>
+                                    <GlassButton
+                                      variant="secondary"
+                                      size="sm"
+                                      onClick={() => { setSelectedDeclaration(decl); setModalOpen(true); }}
+                                    >
+                                      Xem chi tiết
+                                    </GlassButton>
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
                       ) : (
                         <div className="text-center py-8">
                           <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
