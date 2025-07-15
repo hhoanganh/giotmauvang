@@ -43,6 +43,7 @@ const Profile: React.FC = () => {
   const [loadingData, setLoadingData] = useState(true);
   // Store generated QR code images for each appointment
   const [qrImages, setQrImages] = useState<Record<string, string>>({});
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && user) {
@@ -251,6 +252,31 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleCancelAppointment = async (appointmentId: string) => {
+    if (!window.confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?')) return;
+    setCancellingId(appointmentId);
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .update({ status: 'cancelled' })
+        .eq('id', appointmentId);
+      if (error) throw error;
+      toast({
+        title: 'Đã hủy lịch hẹn',
+        description: 'Lịch hẹn của bạn đã được hủy thành công.',
+      });
+      fetchUserData();
+    } catch (error) {
+      toast({
+        title: 'Lỗi',
+        description: 'Không thể hủy lịch hẹn. Vui lòng thử lại.',
+        variant: 'destructive',
+      });
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
   if (loading || loadingData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -400,6 +426,16 @@ const Profile: React.FC = () => {
                                 </div>
                               </div>
                             )}
+                          </div>
+                          <div className="flex justify-end mt-2">
+                            <GlassButton
+                              variant="destructive"
+                              size="sm"
+                              disabled={cancellingId === appointment.id}
+                              onClick={() => handleCancelAppointment(appointment.id)}
+                            >
+                              {cancellingId === appointment.id ? 'Đang hủy...' : 'Hủy lịch hẹn'}
+                            </GlassButton>
                           </div>
                         </div>
                       ))}
