@@ -413,7 +413,7 @@ const Profile: React.FC = () => {
                 {profile.email || 'Chưa cập nhật email'}
               </p>
             </div>
-            <GlassCard className="section-content-medium">
+            <GlassCard className="section-content-medium min-h-[500px] overflow-y-auto">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-3 mb-8">
                   <TabsTrigger value="appointments">Lịch hẹn sắp tới</TabsTrigger>
