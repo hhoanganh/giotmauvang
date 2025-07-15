@@ -304,6 +304,77 @@ const Profile: React.FC = () => {
     }
   };
 
+  // Add a helper function to prettify the health declaration answers
+  const renderHealthDeclarationDetails = (answers: any) => {
+    if (!answers) return null;
+    return (
+      <div className="space-y-4 text-sm">
+        <div>
+          <span className="font-semibold">1. Đã từng hiến máu chưa?</span> {answers.hasDonatedBefore === 'yes' ? 'Có' : answers.hasDonatedBefore === 'no' ? 'Không' : 'Không rõ'}
+        </div>
+        <div>
+          <span className="font-semibold">2. Hiện tại có mắc bệnh lý nào không?</span> {answers.hasCurrentDisease === 'yes' ? 'Có' : answers.hasCurrentDisease === 'no' ? 'Không' : 'Không rõ'}
+          {answers.hasCurrentDisease === 'yes' && answers.currentDiseaseDetails && (
+            <div className="ml-4 text-gray-600">Chi tiết: {answers.currentDiseaseDetails}</div>
+          )}
+        </div>
+        <div>
+          <span className="font-semibold">3. Trước đây có từng mắc bệnh nghiêm trọng?</span> {answers.hasPreviousDisease === 'yes' ? 'Có' : answers.hasPreviousDisease === 'no' ? 'Không' : answers.hasPreviousDisease === 'other' ? 'Khác' : 'Không rõ'}
+          {answers.hasPreviousDisease === 'other' && answers.previousDiseaseDetails && (
+            <div className="ml-4 text-gray-600">Chi tiết: {answers.previousDiseaseDetails}</div>
+          )}
+        </div>
+        <div>
+          <span className="font-semibold">4. Trong 12 tháng gần đây:</span>
+          <ul className="ml-4 list-disc">
+            <li>Khỏi bệnh sau sốt rét, giang mai, lao, ...: {answers.last12Months?.recoveredFromDisease ? 'Có' : 'Không'}</li>
+            <li>Được truyền máu: {answers.last12Months?.receivedBloodTransfusion ? 'Có' : 'Không'}</li>
+            <li>Tiêm Vacxin: {answers.last12Months?.receivedVaccine ? 'Có' : 'Không'}{answers.last12Months?.receivedVaccine && answers.last12Months?.vaccineDetails && ` (${answers.last12Months.vaccineDetails})`}</li>
+            <li>Không: {answers.last12Months?.none ? 'Có' : 'Không'}</li>
+          </ul>
+        </div>
+        <div>
+          <span className="font-semibold">5. Trong 6 tháng gần đây:</span>
+          <ul className="ml-4 list-disc">
+            <li>Khỏi bệnh sau thương hàn, nhiễm trùng máu, ...: {answers.last6Months?.recoveredFromDisease ? 'Có' : 'Không'}</li>
+            <li>Sút cân nhanh: {answers.last6Months?.rapidWeightLoss ? 'Có' : 'Không'}</li>
+            <li>Nổi hạch kéo dài: {answers.last6Months?.persistentLymphNodes ? 'Có' : 'Không'}</li>
+            <li>Thủ thuật y tế xâm lấn: {answers.last6Months?.invasiveMedicalProcedure ? 'Có' : 'Không'}</li>
+            <li>Xăm, xỏ lỗ: {answers.last6Months?.tattooOrPiercing ? 'Có' : 'Không'}</li>
+            <li>Sử dụng ma túy: {answers.last6Months?.drugUse ? 'Có' : 'Không'}</li>
+            <li>Tiếp xúc máu/dịch tiết: {answers.last6Months?.bloodExposure ? 'Có' : 'Không'}</li>
+            <li>Sống chung với người viêm gan B: {answers.last6Months?.livingWithHepatitisB ? 'Có' : 'Không'}</li>
+            <li>Quan hệ với người nhiễm bệnh: {answers.last6Months?.sexualContactWithInfected ? 'Có' : 'Không'}</li>
+            <li>Quan hệ đồng giới: {answers.last6Months?.sameSexContact ? 'Có' : 'Không'}</li>
+            <li>Không: {answers.last6Months?.none ? 'Có' : 'Không'}</li>
+          </ul>
+        </div>
+        <div>
+          <span className="font-semibold">6. Trong 1 tháng gần đây khỏi bệnh sau các bệnh nhiễm trùng?</span> {answers.last1Month === 'yes' ? 'Có' : answers.last1Month === 'no' ? 'Không' : 'Không rõ'}
+        </div>
+        <div>
+          <span className="font-semibold">7. Trong 14 ngày gần đây có bị cúm, cảm lạnh, ...?</span> {answers.last14Days === 'yes' ? 'Có' : answers.last14Days === 'no' ? 'Không' : answers.last14Days === 'other' ? 'Khác' : 'Không rõ'}
+          {answers.last14Days === 'other' && answers.last14DaysDetails && (
+            <div className="ml-4 text-gray-600">Chi tiết: {answers.last14DaysDetails}</div>
+          )}
+        </div>
+        <div>
+          <span className="font-semibold">8. Trong 7 ngày gần đây có dùng thuốc?</span> {answers.last7Days === 'yes' ? 'Có' : answers.last7Days === 'no' ? 'Không' : answers.last7Days === 'other' ? 'Khác' : 'Không rõ'}
+          {answers.last7Days === 'other' && answers.last7DaysDetails && (
+            <div className="ml-4 text-gray-600">Chi tiết: {answers.last7DaysDetails}</div>
+          )}
+        </div>
+        <div>
+          <span className="font-semibold">9. (Nữ) Mang thai, nuôi con, ...?</span> {
+            answers.womenSpecific === 'pregnant' ? 'Đang mang thai/nuôi con' :
+            answers.womenSpecific === 'terminatedPregnancy' ? 'Chấm dứt thai kỳ' :
+            answers.womenSpecific === 'breastfeeding' ? 'Đang cho con bú' :
+            answers.womenSpecific === 'no' ? 'Không' : 'Không rõ'}
+        </div>
+      </div>
+    );
+  };
+
   if (loading || loadingData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -579,9 +650,7 @@ const Profile: React.FC = () => {
                       </DialogHeader>
                       {selectedDeclaration && (
                         <div className="overflow-x-auto max-h-[60vh]">
-                          <pre className="whitespace-pre-wrap text-xs bg-gray-50 p-2 rounded-lg">
-                            {JSON.stringify(selectedDeclaration.answers, null, 2)}
-                          </pre>
+                          {renderHealthDeclarationDetails(selectedDeclaration.answers)}
                         </div>
                       )}
                     </DialogContent>
