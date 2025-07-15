@@ -9,6 +9,7 @@ import { User, Calendar, MapPin, Heart, Clock, CheckCircle, XCircle, ArrowRight,
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 
 interface Appointment {
   id: string;
@@ -47,6 +48,8 @@ const Profile: React.FC = () => {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('appointments');
   const [healthDeclarations, setHealthDeclarations] = useState<any[]>([]);
+  const [selectedDeclaration, setSelectedDeclaration] = useState<any | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
@@ -519,23 +522,21 @@ const Profile: React.FC = () => {
                     </GlassCardHeader>
                     <GlassCardContent>
                       {healthDeclarations.length > 0 ? (
-                        <div className="space-y-4">
+                        <div className="divide-y divide-gray-200">
                           {healthDeclarations.map((decl) => (
-                            <div key={decl.id} className="p-4 border border-gray-200 rounded-lg">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                  <Calendar className="h-4 w-4 text-blue-600" />
-                                  <span className="font-medium">
-                                    {decl.created_at ? new Date(decl.created_at).toLocaleDateString('vi-VN') : 'N/A'}
-                                  </span>
-                                </div>
+                            <div key={decl.id} className="flex flex-col md:flex-row items-start md:items-center justify-between py-3 gap-2">
+                              <div className="flex flex-col md:flex-row md:items-center gap-2 flex-1 min-w-0">
+                                <span className="font-medium w-28 truncate">{decl.created_at ? new Date(decl.created_at).toLocaleDateString('vi-VN') : 'N/A'}</span>
+                                <span className="text-gray-600 w-40 truncate">{decl.appointment_id || 'Không có lịch hẹn'}</span>
                                 <Badge variant="secondary">{decl.is_eligible ? 'Đã khai báo' : 'Chưa khai báo'}</Badge>
                               </div>
-                              <div className="text-sm text-gray-600 break-words">
-                                <pre className="whitespace-pre-wrap text-xs bg-gray-50 p-2 rounded-lg overflow-x-auto">
-                                  {JSON.stringify(decl.answers, null, 2)}
-                                </pre>
-                              </div>
+                              <GlassButton
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => { setSelectedDeclaration(decl); setModalOpen(true); }}
+                              >
+                                Xem chi tiết
+                              </GlassButton>
                             </div>
                           ))}
                         </div>
@@ -550,6 +551,24 @@ const Profile: React.FC = () => {
                       )}
                     </GlassCardContent>
                   </GlassCard>
+                  {/* Modal for viewing declaration details */}
+                  <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+                    <DialogContent className="max-w-lg w-full">
+                      <DialogHeader>
+                        <DialogTitle>Chi tiết tờ khai sức khỏe</DialogTitle>
+                        <DialogClose asChild>
+                          <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">×</button>
+                        </DialogClose>
+                      </DialogHeader>
+                      {selectedDeclaration && (
+                        <div className="overflow-x-auto max-h-[60vh]">
+                          <pre className="whitespace-pre-wrap text-xs bg-gray-50 p-2 rounded-lg">
+                            {JSON.stringify(selectedDeclaration.answers, null, 2)}
+                          </pre>
+                        </div>
+                      )}
+                    </DialogContent>
+                  </Dialog>
                 </TabsContent>
               </Tabs>
             </GlassCard>
