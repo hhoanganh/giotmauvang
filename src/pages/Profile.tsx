@@ -429,7 +429,7 @@ const Profile: React.FC = () => {
                         Lịch hẹn sắp tới
                       </GlassCardTitle>
                     </GlassCardHeader>
-                    <GlassCardContent>
+                    <GlassCardContent className="px-4">
                       {appointments.filter(apt => apt.status === 'scheduled').length > 0 ? (
                         <div className="space-y-4">
                           {appointments
@@ -539,7 +539,7 @@ const Profile: React.FC = () => {
                         Lịch sử hiến máu
                       </GlassCardTitle>
                     </GlassCardHeader>
-                    <GlassCardContent>
+                    <GlassCardContent className="px-4">
                       {donationRecords.length > 0 ? (
                         <div className="space-y-4">
                           {donationRecords.map((record) => (
@@ -591,11 +591,11 @@ const Profile: React.FC = () => {
                         Tờ khai sức khỏe
                       </GlassCardTitle>
                     </GlassCardHeader>
-                    <GlassCardContent>
+                    <GlassCardContent className="px-4">
                       {healthDeclarations.length > 0 ? (
                         <>
                           {/* Table header */}
-                          <div className="hidden md:grid grid-cols-4 gap-4 px-2 pb-2 text-xs font-semibold text-gray-500 border-b border-gray-200">
+                          <div className="hidden md:grid grid-cols-4 gap-4 pb-2 text-xs font-semibold text-gray-500 border-b border-gray-200">
                             <div>Ngày khai báo</div>
                             <div>Trung tâm</div>
                             <div>Trạng thái</div>
@@ -606,7 +606,7 @@ const Profile: React.FC = () => {
                               // Find the appointment for this declaration (if any)
                               const appointment = appointments.find(a => a.id === decl.appointment_id);
                               return (
-                                <div key={decl.id} className="flex flex-col md:grid md:grid-cols-4 gap-2 md:gap-4 items-start md:items-center py-3 px-2">
+                                <div key={decl.id} className="flex flex-col md:grid md:grid-cols-4 gap-2 md:gap-4 items-start md:items-center py-3">
                                   {/* Ngày khai báo */}
                                   <span className="font-medium w-full truncate">{decl.created_at ? new Date(decl.created_at).toLocaleDateString('vi-VN') : 'N/A'}</span>
                                   {/* Trung tâm */}
