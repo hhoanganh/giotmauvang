@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { User, Calendar, MapPin, Heart, Clock, CheckCircle, XCircle, ArrowRight, Download, Printer } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 interface Appointment {
   id: string;
@@ -44,10 +45,13 @@ const Profile: React.FC = () => {
   // Store generated QR code images for each appointment
   const [qrImages, setQrImages] = useState<Record<string, string>>({});
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('appointments');
+  const [healthDeclarations, setHealthDeclarations] = useState<any[]>([]);
 
   useEffect(() => {
     if (!loading && user) {
       fetchUserData();
+      fetchHealthDeclarations();
     }
   }, [user, loading]);
 
@@ -155,6 +159,26 @@ const Profile: React.FC = () => {
     };
     generateQRCodes();
   }, [appointments]);
+
+  // Fetch health declarations
+  const fetchHealthDeclarations = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('health_declarations')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      setHealthDeclarations(data || []);
+    } catch (error) {
+      toast({
+        title: 'Lỗi',
+        description: 'Không thể tải tờ khai sức khỏe',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -303,8 +327,7 @@ const Profile: React.FC = () => {
       <Header />
       <main className="section-padding">
         <div className="container-custom">
-          <div className="max-w-4xl mx-auto space-y-6">
-            {/* Profile Header */}
+          <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="h-10 w-10 text-blue-600" />
@@ -316,195 +339,220 @@ const Profile: React.FC = () => {
                 {profile.email || 'Chưa cập nhật email'}
               </p>
             </div>
-
-            {/* Personal Information */}
-            <GlassCard>
-              <GlassCardHeader>
-                <GlassCardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Thông tin cá nhân
-                </GlassCardTitle>
-              </GlassCardHeader>
-              <GlassCardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Số điện thoại</p>
-                    <p className="font-medium">{profile.phone_number || 'Chưa cập nhật'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Vai trò</p>
-                    <p className="font-medium">{profile.primary_role || 'Chưa xác định'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Tổng số lần hiến máu</p>
-                    <p className="font-medium">{donationRecords.length} lần</p>
-                  </div>
-                </div>
-              </GlassCardContent>
-            </GlassCard>
-
-            {/* Upcoming Appointments */}
-            <GlassCard>
-              <GlassCardHeader>
-                <GlassCardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Lịch hẹn sắp tới
-                </GlassCardTitle>
-              </GlassCardHeader>
-              <GlassCardContent>
-                {appointments.filter(apt => apt.status === 'scheduled').length > 0 ? (
-                  <div className="space-y-4">
-                    {appointments
-                      .filter(apt => apt.status === 'scheduled')
-                      .map((appointment) => (
-                        <div key={appointment.id} className="p-4 border border-gray-200 rounded-lg">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-blue-600" />
-                              <span className="font-medium">
-                                {new Date(appointment.appointment_date).toLocaleDateString('vi-VN')}
-                              </span>
-                            </div>
-                            {appointment.created_at && (
-                              <div className="text-xs text-gray-500 ml-6">
-                                Đăng ký lúc: {new Date(appointment.created_at).toLocaleTimeString('vi-VN')} {new Date(appointment.created_at).toLocaleDateString('vi-VN')}
-                              </div>
-                            )}
-                            {getStatusBadge(appointment.status)}
-                          </div>
-                          <div className="space-y-1 text-sm text-gray-600">
-                            <div className="flex items-center gap-2">
-                              <Clock className="h-4 w-4" />
-                              <span>{appointment.time_slot}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4" />
-                              <span>{appointment.center?.name}</span>
-                            </div>
-                            {appointment.qr_code && (
-                              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                                <div className="flex items-center justify-between mb-2">
-                                  <div className="flex items-center gap-2">
-                                    <CheckCircle className="h-4 w-4 text-green-600" />
-                                    <span className="text-sm font-medium text-gray-700">Mã QR Check-in</span>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <GlassButton
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleDownloadQR(qrImages[appointment.id], appointment.appointment_date, profile?.full_name || '')}
-                                      className="h-8 px-2"
-                                    >
-                                      <Download className="h-3 w-3" />
-                                    </GlassButton>
-                                    <GlassButton
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handlePrintQR(qrImages[appointment.id], appointment.appointment_date, profile?.full_name || '')}
-                                      className="h-8 px-2"
-                                    >
-                                      <Printer className="h-3 w-3" />
-                                    </GlassButton>
-                                  </div>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="flex w-full mb-6 bg-white rounded-lg shadow-sm overflow-x-auto">
+                <TabsTrigger value="appointments" className="flex-1 min-w-[120px]">Lịch hẹn sắp tới</TabsTrigger>
+                <TabsTrigger value="donations" className="flex-1 min-w-[120px]">Lịch sử hiến máu</TabsTrigger>
+                <TabsTrigger value="declarations" className="flex-1 min-w-[120px]">Tờ khai sức khỏe</TabsTrigger>
+              </TabsList>
+              <TabsContent value="appointments">
+                {/* Upcoming Appointments */}
+                <GlassCard>
+                  <GlassCardHeader>
+                    <GlassCardTitle className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      Lịch hẹn sắp tới
+                    </GlassCardTitle>
+                  </GlassCardHeader>
+                  <GlassCardContent>
+                    {appointments.filter(apt => apt.status === 'scheduled').length > 0 ? (
+                      <div className="space-y-4">
+                        {appointments
+                          .filter(apt => apt.status === 'scheduled')
+                          .map((appointment) => (
+                            <div key={appointment.id} className="p-4 border border-gray-200 rounded-lg">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <Calendar className="h-4 w-4 text-blue-600" />
+                                  <span className="font-medium">
+                                    {new Date(appointment.appointment_date).toLocaleDateString('vi-VN')}
+                                  </span>
                                 </div>
-                                <div className="bg-white p-3 rounded border-2 border-dashed border-gray-300 text-center">
-                                  <div className="text-xs text-gray-500 mb-2">Quét mã này tại trung tâm</div>
-                                  {qrImages[appointment.id] ? (
-                                    <img 
-                                      src={qrImages[appointment.id]} 
-                                      alt="QR Code for check-in" 
-                                      className="mx-auto max-w-full h-32 object-contain"
-                                    />
-                                  ) : (
-                                    <div className="font-mono text-xs text-gray-500 break-all">
-                                      {appointment.qr_code}
+                                {appointment.created_at && (
+                                  <div className="text-xs text-gray-500 ml-6">
+                                    Đăng ký lúc: {new Date(appointment.created_at).toLocaleTimeString('vi-VN')} {new Date(appointment.created_at).toLocaleDateString('vi-VN')}
+                                  </div>
+                                )}
+                                {getStatusBadge(appointment.status)}
+                              </div>
+                              <div className="space-y-1 text-sm text-gray-600">
+                                <div className="flex items-center gap-2">
+                                  <Clock className="h-4 w-4" />
+                                  <span>{appointment.time_slot}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <MapPin className="h-4 w-4" />
+                                  <span>{appointment.center?.name}</span>
+                                </div>
+                                {appointment.qr_code && (
+                                  <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center justify-between mb-2">
+                                      <div className="flex items-center gap-2">
+                                        <CheckCircle className="h-4 w-4 text-green-600" />
+                                        <span className="text-sm font-medium text-gray-700">Mã QR Check-in</span>
+                                      </div>
+                                      <div className="flex gap-2">
+                                        <GlassButton
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => handleDownloadQR(qrImages[appointment.id], appointment.appointment_date, profile?.full_name || '')}
+                                          className="h-8 px-2"
+                                        >
+                                          <Download className="h-3 w-3" />
+                                        </GlassButton>
+                                        <GlassButton
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => handlePrintQR(qrImages[appointment.id], appointment.appointment_date, profile?.full_name || '')}
+                                          className="h-8 px-2"
+                                        >
+                                          <Printer className="h-3 w-3" />
+                                        </GlassButton>
+                                      </div>
                                     </div>
-                                  )}
-                                </div>
-                                <div className="text-xs text-gray-500 mt-2 text-center">
-                                  Chứa thông tin: Tên, SĐT, Ngày hẹn, Giờ hẹn, Trung tâm
-                                </div>
+                                    <div className="bg-white p-3 rounded border-2 border-dashed border-gray-300 text-center">
+                                      <div className="text-xs text-gray-500 mb-2">Quét mã này tại trung tâm</div>
+                                      {qrImages[appointment.id] ? (
+                                        <img 
+                                          src={qrImages[appointment.id]} 
+                                          alt="QR Code for check-in" 
+                                          className="mx-auto max-w-full h-32 object-contain"
+                                        />
+                                      ) : (
+                                        <div className="font-mono text-xs text-gray-500 break-all">
+                                          {appointment.qr_code}
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="text-xs text-gray-500 mt-2 text-center">
+                                      Chứa thông tin: Tên, SĐT, Ngày hẹn, Giờ hẹn, Trung tâm
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                          <div className="flex justify-end mt-2">
-                            <GlassButton
-                              variant="destructive"
-                              size="sm"
-                              disabled={cancellingId === appointment.id}
-                              onClick={() => handleCancelAppointment(appointment.id)}
-                            >
-                              {cancellingId === appointment.id ? 'Đang hủy...' : 'Hủy lịch hẹn'}
-                            </GlassButton>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 mb-4">Bạn chưa có lịch hẹn nào</p>
-                    <GlassButton onClick={() => navigate('/donate')}>
-                      Đăng ký hiến máu
-                    </GlassButton>
-                  </div>
-                )}
-              </GlassCardContent>
-            </GlassCard>
-
-            {/* Donation History */}
-            <GlassCard>
-              <GlassCardHeader>
-                <GlassCardTitle className="flex items-center gap-2">
-                  <Heart className="h-5 w-5" />
-                  Lịch sử hiến máu
-                </GlassCardTitle>
-              </GlassCardHeader>
-              <GlassCardContent>
-                {donationRecords.length > 0 ? (
-                  <div className="space-y-4">
-                    {donationRecords.map((record) => (
-                      <div key={record.id} className="p-4 border border-gray-200 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Heart className="h-4 w-4 text-red-600" />
-                            <span className="font-medium">
-                              {new Date(record.donation_date).toLocaleDateString('vi-VN')}
-                            </span>
-                          </div>
-                          {getScreeningResultBadge(record.screening_result)}
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
-                          <div>
-                            <p className="text-gray-500">Nhóm máu</p>
-                            <p className="font-medium">{record.blood_type || 'Chưa xác định'}</p>
-                          </div>
-                          <div>
-                            <p className="text-gray-500">Lượng máu</p>
-                            <p className="font-medium">{record.blood_volume || 'N/A'} ml</p>
-                          </div>
-                          <div>
-                            <p className="text-gray-500">Trung tâm</p>
-                            <p className="font-medium">{record.center?.name}</p>
-                          </div>
-                        </div>
+                              <div className="flex justify-end mt-2">
+                                <GlassButton
+                                  variant="secondary"
+                                  size="sm"
+                                  disabled={cancellingId === appointment.id}
+                                  onClick={() => handleCancelAppointment(appointment.id)}
+                                >
+                                  {cancellingId === appointment.id ? 'Đang hủy...' : 'Hủy lịch hẹn'}
+                                </GlassButton>
+                              </div>
+                            </div>
+                          ))}
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 mb-4">Bạn chưa có lịch sử hiến máu</p>
-                    <GlassButton onClick={() => navigate('/donate')}>
-                      Hiến máu lần đầu
-                    </GlassButton>
-                  </div>
-                )}
-              </GlassCardContent>
-            </GlassCard>
-
+                    ) : (
+                      <div className="text-center py-8">
+                        <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 mb-4">Bạn chưa có lịch hẹn nào</p>
+                        <GlassButton onClick={() => navigate('/donate')}>
+                          Đăng ký hiến máu
+                        </GlassButton>
+                      </div>
+                    )}
+                  </GlassCardContent>
+                </GlassCard>
+              </TabsContent>
+              <TabsContent value="donations">
+                {/* Donation History */}
+                <GlassCard>
+                  <GlassCardHeader>
+                    <GlassCardTitle className="flex items-center gap-2">
+                      <Heart className="h-5 w-5" />
+                      Lịch sử hiến máu
+                    </GlassCardTitle>
+                  </GlassCardHeader>
+                  <GlassCardContent>
+                    {donationRecords.length > 0 ? (
+                      <div className="space-y-4">
+                        {donationRecords.map((record) => (
+                          <div key={record.id} className="p-4 border border-gray-200 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <Heart className="h-4 w-4 text-red-600" />
+                                <span className="font-medium">
+                                  {new Date(record.donation_date).toLocaleDateString('vi-VN')}
+                                </span>
+                              </div>
+                              {getScreeningResultBadge(record.screening_result)}
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                              <div>
+                                <p className="text-gray-500">Nhóm máu</p>
+                                <p className="font-medium">{record.blood_type || 'Chưa xác định'}</p>
+                              </div>
+                              <div>
+                                <p className="text-gray-500">Lượng máu</p>
+                                <p className="font-medium">{record.blood_volume || 'N/A'} ml</p>
+                              </div>
+                              <div>
+                                <p className="text-gray-500">Trung tâm</p>
+                                <p className="font-medium">{record.center?.name}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 mb-4">Bạn chưa có lịch sử hiến máu</p>
+                        <GlassButton onClick={() => navigate('/donate')}>
+                          Hiến máu lần đầu
+                        </GlassButton>
+                      </div>
+                    )}
+                  </GlassCardContent>
+                </GlassCard>
+              </TabsContent>
+              <TabsContent value="declarations">
+                {/* Health Declarations */}
+                <GlassCard>
+                  <GlassCardHeader>
+                    <GlassCardTitle className="flex items-center gap-2">
+                      <User className="h-5 w-5" />
+                      Tờ khai sức khỏe
+                    </GlassCardTitle>
+                  </GlassCardHeader>
+                  <GlassCardContent>
+                    {healthDeclarations.length > 0 ? (
+                      <div className="space-y-4">
+                        {healthDeclarations.map((decl) => (
+                          <div key={decl.id} className="p-4 border border-gray-200 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-blue-600" />
+                                <span className="font-medium">
+                                  {decl.created_at ? new Date(decl.created_at).toLocaleDateString('vi-VN') : 'N/A'}
+                                </span>
+                              </div>
+                              <Badge variant="secondary">{decl.is_eligible ? 'Đã khai báo' : 'Chưa khai báo'}</Badge>
+                            </div>
+                            <div className="text-sm text-gray-600 break-words">
+                              <pre className="whitespace-pre-wrap text-xs bg-gray-50 p-2 rounded-lg overflow-x-auto">
+                                {JSON.stringify(decl.answers, null, 2)}
+                              </pre>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 mb-4">Bạn chưa có tờ khai sức khỏe nào</p>
+                        <GlassButton onClick={() => navigate('/donate')}>
+                          Khai báo sức khỏe
+                        </GlassButton>
+                      </div>
+                    )}
+                  </GlassCardContent>
+                </GlassCard>
+              </TabsContent>
+            </Tabs>
             {/* Quick Actions */}
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-4 mt-8">
               <GlassButton 
                 variant="primary" 
                 onClick={() => navigate('/donate')}
