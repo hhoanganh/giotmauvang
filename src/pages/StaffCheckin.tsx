@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Header from '@/components/Header';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Input } from '@/components/ui/input';
 import { GlassCard } from '@/components/ui/glass-card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+
+// @ts-expect-error: react-qr-reader may not have types
+const QRReader = React.lazy(() => import('react-qr-reader'));
+
+function isUUID(str: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str);
+}
 
 const StaffCheckin: React.FC = () => {
   const { toast } = useToast();
@@ -13,39 +20,112 @@ const StaffCheckin: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | null>(null);
+  const [healthDeclaration, setHealthDeclaration] = useState<any | null>(null);
+  const [showQR, setShowQR] = useState(false);
 
   // Search handler
-  const handleSearch = async () => {
+  const handleSearch = async (inputOverride?: string) => {
     setLoading(true);
     setError(null);
     setResults([]);
     setSelected(null);
+    setHealthDeclaration(null);
     try {
-      // Query by donor id, phone, or name (case-insensitive)
-      let query = supabase
-        .from('appointments')
-        .select(`*, profiles: user_id (full_name, phone_number, email, id)`)
-        .order('appointment_date', { ascending: true })
-        .gte('appointment_date', new Date().toISOString().split('T')[0]);
-
-      if (searchValue.trim() !== '') {
-        query = query.or(`user_id.eq.${searchValue},profiles.phone_number.ilike.%${searchValue}%,profiles.full_name.ilike.%${searchValue}%`);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      if (!data || data.length === 0) {
-        setError('Không tìm thấy lịch hẹn phù hợp.');
-        setResults([]);
+      const input = (inputOverride ?? searchValue).trim();
+      let appointments: any[] = [];
+      if (isUUID(input)) {
+        // Search by appointment id or user_id
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*, profiles: user_id (full_name, phone_number, email, id)')
+          .or(`id.eq.${input},user_id.eq.${input}`)
+          .order('appointment_date', { ascending: true });
+        if (error) throw error;
+        appointments = data || [];
+      } else if (input) {
+        // Search profiles for matching name or phone
+        const { data: profiles, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .or(`full_name.ilike.%${input}%,phone_number.ilike.%${input}%`);
+        if (profileError) throw profileError;
+        const userIds = profiles?.map((p: any) => p.id) || [];
+        if (userIds.length === 0) {
+          setError('Không tìm thấy người dùng phù hợp.');
+          return;
+        }
+        // Search appointments for those user_ids
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*, profiles: user_id (full_name, phone_number, email, id)')
+          .in('user_id', userIds)
+          .order('appointment_date', { ascending: true });
+        if (error) throw error;
+        appointments = data || [];
+      } else {
+        setError('Vui lòng nhập thông tin tìm kiếm.');
         return;
       }
-      setResults(data);
+      if (!appointments || appointments.length === 0) {
+        setError('Không tìm thấy lịch hẹn phù hợp.');
+        return;
+      }
+      setResults(appointments);
     } catch (err: any) {
       setError('Có lỗi xảy ra khi tìm kiếm.');
       toast({ title: 'Lỗi', description: err.message || 'Có lỗi xảy ra khi tìm kiếm.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
+  };
+
+  // Fetch health declaration for selected appointment
+  const fetchHealthDeclaration = async (appointment: any) => {
+    setHealthDeclaration(null);
+    if (!appointment?.id) return;
+    try {
+      const { data, error } = await supabase
+        .from('health_declarations')
+        .select('*')
+        .eq('appointment_id', appointment.id)
+        .single();
+      if (error) {
+        setHealthDeclaration(null);
+        return;
+      }
+      setHealthDeclaration(data);
+    } catch {
+      setHealthDeclaration(null);
+    }
+  };
+
+  // When selecting an appointment, fetch health declaration
+  const handleSelect = (appt: any) => {
+    setSelected(appt);
+    fetchHealthDeclaration(appt);
+  };
+
+  // Render health declaration answers
+  const renderHealthDeclaration = () => {
+    if (!healthDeclaration) {
+      return <div className="text-gray-400 text-sm">Không có phiếu khai báo sức khỏe.</div>;
+    }
+    let answers;
+    try {
+      answers = typeof healthDeclaration.answers === 'string' ? JSON.parse(healthDeclaration.answers) : healthDeclaration.answers;
+    } catch {
+      return <div className="text-red-500 text-sm">Lỗi dữ liệu phiếu khai báo.</div>;
+    }
+    return (
+      <div className="mt-2 text-sm text-gray-700 space-y-1">
+        {Object.entries(answers).map(([key, value]) => (
+          <div key={key} className="flex flex-col">
+            <span className="font-medium capitalize">{key}:</span>
+            <span className="ml-2">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</span>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   // Render search results
@@ -77,7 +157,7 @@ const StaffCheckin: React.FC = () => {
           <GlassCard
             key={appt.id}
             className={`cursor-pointer border-2 ${selected?.id === appt.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}`}
-            onClick={() => setSelected(appt)}
+            onClick={() => handleSelect(appt)}
           >
             <div className="flex flex-col gap-1">
               <div className="font-semibold text-gray-900">{appt.profiles?.full_name || 'Không tên'}</div>
@@ -111,10 +191,28 @@ const StaffCheckin: React.FC = () => {
         <div className="mb-1 text-gray-700">Giờ: {selected.time_slot}</div>
         <div className="mb-1 text-gray-700">Trung tâm: {selected.center_id}</div>
         <div className="mb-1 text-gray-700">Trạng thái: {selected.status}</div>
-        {/* Placeholder for health declaration and actions */}
-        <div className="mt-4 text-gray-400 text-sm">Health declaration and actions will appear here.</div>
+        <div className="mt-4 font-semibold text-gray-900">Phiếu khai báo sức khỏe</div>
+        {renderHealthDeclaration()}
       </GlassCard>
     );
+  };
+
+  // Handle QR scan result
+  const handleQRScan = (data: string | null) => {
+    if (data) {
+      try {
+        const parsed = JSON.parse(data);
+        if (parsed.appointmentId) {
+          setShowQR(false);
+          setSearchValue(parsed.appointmentId);
+          handleSearch(parsed.appointmentId);
+        } else {
+          toast({ title: 'Lỗi', description: 'QR code không hợp lệ.', variant: 'destructive' });
+        }
+      } catch {
+        toast({ title: 'Lỗi', description: 'QR code không hợp lệ.', variant: 'destructive' });
+      }
+    }
   };
 
   return (
@@ -128,10 +226,30 @@ const StaffCheckin: React.FC = () => {
 
           {/* Scan QR Button */}
           <div className="flex justify-center mb-4">
-            <GlassButton variant="primary" size="lg" className="w-full py-4" disabled>
-              Scan QR Code (coming soon)
+            <GlassButton variant="primary" size="lg" className="w-full py-4" onClick={() => setShowQR(true)}>
+              Scan QR Code
             </GlassButton>
           </div>
+
+          {/* QR Scanner Modal */}
+          {showQR && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+              <div className="bg-white rounded-lg p-4 max-w-xs w-full flex flex-col items-center">
+                <div className="mb-2 font-semibold text-gray-900">Scan QR Code</div>
+                <Suspense fallback={<div>Loading scanner...</div>}>
+                  <QRReader
+                    delay={300}
+                    onError={() => toast({ title: 'Lỗi', description: 'Không thể truy cập camera.', variant: 'destructive' })}
+                    onScan={handleQRScan}
+                    style={{ width: '100%' }}
+                  />
+                </Suspense>
+                <GlassButton variant="secondary" size="sm" className="mt-2 w-full" onClick={() => setShowQR(false)}>
+                  Đóng
+                </GlassButton>
+              </div>
+            </div>
+          )}
 
           {/* Manual Search */}
           <div className="flex gap-2 mb-4">
@@ -143,7 +261,7 @@ const StaffCheckin: React.FC = () => {
               onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
               disabled={loading}
             />
-            <GlassButton variant="secondary" size="sm" onClick={handleSearch} disabled={loading || !searchValue.trim()}>
+            <GlassButton variant="secondary" size="sm" onClick={() => handleSearch()} disabled={loading || !searchValue.trim()}>
               {loading ? 'Searching...' : 'Search'}
             </GlassButton>
           </div>
