@@ -554,11 +554,6 @@ const Profile: React.FC = () => {
                                       {new Date(appointment.appointment_date).toLocaleDateString('vi-VN')}
                                     </span>
                                   </div>
-                                  {appointment.created_at && (
-                                    <div className="text-xs text-gray-500 ml-6">
-                                      Đăng ký lúc: {new Date(appointment.created_at).toLocaleTimeString('vi-VN')} {new Date(appointment.created_at).toLocaleDateString('vi-VN')}
-                                    </div>
-                                  )}
                                   {getStatusBadge(appointment.status)}
                                 </div>
                                 <div className="space-y-1 text-sm text-gray-600">
@@ -616,6 +611,12 @@ const Profile: React.FC = () => {
                                     </div>
                                   )}
                                 </div>
+                                {/* Move Đăng ký lúc to the bottom left */}
+                                {appointment.created_at && (
+                                  <div className="text-xs text-gray-500 mt-3 text-left">
+                                    Đăng ký lúc: {new Date(appointment.created_at).toLocaleTimeString('vi-VN')} {new Date(appointment.created_at).toLocaleDateString('vi-VN')}
+                                  </div>
+                                )}
                                 <div className="flex justify-end mt-2">
                                   <GlassButton
                                     variant="secondary"
