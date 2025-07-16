@@ -39,6 +39,7 @@ const StaffCheckin: React.FC = () => {
           .from('appointments')
           .select('*, profiles: user_id (full_name, phone_number, email, id)')
           .or(`id.eq.${input},user_id.eq.${input}`)
+          .eq('status', 'scheduled')
           .order('appointment_date', { ascending: true });
         if (error) throw error;
         appointments = data || [];
@@ -59,6 +60,7 @@ const StaffCheckin: React.FC = () => {
           .from('appointments')
           .select('*, profiles: user_id (full_name, phone_number, email, id)')
           .in('user_id', userIds)
+          .eq('status', 'scheduled')
           .order('appointment_date', { ascending: true });
         if (error) throw error;
         appointments = data || [];
