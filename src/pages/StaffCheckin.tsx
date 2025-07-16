@@ -22,6 +22,7 @@ const StaffCheckin: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | null>(null);
+  const [centerName, setCenterName] = useState<string>('');
   const [healthDeclaration, setHealthDeclaration] = useState<any | null>(null);
   const [showQR, setShowQR] = useState(false);
   const [scannerError, setScannerError] = useState<string | null>(null);
@@ -104,13 +105,64 @@ const StaffCheckin: React.FC = () => {
     }
   };
 
-  // When selecting an appointment, fetch health declaration
-  const handleSelect = (appt: any) => {
+  // When selecting an appointment, fetch health declaration and center name
+  const handleSelect = async (appt: any) => {
     setSelected(appt);
     fetchHealthDeclaration(appt);
+    setCenterName('');
+    if (appt?.center_id) {
+      try {
+        const { data, error } = await supabase
+          .from('donation_centers')
+          .select('name')
+          .eq('id', appt.center_id)
+          .single();
+        if (!error && data?.name) {
+          setCenterName(data.name);
+        }
+      } catch {}
+    }
   };
 
-  // Render health declaration answers
+  // Map health declaration keys to readable questions
+  const healthQuestions: Record<string, string> = {
+    hasDonatedBefore: '1. Anh/chị từng hiến máu chưa?',
+    hasCurrentDisease: '2. Hiện tại, anh/chị có mắc bệnh lý nào không?',
+    currentDiseaseDetails: 'Nếu có, vui lòng mô tả bệnh lý',
+    hasPreviousDisease: '3. Trước đây, anh/chị có từng mắc các bệnh nghiêm trọng?',
+    previousDiseaseDetails: 'Nếu có, vui lòng mô tả bệnh',
+    last12Months: '4. Trong 12 tháng gần đây, anh/chị có:',
+    last6Months: '5. Trong 06 tháng gần đây, anh/chị có:',
+    last1Month: '6. Trong 01 tháng gần đây, anh/chị có:',
+    last14Days: '7. Trong 14 ngày gần đây, anh/chị có:',
+    last14DaysDetails: 'Nếu khác, vui lòng mô tả',
+    last7Days: '8. Trong 07 ngày gần đây, anh/chị có:',
+    last7DaysDetails: 'Nếu khác, vui lòng mô tả',
+    womenSpecific: '9. Câu hỏi dành cho phụ nữ:',
+  };
+  const healthSubQuestions: Record<string, Record<string, string>> = {
+    last12Months: {
+      recoveredFromDisease: 'Khỏi bệnh sau khi mắc các bệnh nghiêm trọng',
+      receivedBloodTransfusion: 'Được truyền máu hoặc các chế phẩm máu',
+      receivedVaccine: 'Tiêm Vacxin',
+      vaccineDetails: 'Loại vacxin',
+      none: 'Không',
+    },
+    last6Months: {
+      recoveredFromDisease: 'Khỏi bệnh sau khi mắc các bệnh nghiêm trọng',
+      rapidWeightLoss: 'Sút cân nhanh không rõ nguyên nhân',
+      persistentLymphNodes: 'Nổi hạch kéo dài',
+      invasiveMedicalProcedure: 'Thực hiện thủ thuật y tế xâm lấn',
+      tattooOrPiercing: 'Xăm, xỏ lỗ',
+      drugUse: 'Sử dụng ma túy',
+      bloodExposure: 'Tiếp xúc trực tiếp với máu',
+      livingWithHepatitisB: 'Sinh sống chung với người nhiễm viêm gan B',
+      sexualContactWithInfected: 'Quan hệ với người nhiễm bệnh',
+      sameSexContact: 'Quan hệ với người cùng giới',
+      none: 'Không',
+    },
+  };
+  // Render health declaration answers (user-friendly)
   const renderHealthDeclaration = () => {
     if (!healthDeclaration) {
       return <div className="text-gray-400 text-sm">Không có phiếu khai báo sức khỏe.</div>;
@@ -122,13 +174,32 @@ const StaffCheckin: React.FC = () => {
       return <div className="text-red-500 text-sm">Lỗi dữ liệu phiếu khai báo.</div>;
     }
     return (
-      <div className="mt-2 text-sm text-gray-700 space-y-1">
-        {Object.entries(answers).map(([key, value]) => (
-          <div key={key} className="flex flex-col">
-            <span className="font-medium capitalize">{key}:</span>
-            <span className="ml-2">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</span>
-          </div>
-        ))}
+      <div className="mt-2 text-sm text-gray-700 space-y-2">
+        {Object.entries(answers).map(([key, value]) => {
+          if (typeof value === 'object' && value !== null) {
+            // Grouped answers (e.g., last12Months, last6Months)
+            return (
+              <div key={key} className="mb-2">
+                <div className="font-medium text-gray-900">{healthQuestions[key] || key}</div>
+                <ul className="list-disc ml-6 mt-1">
+                  {Object.entries(value).map(([subKey, subValue]) => (
+                    <li key={subKey} className="mb-1">
+                      <span className="font-normal">{healthSubQuestions[key]?.[subKey] || subKey}: </span>
+                      <span className="font-semibold">{typeof subValue === 'boolean' ? (subValue ? 'Có' : 'Không') : subValue}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          } else {
+            return (
+              <div key={key}>
+                <span className="font-medium">{healthQuestions[key] || key}: </span>
+                <span className="font-semibold">{value === null || value === '' ? 'Không' : String(value)}</span>
+              </div>
+            );
+          }
+        })}
       </div>
     );
   };
@@ -194,7 +265,7 @@ const StaffCheckin: React.FC = () => {
         <div className="mb-1 text-gray-700">Email: {selected.profiles?.email || 'N/A'}</div>
         <div className="mb-1 text-gray-700">Ngày: {new Date(selected.appointment_date).toLocaleDateString('vi-VN')}</div>
         <div className="mb-1 text-gray-700">Giờ: {selected.time_slot}</div>
-        <div className="mb-1 text-gray-700">Trung tâm: {selected.center_id}</div>
+        <div className="mb-1 text-gray-700">Trung tâm: {centerName || selected.center_id}</div>
         <div className="mb-1 text-gray-700">Trạng thái: {selected.status}</div>
         <div className="mt-4 font-semibold text-gray-900">Phiếu khai báo sức khỏe</div>
         {renderHealthDeclaration()}
