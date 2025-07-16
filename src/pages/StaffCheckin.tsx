@@ -6,7 +6,7 @@ import { GlassCard } from '@/components/ui/glass-card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Use dynamic import for QR reader to avoid SSR issues
+// Use dynamic import for QR reader to avoid SSR issues //
 const QrReader = React.lazy(() => 
   import('react-qr-reader').then(module => ({ default: module.QrReader }))
 );
