@@ -47,14 +47,12 @@ const Profile: React.FC = () => {
   const [qrImages, setQrImages] = useState<Record<string, string>>({});
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('appointments');
-  const [healthDeclarations, setHealthDeclarations] = useState<any[]>([]);
   const [selectedDeclaration, setSelectedDeclaration] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
       fetchUserData();
-      fetchHealthDeclarations();
     }
   }, [user, loading]);
 
@@ -173,13 +171,14 @@ const Profile: React.FC = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      setHealthDeclarations(data || []);
+      return data || [];
     } catch (error) {
       toast({
         title: 'Lỗi',
         description: 'Không thể tải tờ khai sức khỏe',
         variant: 'destructive',
       });
+      return [];
     }
   };
 
@@ -415,10 +414,9 @@ const Profile: React.FC = () => {
             </div>
             <GlassCard className="section-content-medium min-h-[500px] overflow-y-auto">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsList className="grid w-full grid-cols-2 mb-8">
                   <TabsTrigger value="appointments">Lịch hẹn sắp tới</TabsTrigger>
                   <TabsTrigger value="donations">Lịch sử hiến máu</TabsTrigger>
-                  <TabsTrigger value="declarations">Tờ khai sức khỏe</TabsTrigger>
                 </TabsList>
                 <TabsContent value="appointments">
                   {/* Upcoming Appointments */}
@@ -542,138 +540,75 @@ const Profile: React.FC = () => {
                     <GlassCardContent className="px-4">
                       {donationRecords.length > 0 ? (
                         <div className="space-y-4">
-                          {donationRecords.map((record) => (
-                            <div key={record.id} className="p-4 border border-gray-200 rounded-lg">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                  <Heart className="h-4 w-4 text-red-600" />
-                                  <span className="font-medium">
-                                    {new Date(record.donation_date).toLocaleDateString('vi-VN')}
-                                  </span>
+                          {donationRecords.map((record) => {
+                            // Find the health declaration for this donation (if any)
+                            const declaration = record.appointment_id
+                              ? healthDeclarations?.find((decl: any) => decl.appointment_id === record.appointment_id)
+                              : null;
+                            return (
+                              <div key={record.id} className="p-4 border border-gray-200 rounded-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Heart className="h-4 w-4 text-red-600" />
+                                    <span className="font-medium">
+                                      {new Date(record.donation_date).toLocaleDateString('vi-VN')}
+                                    </span>
+                                  </div>
+                                  {getScreeningResultBadge(record.screening_result)}
                                 </div>
-                                {getScreeningResultBadge(record.screening_result)}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                                  <div>
+                                    <p className="text-gray-500">Nhóm máu</p>
+                                    <p className="font-medium">{record.blood_type || 'Chưa xác định'}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-gray-500">Lượng máu</p>
+                                    <p className="font-medium">{record.blood_volume || 'N/A'} ml</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-gray-500">Trung tâm</p>
+                                    <p className="font-medium">{record.center?.name}</p>
+                                  </div>
+                                  {declaration && (
+                                    <div className="flex items-center">
+                                      <GlassButton
+                                        variant="secondary"
+                                        size="sm"
+                                        onClick={() => { setSelectedDeclaration(declaration); setModalOpen(true); }}
+                                      >
+                                        Xem tờ khai
+                                      </GlassButton>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
-                                <div>
-                                  <p className="text-gray-500">Nhóm máu</p>
-                                  <p className="font-medium">{record.blood_type || 'Chưa xác định'}</p>
-                                </div>
-                                <div>
-                                  <p className="text-gray-500">Lượng máu</p>
-                                  <p className="font-medium">{record.blood_volume || 'N/A'} ml</p>
-                                </div>
-                                <div>
-                                  <p className="text-gray-500">Trung tâm</p>
-                                  <p className="font-medium">{record.center?.name}</p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       ) : (
                         <div className="text-center py-8">
                           <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                           <p className="text-gray-600 mb-4">Bạn chưa có lịch sử hiến máu</p>
-                          <GlassButton onClick={() => navigate('/donate')}>
-                            Hiến máu lần đầu
-                          </GlassButton>
                         </div>
                       )}
                     </GlassCardContent>
-                  </GlassCard>
-                </TabsContent>
-                <TabsContent value="declarations">
-                  {/* Health Declarations */}
-                  <GlassCard>
-                    <GlassCardHeader>
-                      <GlassCardTitle className="flex items-center gap-2">
-                        <User className="h-5 w-5" />
-                        Tờ khai sức khỏe
-                      </GlassCardTitle>
-                    </GlassCardHeader>
-                    <GlassCardContent className="px-4">
-                      {healthDeclarations.length > 0 ? (
-                        <>
-                          {/* Table header */}
-                          <div className="hidden md:grid grid-cols-4 gap-4 pb-2 text-xs font-semibold text-gray-500 border-b border-gray-200">
-                            <div>Ngày khai báo</div>
-                            <div>Trung tâm</div>
-                            <div>Trạng thái</div>
-                            <div></div>
+                    {/* Modal for viewing declaration details */}
+                    <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+                      <DialogContent className="max-w-lg w-full">
+                        <DialogHeader>
+                          <DialogTitle>Chi tiết tờ khai sức khỏe</DialogTitle>
+                        </DialogHeader>
+                        {selectedDeclaration && (
+                          <div className="overflow-x-auto max-h-[60vh]">
+                            {renderHealthDeclarationDetails(selectedDeclaration.answers)}
                           </div>
-                          <div className="divide-y divide-gray-200">
-                            {healthDeclarations.map((decl) => {
-                              // Find the appointment for this declaration (if any)
-                              const appointment = appointments.find(a => a.id === decl.appointment_id);
-                              return (
-                                <div key={decl.id} className="flex flex-col md:grid md:grid-cols-4 gap-2 md:gap-4 items-start md:items-center py-3">
-                                  {/* Ngày khai báo */}
-                                  <span className="font-medium w-full truncate">{decl.created_at ? new Date(decl.created_at).toLocaleDateString('vi-VN') : 'N/A'}</span>
-                                  {/* Trung tâm */}
-                                  <span className="text-gray-600 w-full truncate">{appointment ? appointment.center?.name : 'Không có lịch hẹn'}</span>
-                                  {/* Trạng thái */}
-                                  <span><Badge variant="secondary">{decl.is_eligible ? 'Đã khai báo' : 'Chưa khai báo'}</Badge></span>
-                                  {/* Xem chi tiết */}
-                                  <span>
-                                    <GlassButton
-                                      variant="secondary"
-                                      size="sm"
-                                      onClick={() => { setSelectedDeclaration(decl); setModalOpen(true); }}
-                                    >
-                                      Xem chi tiết
-                                    </GlassButton>
-                                  </span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-center py-8">
-                          <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                          <p className="text-gray-600 mb-4">Bạn chưa có tờ khai sức khỏe nào</p>
-                          <GlassButton onClick={() => navigate('/donate')}>
-                            Khai báo sức khỏe
-                          </GlassButton>
-                        </div>
-                      )}
-                    </GlassCardContent>
+                        )}
+                      </DialogContent>
+                    </Dialog>
                   </GlassCard>
-                  {/* Modal for viewing declaration details */}
-                  <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-                    <DialogContent className="max-w-lg w-full">
-                      <DialogHeader>
-                        <DialogTitle>Chi tiết tờ khai sức khỏe</DialogTitle>
-                      </DialogHeader>
-                      {selectedDeclaration && (
-                        <div className="overflow-x-auto max-h-[60vh]">
-                          {renderHealthDeclarationDetails(selectedDeclaration.answers)}
-                        </div>
-                      )}
-                    </DialogContent>
-                  </Dialog>
                 </TabsContent>
               </Tabs>
             </GlassCard>
-            {/* Quick Actions */}
-            <div className="flex justify-center gap-4 mt-8">
-              <GlassButton 
-                variant="primary" 
-                onClick={() => navigate('/donate')}
-                className="flex items-center gap-2"
-              >
-                <Heart className="h-4 w-4" />
-                Đăng ký hiến máu
-              </GlassButton>
-              <GlassButton 
-                variant="secondary" 
-                onClick={() => navigate('/centers')}
-                className="flex items-center gap-2"
-              >
-                <MapPin className="h-4 w-4" />
-                Tìm trung tâm
-              </GlassButton>
-            </div>
           </div>
         </div>
       </main>
