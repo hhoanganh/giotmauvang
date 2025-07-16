@@ -1,4 +1,3 @@
-
 import React, { useState, Suspense } from 'react';
 import Header from '@/components/Header';
 import { GlassButton } from '@/components/ui/glass-button';
@@ -273,13 +272,7 @@ const StaffCheckin: React.FC = () => {
                         onError={handleQRError}
                         onScan={handleQRScan}
                         style={{ width: '100%', height: '100%' }}
-                        constraints={{
-                          video: { 
-                            facingMode: 'environment',
-                            width: { ideal: 640 },
-                            height: { ideal: 640 }
-                          }
-                        }}
+                        facingMode="environment"
                         showViewFinder={true}
                       />
                     </Suspense>
