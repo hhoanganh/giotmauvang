@@ -1,3 +1,4 @@
+
 import React, { useState, Suspense } from 'react';
 import Header from '@/components/Header';
 import { GlassButton } from '@/components/ui/glass-button';
@@ -6,8 +7,10 @@ import { GlassCard } from '@/components/ui/glass-card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// @ts-expect-error: react-qr-reader may not have types
-const QRReader = React.lazy(() => import('react-qr-reader'));
+// Use dynamic import for QR reader to avoid SSR issues
+const QrReader = React.lazy(() => 
+  import('react-qr-reader').then(module => ({ default: module.QrReader }))
+);
 
 function isUUID(str: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str);
@@ -22,6 +25,7 @@ const StaffCheckin: React.FC = () => {
   const [selected, setSelected] = useState<any | null>(null);
   const [healthDeclaration, setHealthDeclaration] = useState<any | null>(null);
   const [showQR, setShowQR] = useState(false);
+  const [scannerError, setScannerError] = useState<string | null>(null);
 
   // Search handler
   const handleSearch = async (inputOverride?: string) => {
@@ -198,9 +202,11 @@ const StaffCheckin: React.FC = () => {
   };
 
   // Handle QR scan result
-  const handleQRScan = (data: string | null) => {
-    if (data) {
+  const handleQRScan = (result: any) => {
+    if (result) {
       try {
+        const data = typeof result === 'string' ? result : result.text;
+        console.log('QR scan result:', data);
         const parsed = JSON.parse(data);
         if (parsed.appointmentId) {
           setShowQR(false);
@@ -215,6 +221,17 @@ const StaffCheckin: React.FC = () => {
     }
   };
 
+  // Handle QR scan error
+  const handleQRError = (error: any) => {
+    console.error('QR scan error:', error);
+    setScannerError('Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập camera.');
+    toast({ 
+      title: 'Lỗi camera', 
+      description: 'Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập camera.', 
+      variant: 'destructive' 
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30 flex flex-col">
       <Header />
@@ -226,7 +243,10 @@ const StaffCheckin: React.FC = () => {
 
           {/* Scan QR Button */}
           <div className="flex justify-center mb-4">
-            <GlassButton variant="primary" size="lg" className="w-full py-4" onClick={() => setShowQR(true)}>
+            <GlassButton variant="primary" size="lg" className="w-full py-4" onClick={() => {
+              setShowQR(true);
+              setScannerError(null);
+            }}>
               Scan QR Code
             </GlassButton>
           </div>
@@ -234,19 +254,61 @@ const StaffCheckin: React.FC = () => {
           {/* QR Scanner Modal */}
           {showQR && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-              <div className="bg-white rounded-lg p-4 max-w-xs w-full flex flex-col items-center">
-                <div className="mb-2 font-semibold text-gray-900">Scan QR Code</div>
-                <Suspense fallback={<div>Loading scanner...</div>}>
-                  <QRReader
-                    delay={300}
-                    onError={() => toast({ title: 'Lỗi', description: 'Không thể truy cập camera.', variant: 'destructive' })}
-                    onScan={handleQRScan}
-                    style={{ width: '100%' }}
-                  />
-                </Suspense>
-                <GlassButton variant="secondary" size="sm" className="mt-2 w-full" onClick={() => setShowQR(false)}>
-                  Đóng
-                </GlassButton>
+              <div className="bg-white rounded-lg p-4 max-w-sm w-full mx-4 flex flex-col items-center">
+                <div className="mb-4 font-semibold text-gray-900 text-center">Scan QR Code</div>
+                
+                {scannerError ? (
+                  <div className="text-red-500 text-sm text-center mb-4 p-4 bg-red-50 rounded">
+                    {scannerError}
+                  </div>
+                ) : (
+                  <div className="w-full aspect-square max-w-xs mb-4">
+                    <Suspense fallback={
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded">
+                        <div className="text-gray-500">Loading scanner...</div>
+                      </div>
+                    }>
+                      <QrReader
+                        delay={300}
+                        onError={handleQRError}
+                        onScan={handleQRScan}
+                        style={{ width: '100%', height: '100%' }}
+                        constraints={{
+                          video: { 
+                            facingMode: 'environment',
+                            width: { ideal: 640 },
+                            height: { ideal: 640 }
+                          }
+                        }}
+                        showViewFinder={true}
+                      />
+                    </Suspense>
+                  </div>
+                )}
+                
+                <div className="flex gap-2 w-full">
+                  <GlassButton 
+                    variant="secondary" 
+                    size="sm" 
+                    className="flex-1" 
+                    onClick={() => {
+                      setShowQR(false);
+                      setScannerError(null);
+                    }}
+                  >
+                    Đóng
+                  </GlassButton>
+                  {scannerError && (
+                    <GlassButton 
+                      variant="primary" 
+                      size="sm" 
+                      className="flex-1" 
+                      onClick={() => setScannerError(null)}
+                    >
+                      Thử lại
+                    </GlassButton>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -277,4 +339,4 @@ const StaffCheckin: React.FC = () => {
   );
 };
 
-export default StaffCheckin; 
+export default StaffCheckin;
