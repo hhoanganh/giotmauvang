@@ -427,17 +427,7 @@ const Profile: React.FC = () => {
       <main className="section-padding">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <User className="h-10 w-10 text-blue-600" />
-              </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {profile.full_name || 'Chưa cập nhật tên'}
-              </h1>
-              <p className="text-gray-600">
-                {profile.email || 'Chưa cập nhật email'}
-              </p>
-            </div>
+            {/* Remove the profile icon, user name, and email above the personal info card */}
             <GlassCard className="mb-8">
               <GlassCardHeader>
                 <GlassCardTitle className="flex items-center gap-2">
