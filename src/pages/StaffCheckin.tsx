@@ -215,7 +215,7 @@ const StaffCheckin: React.FC = () => {
     },
   ];
 
-  // Render health declaration answers (ordered, only selected)
+  // Render health declaration answers (ordered, always show all questions)
   const renderHealthDeclaration = () => {
     if (!healthDeclaration) {
       return <div className="text-gray-400 text-sm">Không có phiếu khai báo sức khỏe.</div>;
@@ -231,9 +231,8 @@ const StaffCheckin: React.FC = () => {
         {healthDeclarationOrder.map((q) => {
           const value = answers[q.key];
           if (q.type === 'single') {
-            if (value === undefined || value === null || value === '' || value === 'no' || value === false) return null;
-            // Show only the selected option
-            let label = q.options?.[value] || value;
+            // Always show the question, even if answer is 'no' or falsy
+            let label = q.options?.[value] || (value === null || value === undefined || value === '' ? 'Không áp dụng' : value);
             // For 'other' or text options, show detail if present
             let detail = '';
             if (q.detailKey && (value === 'yes' || value === 'other')) {
@@ -254,6 +253,10 @@ const StaffCheckin: React.FC = () => {
                 </div>
               );
             } else {
+              // womenSpecific: if null, show 'Không áp dụng'
+              if (q.key === 'womenSpecific' && (value === null || value === undefined)) {
+                label = 'Không áp dụng';
+              }
               return (
                 <div key={q.key}>
                   <span className="font-medium">{q.label}</span>
@@ -262,25 +265,28 @@ const StaffCheckin: React.FC = () => {
               );
             }
           } else if (q.type === 'multi' && typeof value === 'object' && value !== null) {
-            // Show only selected (true or filled) options
+            // Show all selected (true) options, if none, show 'Không'
             const selectedOptions = Object.entries(value).filter(
               ([k, v]) => (k === 'vaccineDetails' ? v && value['receivedVaccine'] : v === true)
             );
-            if (selectedOptions.length === 0) return null;
             return (
               <div key={q.key}>
                 <span className="font-medium">{q.label}</span>
                 <ul className="ml-4 list-disc">
-                  {selectedOptions.map(([k, v]) => {
-                    if (k === 'vaccineDetails') {
+                  {selectedOptions.length > 0 ? (
+                    selectedOptions.map(([k, v]) => {
+                      if (k === 'vaccineDetails') {
+                        return (
+                          <li key={k}><span className="font-semibold">Loại vacxin:</span> {v}</li>
+                        );
+                      }
                       return (
-                        <li key={k}><span className="font-semibold">Loại vacxin:</span> {v}</li>
+                        <li key={k}><span className="font-semibold">{q.options?.[k] || k}</span></li>
                       );
-                    }
-                    return (
-                      <li key={k}><span className="font-semibold">{q.options?.[k] || k}</span></li>
-                    );
-                  })}
+                    })
+                  ) : (
+                    <li key="none"><span className="font-semibold">Không</span></li>
+                  )}
                 </ul>
               </div>
             );
