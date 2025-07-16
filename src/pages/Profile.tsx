@@ -5,11 +5,12 @@ import Header from '@/components/Header';
 import { GlassCard, GlassCardContent, GlassCardHeader, GlassCardTitle } from '@/components/ui/glass-card';
 import { GlassButton } from '@/components/ui/glass-button';
 import { Badge } from '@/components/ui/badge';
-import { User, Calendar, MapPin, Heart, Clock, CheckCircle, XCircle, ArrowRight, Download, Printer } from 'lucide-react';
+import { User, Calendar, MapPin, Heart, Clock, CheckCircle, XCircle, ArrowRight, Download, Printer, Pencil } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 interface Appointment {
   id: string;
@@ -49,6 +50,10 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState('appointments');
   const [selectedDeclaration, setSelectedDeclaration] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  // Inline edit state
+  const [editField, setEditField] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string>('');
+  const [savingEdit, setSavingEdit] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
@@ -374,6 +379,27 @@ const Profile: React.FC = () => {
     );
   };
 
+  // Add updateProfile function
+  const updateProfileField = async (field: string, value: string) => {
+    setSavingEdit(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ [field]: value })
+        .eq('id', user.id);
+      if (error) throw error;
+      toast({ title: 'Cập nhật thành công', description: 'Thông tin đã được cập nhật.' });
+      setEditField(null);
+      setEditValue('');
+      // Refresh profile (assume useAuth context will update, or force reload if needed)
+      window.location.reload();
+    } catch (error) {
+      toast({ title: 'Lỗi', description: 'Không thể cập nhật thông tin.', variant: 'destructive' });
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   if (loading || loadingData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50/30 to-orange-50/30">
@@ -412,6 +438,138 @@ const Profile: React.FC = () => {
                 {profile.email || 'Chưa cập nhật email'}
               </p>
             </div>
+            <GlassCard className="mb-8">
+              <GlassCardHeader>
+                <GlassCardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Thông tin cá nhân
+                </GlassCardTitle>
+              </GlassCardHeader>
+              <GlassCardContent>
+                <div className="space-y-4">
+                  {/* Full Name */}
+                  <div className="flex items-center gap-3">
+                    <span className="w-32 text-gray-500">Họ và tên</span>
+                    {editField === 'full_name' ? (
+                      <>
+                        <Input
+                          value={editValue}
+                          onChange={e => setEditValue(e.target.value)}
+                          className="max-w-xs"
+                          disabled={savingEdit}
+                        />
+                        <GlassButton
+                          size="sm"
+                          onClick={() => updateProfileField('full_name', editValue)}
+                          disabled={savingEdit || !editValue.trim()}
+                        >
+                          Lưu
+                        </GlassButton>
+                        <GlassButton
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => { setEditField(null); setEditValue(''); }}
+                          disabled={savingEdit}
+                        >
+                          Hủy
+                        </GlassButton>
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-medium">{profile?.full_name || 'Chưa cập nhật'}</span>
+                        <button
+                          className="ml-2 text-gray-400 hover:text-blue-600"
+                          onClick={() => { setEditField('full_name'); setEditValue(profile?.full_name || ''); }}
+                          aria-label="Chỉnh sửa họ và tên"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  {/* Phone Number */}
+                  <div className="flex items-center gap-3">
+                    <span className="w-32 text-gray-500">Số điện thoại</span>
+                    {editField === 'phone_number' ? (
+                      <>
+                        <Input
+                          value={editValue}
+                          onChange={e => setEditValue(e.target.value)}
+                          className="max-w-xs"
+                          disabled={savingEdit}
+                        />
+                        <GlassButton
+                          size="sm"
+                          onClick={() => updateProfileField('phone_number', editValue)}
+                          disabled={savingEdit || !editValue.trim()}
+                        >
+                          Lưu
+                        </GlassButton>
+                        <GlassButton
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => { setEditField(null); setEditValue(''); }}
+                          disabled={savingEdit}
+                        >
+                          Hủy
+                        </GlassButton>
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-medium">{profile?.phone_number || 'Chưa cập nhật'}</span>
+                        <button
+                          className="ml-2 text-gray-400 hover:text-blue-600"
+                          onClick={() => { setEditField('phone_number'); setEditValue(profile?.phone_number || ''); }}
+                          aria-label="Chỉnh sửa số điện thoại"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  {/* Email */}
+                  <div className="flex items-center gap-3">
+                    <span className="w-32 text-gray-500">Email</span>
+                    {editField === 'email' ? (
+                      <>
+                        <Input
+                          value={editValue}
+                          onChange={e => setEditValue(e.target.value)}
+                          className="max-w-xs"
+                          disabled={savingEdit}
+                        />
+                        <GlassButton
+                          size="sm"
+                          onClick={() => updateProfileField('email', editValue)}
+                          disabled={savingEdit || !editValue.trim()}
+                        >
+                          Lưu
+                        </GlassButton>
+                        <GlassButton
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => { setEditField(null); setEditValue(''); }}
+                          disabled={savingEdit}
+                        >
+                          Hủy
+                        </GlassButton>
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-medium">{profile?.email || 'Chưa cập nhật'}</span>
+                        <button
+                          className="ml-2 text-gray-400 hover:text-blue-600"
+                          onClick={() => { setEditField('email'); setEditValue(profile?.email || ''); }}
+                          aria-label="Chỉnh sửa email"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </GlassCardContent>
+            </GlassCard>
             <GlassCard className="section-content-medium min-h-[500px] overflow-y-auto">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8">
