@@ -242,3 +242,7 @@ All colors MUST be HSL.
     @apply homepage-grid-2-1;
   }
 }
+
+html {
+  overflow-y: scroll;
+}
