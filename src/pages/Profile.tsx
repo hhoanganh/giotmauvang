@@ -50,6 +50,7 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState('appointments');
   const [selectedDeclaration, setSelectedDeclaration] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [healthDeclarations, setHealthDeclarations] = useState<any[]>([]);
   // Inline edit state
   const [editField, setEditField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
@@ -58,6 +59,7 @@ const Profile: React.FC = () => {
   useEffect(() => {
     if (!loading && user) {
       fetchUserData();
+      fetchHealthDeclarations();
     }
   }, [user, loading]);
 
@@ -176,14 +178,14 @@ const Profile: React.FC = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data || [];
+      setHealthDeclarations(data || []);
     } catch (error) {
       toast({
         title: 'Lỗi',
         description: 'Không thể tải tờ khai sức khỏe',
         variant: 'destructive',
       });
-      return [];
+      setHealthDeclarations([]);
     }
   };
 
@@ -656,9 +658,7 @@ const Profile: React.FC = () => {
                         <div className="space-y-4">
                           {donationRecords.map((record) => {
                             // Find the health declaration for this donation (if any)
-                            const declaration = record.appointment_id
-                              ? healthDeclarations?.find((decl: any) => decl.appointment_id === record.appointment_id)
-                              : null;
+                            const declaration = healthDeclarations?.find((decl: any) => decl.appointment_id === record.id) || null;
                             return (
                               <div key={record.id} className="p-4 border border-gray-200 rounded-lg">
                                 <div className="flex items-center justify-between mb-2">
