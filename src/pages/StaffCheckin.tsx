@@ -124,45 +124,98 @@ const StaffCheckin: React.FC = () => {
     }
   };
 
-  // Map health declaration keys to readable questions
-  const healthQuestions: Record<string, string> = {
-    hasDonatedBefore: '1. Anh/chị từng hiến máu chưa?',
-    hasCurrentDisease: '2. Hiện tại, anh/chị có mắc bệnh lý nào không?',
-    currentDiseaseDetails: 'Nếu có, vui lòng mô tả bệnh lý',
-    hasPreviousDisease: '3. Trước đây, anh/chị có từng mắc các bệnh nghiêm trọng?',
-    previousDiseaseDetails: 'Nếu có, vui lòng mô tả bệnh',
-    last12Months: '4. Trong 12 tháng gần đây, anh/chị có:',
-    last6Months: '5. Trong 06 tháng gần đây, anh/chị có:',
-    last1Month: '6. Trong 01 tháng gần đây, anh/chị có:',
-    last14Days: '7. Trong 14 ngày gần đây, anh/chị có:',
-    last14DaysDetails: 'Nếu khác, vui lòng mô tả',
-    last7Days: '8. Trong 07 ngày gần đây, anh/chị có:',
-    last7DaysDetails: 'Nếu khác, vui lòng mô tả',
-    womenSpecific: '9. Câu hỏi dành cho phụ nữ:',
-  };
-  const healthSubQuestions: Record<string, Record<string, string>> = {
-    last12Months: {
-      recoveredFromDisease: 'Khỏi bệnh sau khi mắc các bệnh nghiêm trọng',
-      receivedBloodTransfusion: 'Được truyền máu hoặc các chế phẩm máu',
-      receivedVaccine: 'Tiêm Vacxin',
-      vaccineDetails: 'Loại vacxin',
-      none: 'Không',
+  // Define the ordered list of health declaration questions and their types
+  const healthDeclarationOrder = [
+    {
+      key: 'hasDonatedBefore',
+      label: '1. Anh/chị từng hiến máu chưa?',
+      type: 'single',
+      options: { yes: 'Có', no: 'Không' },
     },
-    last6Months: {
-      recoveredFromDisease: 'Khỏi bệnh sau khi mắc các bệnh nghiêm trọng',
-      rapidWeightLoss: 'Sút cân nhanh không rõ nguyên nhân',
-      persistentLymphNodes: 'Nổi hạch kéo dài',
-      invasiveMedicalProcedure: 'Thực hiện thủ thuật y tế xâm lấn',
-      tattooOrPiercing: 'Xăm, xỏ lỗ',
-      drugUse: 'Sử dụng ma túy',
-      bloodExposure: 'Tiếp xúc trực tiếp với máu',
-      livingWithHepatitisB: 'Sinh sống chung với người nhiễm viêm gan B',
-      sexualContactWithInfected: 'Quan hệ với người nhiễm bệnh',
-      sameSexContact: 'Quan hệ với người cùng giới',
-      none: 'Không',
+    {
+      key: 'hasCurrentDisease',
+      label: '2. Hiện tại, anh/chị có mắc bệnh lý nào không?',
+      type: 'single',
+      options: { yes: 'Có', no: 'Không' },
+      detailKey: 'currentDiseaseDetails',
+      detailLabel: 'Nếu có, vui lòng mô tả bệnh lý',
     },
-  };
-  // Render health declaration answers (user-friendly)
+    {
+      key: 'hasPreviousDisease',
+      label: '3. Trước đây, anh/chị có từng mắc các bệnh nghiêm trọng?',
+      type: 'single',
+      options: { yes: 'Có', no: 'Không', other: 'Bệnh khác' },
+      detailKey: 'previousDiseaseDetails',
+      detailLabel: 'Nếu có, vui lòng mô tả bệnh',
+    },
+    {
+      key: 'last12Months',
+      label: '4. Trong 12 tháng gần đây, anh/chị có:',
+      type: 'multi',
+      options: {
+        recoveredFromDisease: 'Khỏi bệnh sau khi mắc các bệnh nghiêm trọng',
+        receivedBloodTransfusion: 'Được truyền máu hoặc các chế phẩm máu',
+        receivedVaccine: 'Tiêm Vacxin',
+        vaccineDetails: 'Loại vacxin',
+        none: 'Không',
+      },
+      detailKey: 'vaccineDetails',
+      detailLabel: 'Loại vacxin',
+    },
+    {
+      key: 'last6Months',
+      label: '5. Trong 06 tháng gần đây, anh/chị có:',
+      type: 'multi',
+      options: {
+        recoveredFromDisease: 'Khỏi bệnh sau khi mắc các bệnh nghiêm trọng',
+        rapidWeightLoss: 'Sút cân nhanh không rõ nguyên nhân',
+        persistentLymphNodes: 'Nổi hạch kéo dài',
+        invasiveMedicalProcedure: 'Thực hiện thủ thuật y tế xâm lấn',
+        tattooOrPiercing: 'Xăm, xỏ lỗ',
+        drugUse: 'Sử dụng ma túy',
+        bloodExposure: 'Tiếp xúc trực tiếp với máu',
+        livingWithHepatitisB: 'Sinh sống chung với người nhiễm viêm gan B',
+        sexualContactWithInfected: 'Quan hệ với người nhiễm bệnh',
+        sameSexContact: 'Quan hệ với người cùng giới',
+        none: 'Không',
+      },
+    },
+    {
+      key: 'last1Month',
+      label: '6. Trong 01 tháng gần đây, anh/chị có:',
+      type: 'single',
+      options: { yes: 'Có', no: 'Không' },
+    },
+    {
+      key: 'last14Days',
+      label: '7. Trong 14 ngày gần đây, anh/chị có:',
+      type: 'single',
+      options: { yes: 'Có', no: 'Không', other: 'Khác (cụ thể)' },
+      detailKey: 'last14DaysDetails',
+      detailLabel: 'Nếu khác, vui lòng mô tả',
+    },
+    {
+      key: 'last7Days',
+      label: '8. Trong 07 ngày gần đây, anh/chị có:',
+      type: 'single',
+      options: { yes: 'Có', no: 'Không', other: 'Khác (cụ thể)' },
+      detailKey: 'last7DaysDetails',
+      detailLabel: 'Nếu khác, vui lòng mô tả',
+    },
+    {
+      key: 'womenSpecific',
+      label: '9. Câu hỏi dành cho phụ nữ:',
+      type: 'single',
+      options: {
+        pregnant: 'Hiện chị đang mang thai hoặc nuôi con dưới 12 tháng tuổi',
+        breastfeeding: 'Đang cho con bú',
+        terminatedPregnancy: 'Chấm dứt thai kỳ trong 12 tháng gần đây',
+        no: 'Không',
+      },
+    },
+  ];
+
+  // Render health declaration answers (ordered, only selected)
   const renderHealthDeclaration = () => {
     if (!healthDeclaration) {
       return <div className="text-gray-400 text-sm">Không có phiếu khai báo sức khỏe.</div>;
@@ -174,31 +227,65 @@ const StaffCheckin: React.FC = () => {
       return <div className="text-red-500 text-sm">Lỗi dữ liệu phiếu khai báo.</div>;
     }
     return (
-      <div className="mt-2 text-sm text-gray-700 space-y-2">
-        {Object.entries(answers).map(([key, value]) => {
-          if (typeof value === 'object' && value !== null) {
-            // Grouped answers (e.g., last12Months, last6Months)
+      <div className="mt-2 text-sm text-gray-700 space-y-3">
+        {healthDeclarationOrder.map((q) => {
+          const value = answers[q.key];
+          if (q.type === 'single') {
+            if (value === undefined || value === null || value === '' || value === 'no' || value === false) return null;
+            // Show only the selected option
+            let label = q.options?.[value] || value;
+            // For 'other' or text options, show detail if present
+            let detail = '';
+            if (q.detailKey && (value === 'yes' || value === 'other')) {
+              detail = answers[q.detailKey];
+            }
+            if (value === 'other' && detail) {
+              return (
+                <div key={q.key}>
+                  <span className="font-medium">{q.label}</span>
+                  <div className="ml-4">- {label}: <span className="font-semibold">{detail}</span></div>
+                </div>
+              );
+            } else if (q.detailKey && value === 'yes' && detail) {
+              return (
+                <div key={q.key}>
+                  <span className="font-medium">{q.label}</span>
+                  <div className="ml-4">- {label}: <span className="font-semibold">{detail}</span></div>
+                </div>
+              );
+            } else {
+              return (
+                <div key={q.key}>
+                  <span className="font-medium">{q.label}</span>
+                  <div className="ml-4">- <span className="font-semibold">{label}</span></div>
+                </div>
+              );
+            }
+          } else if (q.type === 'multi' && typeof value === 'object' && value !== null) {
+            // Show only selected (true or filled) options
+            const selectedOptions = Object.entries(value).filter(
+              ([k, v]) => (k === 'vaccineDetails' ? v && value['receivedVaccine'] : v === true)
+            );
+            if (selectedOptions.length === 0) return null;
             return (
-              <div key={key} className="mb-2">
-                <div className="font-medium text-gray-900">{healthQuestions[key] || key}</div>
-                <ul className="list-disc ml-6 mt-1">
-                  {Object.entries(value).map(([subKey, subValue]) => (
-                    <li key={subKey} className="mb-1">
-                      <span className="font-normal">{healthSubQuestions[key]?.[subKey] || subKey}: </span>
-                      <span className="font-semibold">{typeof subValue === 'boolean' ? (subValue ? 'Có' : 'Không') : subValue}</span>
-                    </li>
-                  ))}
+              <div key={q.key}>
+                <span className="font-medium">{q.label}</span>
+                <ul className="ml-4 list-disc">
+                  {selectedOptions.map(([k, v]) => {
+                    if (k === 'vaccineDetails') {
+                      return (
+                        <li key={k}><span className="font-semibold">Loại vacxin:</span> {v}</li>
+                      );
+                    }
+                    return (
+                      <li key={k}><span className="font-semibold">{q.options?.[k] || k}</span></li>
+                    );
+                  })}
                 </ul>
               </div>
             );
-          } else {
-            return (
-              <div key={key}>
-                <span className="font-medium">{healthQuestions[key] || key}: </span>
-                <span className="font-semibold">{value === null || value === '' ? 'Không' : String(value)}</span>
-              </div>
-            );
           }
+          return null;
         })}
       </div>
     );
