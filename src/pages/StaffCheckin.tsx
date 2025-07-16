@@ -277,7 +277,7 @@ const StaffCheckin: React.FC = () => {
                     selectedOptions.map(([k, v]) => {
                       if (k === 'vaccineDetails') {
                         return (
-                          <li key={k}><span className="font-semibold">Loại vacxin:</span> {v}</li>
+                          <li key={k}><span className="font-semibold">Loại vacxin:</span> {String(v)}</li>
                         );
                       }
                       return (
@@ -367,10 +367,9 @@ const StaffCheckin: React.FC = () => {
   };
 
   // Handle QR scan result
-  const handleQRScan = (result: any) => {
-    if (result) {
+  const handleQrScan = (data: string) => {
+    if (data) {
       try {
-        const data = typeof result === 'string' ? result : result.text;
         console.log('QR scan result:', data);
         const parsed = JSON.parse(data);
         if (parsed.appointmentId) {
@@ -381,7 +380,10 @@ const StaffCheckin: React.FC = () => {
           toast({ title: 'Lỗi', description: 'QR code không hợp lệ.', variant: 'destructive' });
         }
       } catch {
-        toast({ title: 'Lỗi', description: 'QR code không hợp lệ.', variant: 'destructive' });
+        // If not JSON, treat as direct appointmentId
+        setShowQR(false);
+        setSearchValue(data);
+        handleSearch(data);
       }
     }
   };
@@ -436,16 +438,14 @@ const StaffCheckin: React.FC = () => {
                       <div style={{ width: '100%', height: '100%' }}>
                         <QrReader
                           onResult={(result, error) => {
-                            if (error) {
+                            if (!!result) {
+                              handleQrScan(result.getText());
+                            }
+                            if (!!error) {
                               handleQRError(error);
                             }
-                            if (result) {
-                              handleQRScan(result?.getText());
-                            }
                           }}
-                          constraints={{
-                            facingMode: 'environment'
-                          }}
+                          constraints={{ facingMode: "environment" }}
                         />
                       </div>
                     </Suspense>
