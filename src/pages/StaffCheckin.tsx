@@ -268,7 +268,6 @@ const StaffCheckin: React.FC = () => {
                       </div>
                     }>
                       <QrReader
-                        delay={300}
                         onError={handleQRError}
                         onScan={handleQRScan}
                         style={{ width: '100%', height: '100%' }}
