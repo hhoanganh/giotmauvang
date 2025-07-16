@@ -530,42 +530,7 @@ const Profile: React.FC = () => {
                   {/* Email */}
                   <div className="flex items-center gap-3">
                     <span className="w-32 text-gray-500">Email</span>
-                    {editField === 'email' ? (
-                      <>
-                        <Input
-                          value={editValue}
-                          onChange={e => setEditValue(e.target.value)}
-                          className="max-w-xs"
-                          disabled={savingEdit}
-                        />
-                        <GlassButton
-                          size="sm"
-                          onClick={() => updateProfileField('email', editValue)}
-                          disabled={savingEdit || !editValue.trim()}
-                        >
-                          Lưu
-                        </GlassButton>
-                        <GlassButton
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => { setEditField(null); setEditValue(''); }}
-                          disabled={savingEdit}
-                        >
-                          Hủy
-                        </GlassButton>
-                      </>
-                    ) : (
-                      <>
-                        <span className="font-medium">{profile?.email || 'Chưa cập nhật'}</span>
-                        <button
-                          className="ml-2 text-gray-400 hover:text-blue-600"
-                          onClick={() => { setEditField('email'); setEditValue(profile?.email || ''); }}
-                          aria-label="Chỉnh sửa email"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                      </>
-                    )}
+                    <span className="font-medium">{profile?.email || 'Chưa cập nhật'}</span>
                   </div>
                 </div>
               </GlassCardContent>
