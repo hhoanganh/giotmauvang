@@ -20,6 +20,7 @@ import NewsDetail from "./pages/NewsDetail";
 import AdminNews from "./pages/AdminNews";
 import Donate from "./pages/Donate";
 import Profile from "./pages/Profile";
+import StaffCheckin from "./pages/StaffCheckin";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,14 @@ const App = () => (
               element={
                 <ProtectedRoute requiredRole="system_admin">
                   <AdminNews />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/staff/checkin" 
+              element={
+                <ProtectedRoute requiredRole="center_staff">
+                  <StaffCheckin />
                 </ProtectedRoute>
               } 
             />
