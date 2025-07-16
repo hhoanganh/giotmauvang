@@ -267,13 +267,21 @@ const StaffCheckin: React.FC = () => {
                         <div className="text-gray-500">Loading scanner...</div>
                       </div>
                     }>
-                      <QrReader
-                        onError={handleQRError}
-                        onScan={handleQRScan}
-                        style={{ width: '100%', height: '100%' }}
-                        facingMode="environment"
-                        showViewFinder={true}
-                      />
+                      <div style={{ width: '100%', height: '100%' }}>
+                        <QrReader
+                          onResult={(result, error) => {
+                            if (error) {
+                              handleQRError(error);
+                            }
+                            if (result) {
+                              handleQRScan(result?.getText());
+                            }
+                          }}
+                          constraints={{
+                            facingMode: 'environment'
+                          }}
+                        />
+                      </div>
                     </Suspense>
                   </div>
                 )}
