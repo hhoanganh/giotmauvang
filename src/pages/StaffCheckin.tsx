@@ -272,22 +272,22 @@ const StaffCheckin: React.FC = () => {
             return (
               <div key={q.key}>
                 <span className="font-medium">{q.label}</span>
-                <ul className="ml-4 list-disc">
+                <div className="ml-4 flex flex-col gap-1">
                   {selectedOptions.length > 0 ? (
                     selectedOptions.map(([k, v]) => {
                       if (k === 'vaccineDetails') {
                         return (
-                          <li key={k}><span className="font-semibold">Loại vacxin:</span> {String(v)}</li>
+                          <div key={k}>- <span className="font-semibold">Loại vacxin:</span> {String(v)}</div>
                         );
                       }
                       return (
-                        <li key={k}><span className="font-semibold">{q.options?.[k] || k}</span></li>
+                        <div key={k}>- <span className="font-semibold">{q.options?.[k] || k}</span></div>
                       );
                     })
                   ) : (
-                    <li key="none"><span className="font-semibold">Không</span></li>
+                    <div key="none">- <span className="font-semibold">Không</span></div>
                   )}
-                </ul>
+                </div>
               </div>
             );
           }
